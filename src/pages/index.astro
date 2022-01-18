@@ -1,6 +1,7 @@
 ---
 // Component Imports
 import collections from '../../data/collections.json';
+import CollectionItem from '../components/CollectionItem.svelte';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -19,16 +20,46 @@ import collections from '../../data/collections.json';
         <script type="module">
             import barba from '@barba/core';
 
-            barba.init({});
+            barba.init({
+                transitions: [{
+                    name: 'sun-from-index',
+                    from: {
+                        namespace: ['index']
+                    },
+                    leave() {
+                        let sunOne = document.querySelector('.sun-one');
+                        let sunTwo = document.querySelector('.sun-two');
+
+                        sunOne.style.transform = 'translate(-50%, -50%)';
+                        sunTwo.style.transform = 'translate(-20%, -20%)';
+                    },
+                    enter() {
+                    }
+                }, {
+                    name: 'sun-from-collection',
+                    from: {
+                        namespace: ['collection']
+                    },
+                    leave() {
+                        let sunOne = document.querySelector('.sun-one');
+                        let sunTwo = document.querySelector('.sun-two');
+
+                        sunOne.style.transform = 'translate(45%, 45%)';
+                        sunTwo.style.transform = 'translate(90%, 20%)';
+                    },
+                    enter() {
+                    }
+                }]
+            });
         </script>
     </head>
 
     <body data-barba="wrapper">
-        <div data-barba="container" class="w-screen h-screen px-20 py-20 bg-black">
+        <div class="sun sun-one"></div>
+		<div class="sun sun-two"></div>
+        <div data-barba="container" data-barba-namespace="index" class="w-screen h-screen px-20 py-20 bg-black">
 			<h1 class="text-6xl text-white">vance.photos</h1>
-			<div class="flex flex-col">{collections.map(collection => <a href={`/${collection.slug}`} class="mt-10 text-6xl cursor-pointer text-stroke">{collection.name}</a>)}</div>
+			<div class="relative z-10 flex flex-col items-start">{collections.map(collection => <CollectionItem {collection} client:visible/>)}</div>
 		</div>
-		<div class="sun-one"></div>
-		<div class="sun-two"></div>
     </body>
 </html>

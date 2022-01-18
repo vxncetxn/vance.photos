@@ -25,6 +25,8 @@ export async function getStaticPaths() {
     </head>
 
     <body data-barba="wrapper">
-        <div data-barba="container" class="w-screen h-screen px-20 py-20 bg-black"></div>
+        <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-20 py-20 bg-black">
+            <a href="/" class="mt-10 text-6xl text-transparent cursor-pointer text-stroke hover:text-white">Go back</a>
+        </div>
     </body>
 </html>
