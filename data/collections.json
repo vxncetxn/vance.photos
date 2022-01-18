@@ -4,7 +4,19 @@
     "slug": "taiwan-exchange"
   },
   {
+    "name": "europe solo",
+    "slug": "europe-solo"
+  },
+  {
     "name": "covid suppers",
     "slug": "covid-suppers"
+  },
+  {
+    "name": "easter",
+    "slug": "easter"
+  },
+  {
+    "name": "anniversary",
+    "slug": "anniversary"
   }
 ]

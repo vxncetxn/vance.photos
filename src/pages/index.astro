@@ -1,6 +1,6 @@
 ---
 // Component Imports
-import Button from '../components/Button.astro';
+import collections from '../../data/collections.json';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -16,15 +16,17 @@ import Button from '../components/Button.astro';
             type="text/css"
             href={Astro.resolve('../styles/global.css')}
         />
+        <script type="module">
+            import barba from '@barba/core';
+
+            barba.init({});
+        </script>
     </head>
 
-    <body>
-        <div class="w-screen h-screen px-20 py-20 bg-black">
+    <body data-barba="wrapper">
+        <div data-barba="container" class="w-screen h-screen px-20 py-20 bg-black">
 			<h1 class="text-6xl text-white">vance.photos</h1>
-			<p class="mt-10 text-6xl text-stroke">covid suppers</p>
-			<p class="mt-10 text-6xl text-stroke">taiwan exchange</p>
-			<p class="mt-10 text-6xl text-stroke">easter</p>
-			<p class="mt-10 text-6xl text-stroke">anniversary</p>
+			<div class="flex flex-col">{collections.map(collection => <a href={`/${collection.slug}`} class="mt-10 text-6xl cursor-pointer text-stroke">{collection.name}</a>)}</div>
 		</div>
 		<div class="sun-one"></div>
 		<div class="sun-two"></div>
