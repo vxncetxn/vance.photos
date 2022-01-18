@@ -1,0 +1,30 @@
+---
+import collections from '../../data/collections.json';
+
+export async function getStaticPaths() {
+    return collections.map(collection => {
+        return {
+            params: {
+                slug: collection.slug
+            }
+        }
+    })
+}
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <title>Astro + TailwindCSS</title>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href={Astro.resolve('../styles/global.css')}
+        />
+    </head>
+
+    <body>
+        Hello Collection!
+    </body>
+</html>

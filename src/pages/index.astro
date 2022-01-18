@@ -7,14 +7,26 @@ import Button from '../components/Button.astro';
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>Astro + TailwindCSS</title>
-		<link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
-	</head>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <title>Astro + TailwindCSS</title>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href={Astro.resolve('../styles/global.css')}
+        />
+    </head>
 
-	<body>
-		<Button>I’m a Tailwind Button!</Button>
-	</body>
+    <body>
+        <div class="w-screen h-screen px-20 py-20 bg-black">
+			<h1 class="text-6xl text-white">vance.photos</h1>
+			<p class="mt-10 text-6xl text-stroke">covid suppers</p>
+			<p class="mt-10 text-6xl text-stroke">taiwan exchange</p>
+			<p class="mt-10 text-6xl text-stroke">easter</p>
+			<p class="mt-10 text-6xl text-stroke">anniversary</p>
+		</div>
+		<div class="sun-one"></div>
+		<div class="sun-two"></div>
+    </body>
 </html>

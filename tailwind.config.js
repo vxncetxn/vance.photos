@@ -1,3 +1,13 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
-	content: ['./src/**/*.{astro,html,js,jsx,svelte,ts,tsx,vue}'],
+  mode: "jit",
+  content: ["./src/**/*.{astro,html,js,jsx,svelte,ts,tsx,vue}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Monument Extended", ...defaultTheme.fontFamily.sans],
+      },
+    },
+  },
 };
