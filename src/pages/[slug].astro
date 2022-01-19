@@ -25,7 +25,14 @@ let { name } = Astro.props;
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
     </head>
 
+    <script type="module">
+        import WebglInit from '@/webgl/index.js';
+
+        new WebglInit(document.getElementById('webgl-canvas'));
+    </script>
+
     <body data-barba="wrapper">
+        <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen"></div>
         <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-20 py-20 bg-black">
             <div class="py-1 overflow-hidden">
                 <h1 class="text-6xl text-white mo-text">{name}</h1>
