@@ -1,27 +1,27 @@
 [
-  {
-    "name": "taiwan exchange",
-    "slug": "taiwan-exchange",
-    "colors": ["#6a82fb", "#fc5c7d"]
-  },
-  {
-    "name": "europe solo",
-    "slug": "europe-solo",
-    "colors": ["#3CA55C", "#B5AC49"]
-  },
-  {
-    "name": "covid suppers",
-    "slug": "covid-suppers",
-    "colors": ["#56B4D3", "#348F50"]
-  },
-  {
-    "name": "easter",
-    "slug": "easter",
-    "colors": ["#ff6e7f", "#bfe9ff"]
-  },
-  {
-    "name": "anniversary",
-    "slug": "anniversary",
-    "colors": ["#314755", "#26a0da"]
-  }
+    {
+        "name": "taiwan exchange",
+        "slug": "taiwan-exchange",
+        "colors": ["#6a82fb", "#fc5c7d"]
+    },
+    {
+        "name": "europe solo",
+        "slug": "europe-solo",
+        "colors": ["#3CA55C", "#B5AC49"]
+    },
+    {
+        "name": "covid suppers",
+        "slug": "covid-suppers",
+        "colors": ["#56B4D3", "#348F50"]
+    },
+    {
+        "name": "easter",
+        "slug": "easter",
+        "colors": ["#ff6e7f", "#bfe9ff"]
+    },
+    {
+        "name": "anniversary",
+        "slug": "anniversary",
+        "colors": ["#314755", "#26a0da"]
+    }
 ]

@@ -12,79 +12,100 @@ import CollectionItem from '../components/CollectionItem.svelte';
         <meta charset="UTF-8" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <title>Astro + TailwindCSS</title>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href={Astro.resolve('../styles/global.css')}
-        />
+        <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
         <script type="module">
             import barba from '@barba/core';
 
             barba.init({
-                transitions: [{
-                    name: 'sun-from-index',
-                    from: {
-                        namespace: ['index']
-                    },
-                    leave() {
-                        let sunOne = document.querySelector('.sun-one');
-                        let sunTwo = document.querySelector('.sun-two');
+                transitions: [
+                    {
+                        name: 'sun-from-index',
+                        from: {
+                            namespace: ['index'],
+                        },
+                        leave() {
+                            let sunOne = document.querySelector('.sun-one');
+                            let sunTwo = document.querySelector('.sun-two');
 
-                        sunOne.style.transform = 'translate(-50%, -50%)';
-                        sunTwo.style.transform = 'translate(-20%, -20%)';
+                            sunOne.style.transform = 'translate(-50%, -50%)';
+                            sunTwo.style.transform = 'translate(-20%, -20%)';
+                        },
+                        enter() {},
                     },
-                    enter() {
-                    }
-                }, {
-                    name: 'sun-from-collection',
-                    from: {
-                        namespace: ['collection']
-                    },
-                    leave() {
-                        let sunOne = document.querySelector('.sun-one');
-                        let sunTwo = document.querySelector('.sun-two');
+                    {
+                        name: 'sun-from-collection',
+                        from: {
+                            namespace: ['collection'],
+                        },
+                        leave() {
+                            let sunOne = document.querySelector('.sun-one');
+                            let sunTwo = document.querySelector('.sun-two');
 
-                        sunOne.style.transform = 'translate(45%, 45%)';
-                        sunTwo.style.transform = 'translate(90%, 20%)';
+                            sunOne.style.transform = 'translate(45%, 45%)';
+                            sunTwo.style.transform = 'translate(90%, 20%)';
+                        },
+                        enter() {},
                     },
-                    enter() {
-                    }
-                }]
+                ],
             });
         </script>
     </head>
 
     <body data-barba="wrapper">
-        <svg class="sun sun-one" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink">
+        <svg
+            class="sun sun-one"
+            viewBox="0 0 10 10"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
             <defs>
                 <radialGradient cy="40%" id="sunGradientOne">
                     <stop offset="5%" stop-color="#6a82fb">
-                        <animate id="sun-one-animate" attributeName="stop-color" from="#6a82fb" to="#6a82fb"
-                        dur="0.8s" repeatCount="1" restart="always" fill="freeze"/>
+                        <animate
+                            id="sun-one-animate"
+                            attributeName="stop-color"
+                            from="#6a82fb"
+                            to="#6a82fb"
+                            dur="0.8s"
+                            repeatCount="1"
+                            restart="always"
+                            fill="freeze"></animate>
                     </stop>
-                    <stop offset="70%" stop-color="transparent" />
+                    <stop offset="70%" stop-color="transparent"></stop>
                 </radialGradient>
             </defs>
-            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"/>
+            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"></ellipse>
         </svg>
-        <svg class="sun sun-two" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink">
+        <svg
+            class="sun sun-two"
+            viewBox="0 0 10 10"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
             <defs>
                 <radialGradient cy="40%" id="sunGradientTwo">
                     <stop offset="5%" stop-color="#fc5c7d">
-                        <animate id="sun-two-animate" attributeName="stop-color" from="#fc5c7d" to="#fc5c7d"
-                        dur="0.8s" repeatCount="1" restart="always" fill="freeze"/>
+                        <animate
+                            id="sun-two-animate"
+                            attributeName="stop-color"
+                            from="#fc5c7d"
+                            to="#fc5c7d"
+                            dur="0.8s"
+                            repeatCount="1"
+                            restart="always"
+                            fill="freeze"></animate>
                     </stop>
-                    <stop offset="70%" stop-color="transparent" />
+                    <stop offset="70%" stop-color="transparent"></stop>
                 </radialGradient>
             </defs>
-            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"/>
+            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"></ellipse>
         </svg>
 
         <div data-barba="container" data-barba-namespace="index" class="w-screen h-screen px-20 py-20 bg-black">
-			<h1 class="text-6xl text-white">vance.photos</h1>
-			<div class="relative z-10 flex flex-col items-start">{collections.map(collection => <CollectionItem {collection} client:visible/>)}</div>
-		</div>
+            <h1 class="text-6xl text-white">vance.photos</h1>
+            <div class="relative z-10 flex flex-col items-start">
+                {collections.map(collection => <CollectionItem {collection} client:visible/>)}
+            </div>
+        </div>
     </body>
 </html>

@@ -3,43 +3,43 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Monument Extended";
-  src: url("/PPMonumentExtended-Regular.woff2") format("woff2"),
-    url("/PPMonumentExtended-Regular.woff") format("woff");
+    font-family: 'Monument Extended';
+    src: url('/PPMonumentExtended-Regular.woff2') format('woff2'),
+        url('/PPMonumentExtended-Regular.woff') format('woff');
 }
 
 .text-stroke {
-  -webkit-text-stroke: 1px white;
+    -webkit-text-stroke: 1px white;
 }
 
 .sun-middle {
-  top: 50%;
-  left: 50%;
-  transform: translate(0%, -50%);
-  width: 400px;
-  height: 400px;
-  /* border-radius: 300px;   */
-  filter: blur(100px);
-  background: radial-gradient(ellipse at top, #fc5c7d, transparent);
-  opacity: 0.6;
-  /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
+    top: 50%;
+    left: 50%;
+    transform: translate(0%, -50%);
+    width: 400px;
+    height: 400px;
+    /* border-radius: 300px;   */
+    filter: blur(100px);
+    background: radial-gradient(ellipse at top, #fc5c7d, transparent);
+    opacity: 0.6;
+    /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
 }
 
 .sun {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  filter: blur(100px);
-  width: 400px;
-  height: 400px;
-  opacity: 0.6;
-  transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    filter: blur(100px);
+    width: 400px;
+    height: 400px;
+    opacity: 0.6;
+    transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
 }
 
 .sun-one {
-  transform: translate(45%, 40%);
+    transform: translate(45%, 40%);
 }
 
 .sun-two {
-  transform: translate(100%, 20%);
+    transform: translate(100%, 20%);
 }
