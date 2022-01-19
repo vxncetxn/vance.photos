@@ -1,5 +1,5 @@
 ---
-import collections from '../../data/collections.json';
+import collections from '@/data/collections.json';
 
 export async function getStaticPaths() {
     return collections.map((collection) => {
@@ -7,16 +7,21 @@ export async function getStaticPaths() {
             params: {
                 slug: collection.slug,
             },
+            props: {
+                name: collection.name,
+            },
         };
     });
 }
+
+let { name } = Astro.props;
 ---
 
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <title>Astro + TailwindCSS</title>
+        <title>vance.photos // {name}</title>
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
     </head>
 

@@ -1,5 +1,13 @@
 {
     "compilerOptions": {
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@/pages/*": ["src/pages/*"],
+            "@/components/*": ["src/components/*"],
+            "@/styles/*": ["src/styles/*"],
+            "@/public/*": ["public/*"],
+            "@/data/*": ["data/*"]
+        }
     }
 }
