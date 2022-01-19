@@ -27,7 +27,9 @@ let { name } = Astro.props;
 
     <body data-barba="wrapper">
         <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-20 py-20 bg-black">
-            <a href="/" class="mt-10 text-6xl text-transparent cursor-pointer text-stroke hover:text-white">Go back</a>
+            <div class="py-1 overflow-hidden">
+                <h1 class="text-6xl text-white mo-text">{name}</h1>
+            </div>
         </div>
     </body>
 </html>

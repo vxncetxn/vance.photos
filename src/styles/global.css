@@ -43,3 +43,31 @@
 .sun-two {
     transform: translate(100%, 20%);
 }
+
+.text-leave {
+    animation: 0.8s swipeLeave cubic-bezier(0.64, 0, 0.78, 0) forwards;
+}
+
+.text-enter {
+    animation: 0.8s swipeEnter cubic-bezier(0.64, 0, 0.78, 0) forwards;
+}
+
+@keyframes swipeLeave {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(105%);
+    }
+}
+
+@keyframes swipeEnter {
+    from {
+        transform: translateY(-105%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}

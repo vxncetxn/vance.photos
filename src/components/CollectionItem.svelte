@@ -23,8 +23,12 @@
     }
 </script>
 
-<a
-    on:mouseenter={handleMouseEnter}
-    href={`/${collection.slug}`}
-    class="mt-10 text-6xl text-transparent cursor-pointer text-stroke hover:text-white">{collection.name}</a
->
+<div class="py-1 mt-10 overflow-hidden">
+    <a
+        on:mouseenter={handleMouseEnter}
+        href={`/${collection.slug}`}
+        class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white"
+    >
+        <p class="mo-text">{collection.name}</p>
+    </a>
+</div>
