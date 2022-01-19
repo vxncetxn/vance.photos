@@ -55,8 +55,33 @@ import CollectionItem from '../components/CollectionItem.svelte';
     </head>
 
     <body data-barba="wrapper">
-        <div class="sun sun-one"></div>
-		<div class="sun sun-two"></div>
+        <svg class="sun sun-one" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <radialGradient cy="40%" id="sunGradientOne">
+                    <stop offset="5%" stop-color="#6a82fb">
+                        <animate id="sun-one-animate" attributeName="stop-color" from="#6a82fb" to="#6a82fb"
+                        dur="0.8s" repeatCount="1" restart="always" fill="freeze"/>
+                    </stop>
+                    <stop offset="70%" stop-color="transparent" />
+                </radialGradient>
+            </defs>
+            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"/>
+        </svg>
+        <svg class="sun sun-two" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <radialGradient cy="40%" id="sunGradientTwo">
+                    <stop offset="5%" stop-color="#fc5c7d">
+                        <animate id="sun-two-animate" attributeName="stop-color" from="#fc5c7d" to="#fc5c7d"
+                        dur="0.8s" repeatCount="1" restart="always" fill="freeze"/>
+                    </stop>
+                    <stop offset="70%" stop-color="transparent" />
+                </radialGradient>
+            </defs>
+            <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"/>
+        </svg>
+
         <div data-barba="container" data-barba-namespace="index" class="w-screen h-screen px-20 py-20 bg-black">
 			<h1 class="text-6xl text-white">vance.photos</h1>
 			<div class="relative z-10 flex flex-col items-start">{collections.map(collection => <CollectionItem {collection} client:visible/>)}</div>

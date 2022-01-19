@@ -12,32 +12,34 @@
   -webkit-text-stroke: 1px white;
 }
 
-.sun {
-  position: fixed;
-}
-
-.sun-one {
+.sun-middle {
   top: 50%;
   left: 50%;
-  transform: translate(45%, 45%);
-  width: 400px;
-  height: 400px;
-  /* border-radius: 300px;   */
-  filter: blur(100px);
-  background: radial-gradient(ellipse at top, #6a82fb, transparent);
-  opacity: 0.6;
-  transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
-}
-
-.sun-two {
-  top: 50%;
-  left: 50%;
-  transform: translate(90%, 20%);
+  transform: translate(0%, -50%);
   width: 400px;
   height: 400px;
   /* border-radius: 300px;   */
   filter: blur(100px);
   background: radial-gradient(ellipse at top, #fc5c7d, transparent);
   opacity: 0.6;
+  /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
+}
+
+.sun {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  filter: blur(100px);
+  width: 400px;
+  height: 400px;
+  opacity: 0.6;
   transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
+}
+
+.sun-one {
+  transform: translate(45%, 40%);
+}
+
+.sun-two {
+  transform: translate(100%, 20%);
 }
