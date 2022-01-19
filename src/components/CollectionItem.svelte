@@ -1,7 +1,13 @@
-<script>
-    export let collection;
+<script lang="ts">
+    interface Collection {
+        name: string;
+        slug: string;
+        colors: string[];
+    }
 
-    function handleMouseEnter() {
+    export let collection: Collection;
+
+    function handleMouseEnter(): void {
         let sunOneAnimate = document.getElementById('sun-one-animate');
         let sunTwoAnimate = document.getElementById('sun-two-animate');
 
@@ -10,8 +16,10 @@
         sunTwoAnimate.setAttribute('from', sunTwoAnimate.getAttribute('to'));
         sunTwoAnimate.setAttribute('to', collection.colors[1]);
 
-        sunOneAnimate.beginElement();
-        sunTwoAnimate.beginElement();
+        if (sunOneAnimate instanceof SVGAnimationElement && sunTwoAnimate instanceof SVGAnimationElement) {
+            sunOneAnimate.beginElement();
+            sunTwoAnimate.beginElement();
+        }
     }
 </script>
 
