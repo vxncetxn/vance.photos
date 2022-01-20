@@ -9,6 +9,7 @@ export default class WebglInit {
         this.container = container;
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
+        this.widthTotal = 0;
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 10, 1000);
@@ -33,6 +34,7 @@ export default class WebglInit {
             target: 0,
             last: 0,
         };
+        this.direction = 'right';
 
         this.addObjects();
         this.onResize();
@@ -100,6 +102,8 @@ export default class WebglInit {
             mesh.scale.set(bounds.width, bounds.height, 1);
             this.scene.add(mesh);
 
+            this.widthTotal += bounds.width + 100;
+
             return {
                 img,
                 mesh,
@@ -107,15 +111,40 @@ export default class WebglInit {
                 height: bounds.height,
                 top: bounds.top,
                 left: bounds.left,
+                isBefore: false,
+                isAfter: false,
+                extraScroll: 0,
             };
         });
     }
 
     setPosition() {
-        this.imageStore.forEach((o) => {
+        this.imageStore.forEach((o, i) => {
             // o.mesh.position.x = -this.asscroll.currentPos + o.left - this.width / 2 + o.width / 2;
-            o.mesh.position.x = -this.scroll.current + o.left - this.width / 2 + o.width / 2;
+            o.mesh.position.x = -this.scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
             o.mesh.position.y = -o.top + this.height / 2 - o.height / 2;
+
+            let meshOffset = o.mesh.scale.x / 2;
+            o.isBefore = o.mesh.position.x + meshOffset < -this.width;
+            o.isAfter = o.mesh.position.x - meshOffset > this.width;
+
+            if (i === 1) {
+                console.log(o.isBefore, o.isAfter);
+            }
+
+            if (this.direction === 'right' && o.isBefore) {
+                o.extraScroll -= this.widthTotal;
+
+                o.isBefore = false;
+                o.isAfter = false;
+            }
+
+            if (this.direction === 'left' && o.isAfter) {
+                o.extraScroll += this.widthTotal;
+
+                o.isBefore = false;
+                o.isAfter = false;
+            }
         });
     }
 
@@ -163,6 +192,13 @@ export default class WebglInit {
 
     render() {
         this.scroll.current = this.lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
+        if (this.scroll.current > this.scroll.last) {
+            this.direction = 'right';
+        } else {
+            this.direction = 'left';
+        }
+        this.scroll.last = this.scroll.current;
+
         this.setPosition();
         requestAnimationFrame(this.render.bind(this));
         this.renderer.render(this.scene, this.camera);

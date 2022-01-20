@@ -31,13 +31,13 @@ let { name } = Astro.props;
         new WebglInit(document.getElementById('webgl-canvas'));
     </script>
 
-    <body data-barba="wrapper">
-        <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen"></div>
+    <body data-barba="wrapper" class="overflow-hidden">
+        <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div>
         <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-20 py-20 bg-black">
             <div class="py-1 overflow-hidden">
                 <h1 class="text-6xl text-white mo-text">{name}</h1>
             </div>
-            <div class="flex space-x-10">
+            <div class="flex space-x-[100px]">
                 <img
                     class="image"
                     src="https://vance.imgix.net/anniversary/s1.jpg?w=600&h=400&fit=contain&fm=avif"
@@ -61,6 +61,31 @@ let { name } = Astro.props;
                 <img
                     class="image"
                     src="https://vance.imgix.net/anniversary/s5.jpg?w=600&h=400&fit=contain&fm=avif"
+                    alt="bowl"
+                />
+                <img
+                    class="image"
+                    src="https://vance.imgix.net/anniversary/s6.jpg?w=600&h=400&fit=contain&fm=avif"
+                    alt="bowl"
+                />
+                <img
+                    class="image"
+                    src="https://vance.imgix.net/anniversary/s7.jpg?w=600&h=400&fit=contain&fm=avif"
+                    alt="bowl"
+                />
+                <img
+                    class="image"
+                    src="https://vance.imgix.net/anniversary/s8.jpg?w=600&h=400&fit=contain&fm=avif"
+                    alt="bowl"
+                />
+                <img
+                    class="image"
+                    src="https://vance.imgix.net/anniversary/s9.jpg?w=600&h=400&fit=contain&fm=avif"
+                    alt="bowl"
+                />
+                <img
+                    class="image"
+                    src="https://vance.imgix.net/anniversary/s10.jpg?w=600&h=400&fit=contain&fm=avif"
                     alt="bowl"
                 />
             </div>
