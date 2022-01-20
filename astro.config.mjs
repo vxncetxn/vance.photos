@@ -1,3 +1,5 @@
+import glsl from 'vite-plugin-glsl';
+
 // Full Astro Configuration API Documentation:
 // https://docs.astro.build/reference/configuration-reference
 
@@ -10,4 +12,7 @@
 export default /** @type {import('astro').AstroUserConfig} */ ({
     // Enable the Preact renderer to support Preact JSX components.
     renderers: ['@astrojs/renderer-svelte'],
+    vite: {
+        plugins: [glsl.default()],
+    },
 });
