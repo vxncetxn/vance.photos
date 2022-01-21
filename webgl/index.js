@@ -128,10 +128,6 @@ export default class WebglInit {
             o.isBefore = o.mesh.position.x + meshOffset < -this.width;
             o.isAfter = o.mesh.position.x - meshOffset > this.width;
 
-            if (i === 1) {
-                console.log(o.isBefore, o.isAfter);
-            }
-
             if (this.direction === 'right' && o.isBefore) {
                 o.extraScroll -= this.widthTotal;
 

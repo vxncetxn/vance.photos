@@ -25,7 +25,8 @@
     /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
 }
 
-.sun {
+.sun-one,
+.sun-two {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -36,12 +37,20 @@
     transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
 }
 
-.sun-one {
+.sun-one-index {
     transform: translate(45%, 40%);
 }
 
-.sun-two {
+.sun-two-index {
     transform: translate(100%, 20%);
+}
+
+.sun-one-collection {
+    transform: translate(-50%, -50%);
+}
+
+.sun-two-collection {
+    transform: translate(-20%, -20%);
 }
 
 .text-leave {

@@ -13,74 +13,12 @@ import CollectionItem from '@/components/CollectionItem.svelte';
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <title>vance.photos</title>
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
-        <script type="module">
-            import barba from '@barba/core';
-            import { animate } from 'motion';
-
-            barba.init({
-                transitions: [
-                    {
-                        name: 'sun-from-index',
-                        from: {
-                            namespace: ['index'],
-                        },
-                        leave() {
-                            let sunOne = document.querySelector('.sun-one');
-                            let sunTwo = document.querySelector('.sun-two');
-                            let texts = document.querySelectorAll('.mo-text');
-
-                            sunOne.style.transform = 'translate(-50%, -50%)';
-                            sunTwo.style.transform = 'translate(-20%, -20%)';
-
-                            return animate(
-                                texts,
-                                {
-                                    transform: 'translateY(120%)',
-                                },
-                                { duration: 0.8 },
-                            ).finished;
-                        },
-                        enter(data) {
-                            let texts = data.next.container.querySelectorAll('.mo-text');
-
-                            animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 });
-                        },
-                    },
-                    {
-                        name: 'sun-from-collection',
-                        from: {
-                            namespace: ['collection'],
-                        },
-                        leave() {
-                            let sunOne = document.querySelector('.sun-one');
-                            let sunTwo = document.querySelector('.sun-two');
-                            let texts = document.querySelectorAll('.mo-text');
-
-                            sunOne.style.transform = 'translate(45%, 45%)';
-                            sunTwo.style.transform = 'translate(90%, 20%)';
-
-                            return animate(
-                                texts,
-                                {
-                                    transform: 'translateY(120%)',
-                                },
-                                { duration: 0.8 },
-                            ).finished;
-                        },
-                        enter(data) {
-                            let texts = data.next.container.querySelectorAll('.mo-text');
-
-                            animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 });
-                        },
-                    },
-                ],
-            });
-        </script>
+        <script type="module" src="../../scripts/barba.js"></script>
     </head>
 
     <body data-barba="wrapper">
         <svg
-            class="sun sun-one"
+            class="sun-one sun-one-index"
             viewBox="0 0 10 10"
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -104,7 +42,7 @@ import CollectionItem from '@/components/CollectionItem.svelte';
             <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"></ellipse>
         </svg>
         <svg
-            class="sun sun-two"
+            class="sun-two sun-two-index"
             viewBox="0 0 10 10"
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
