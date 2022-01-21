@@ -1,7 +1,17 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
+import WebglInit from '@/webgl/index.js';
+
 barba.init({
+    views: [
+        {
+            namespace: 'collection',
+            beforeEnter() {
+                new WebglInit(document.getElementById('webgl-canvas'));
+            },
+        },
+    ],
     transitions: [
         {
             name: 'sun-from-index',
@@ -13,8 +23,27 @@ barba.init({
                 let sunTwo = document.querySelector('.sun-two');
                 let texts = document.querySelectorAll('.mo-text');
 
-                sunOne.style.transform = 'translate(-50%, -50%)';
-                sunTwo.style.transform = 'translate(-20%, -20%)';
+                animate(
+                    sunOne,
+                    {
+                        transform: 'translate(-50%, -50%)',
+                    },
+                    {
+                        duration: 1.6,
+                        easing: [0.2, 0.125, 0, 0.73],
+                    },
+                );
+
+                animate(
+                    sunTwo,
+                    {
+                        transform: 'translate(-20%, -20%)',
+                    },
+                    {
+                        duration: 1.6,
+                        easing: [0.2, 0.125, 0, 0.73],
+                    },
+                );
 
                 return animate(
                     texts,
@@ -40,8 +69,27 @@ barba.init({
                 let sunTwo = document.querySelector('.sun-two');
                 let texts = document.querySelectorAll('.mo-text');
 
-                sunOne.style.transform = 'translate(45%, 45%)';
-                sunTwo.style.transform = 'translate(90%, 20%)';
+                animate(
+                    sunOne,
+                    {
+                        transform: 'translate(45%, 45%)',
+                    },
+                    {
+                        duration: 1.6,
+                        easing: [0.2, 0.125, 0, 0.73],
+                    },
+                );
+
+                animate(
+                    sunTwo,
+                    {
+                        transform: 'translate(90%, 20%)',
+                    },
+                    {
+                        duration: 1.6,
+                        easing: [0.2, 0.125, 0, 0.73],
+                    },
+                );
 
                 return animate(
                     texts,

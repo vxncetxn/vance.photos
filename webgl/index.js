@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import normalizeWheel from 'normalize-wheel';
+import imagesLoaded from 'imagesLoaded';
 
 import vertex from './shaders/vertex.glsl';
 import fragment from './shaders/fragment.glsl';
 
 export default class WebglInit {
     constructor(container) {
+        console.log('CONSTRUCTING WEBGL!');
         this.container = container;
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
@@ -36,10 +38,17 @@ export default class WebglInit {
         };
         this.direction = 'right';
 
-        this.addObjects();
-        this.onResize();
-        this.render();
-        this.addEventListeners();
+        const preloadImages = new Promise((resolve, reject) => {
+            imagesLoaded(document.querySelectorAll('.image'), { background: true }, resolve);
+        });
+
+        Promise.all([preloadImages]).then(() => {
+            this.addObjects();
+            this.onResize();
+            this.render();
+            this.addEventListeners();
+            console.log('FINISHED WEBGL!');
+        });
     }
 
     requestCORSIfNotSameOrigin(img, url) {
@@ -101,6 +110,7 @@ export default class WebglInit {
             let mesh = new THREE.Mesh(this.baseGeometry, material);
             mesh.scale.set(bounds.width, bounds.height, 1);
             this.scene.add(mesh);
+            console.log(this.scene);
 
             this.widthTotal += bounds.width + 100;
 

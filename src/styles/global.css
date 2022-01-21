@@ -34,15 +34,15 @@
     width: 400px;
     height: 400px;
     opacity: 0.6;
-    transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73);
+    /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
 }
 
 .sun-one-index {
-    transform: translate(45%, 40%);
+    transform: translate(45%, 45%);
 }
 
 .sun-two-index {
-    transform: translate(100%, 20%);
+    transform: translate(90%, 20%);
 }
 
 .sun-one-collection {

@@ -27,11 +27,11 @@ let { name, length } = Astro.props;
         <script type="module" src="../../scripts/barba.js"></script>
     </head>
 
-    <script type="module">
+    <!-- <script type="module">
         import WebglInit from '@/webgl/index.js';
 
-        // new WebglInit(document.getElementById('webgl-canvas'));
-    </script>
+        new WebglInit(document.getElementById('webgl-canvas'));
+    </script> -->
 
     <body data-barba="wrapper" class="overflow-hidden">
         <svg
@@ -83,8 +83,8 @@ let { name, length } = Astro.props;
             <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"></ellipse>
         </svg>
 
-        <!-- <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div> -->
         <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-20 py-20 bg-black">
+            <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div>
             <div class="py-1 overflow-hidden">
                 <h1 class="text-6xl text-white mo-text">{name}</h1>
             </div>
