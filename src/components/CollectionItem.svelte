@@ -1,9 +1,5 @@
 <script lang="ts">
-    interface Collection {
-        name: string;
-        slug: string;
-        colors: string[];
-    }
+    import { Collection } from '@/types/index';
 
     export let collection: Collection;
 

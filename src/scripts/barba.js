@@ -1,7 +1,7 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
-import WebglInit from '@/webgl/index.js';
+import { WebglInit } from '@/scripts/webgl.js';
 
 barba.init({
     views: [

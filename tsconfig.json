@@ -7,9 +7,10 @@
             "@/components/*": ["src/components/*"],
             "@/styles/*": ["src/styles/*"],
             "@/public/*": ["public/*"],
-            "@/data/*": ["data/*"],
-            "@/webgl/*": ["webgl/*"],
-            "@/scripts/*": ["scripts/*"]
+            "@/scripts/*": ["src/scripts/*"],
+            "@/data/*": ["src/data/*"],
+            "@/shaders/*": ["src/shaders/*"],
+            "@/types/*": ["src/types/*"]
         }
     }
 }

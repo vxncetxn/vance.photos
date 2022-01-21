@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import normalizeWheel from 'normalize-wheel';
 import imagesLoaded from 'imagesLoaded';
 
-import vertex from './shaders/vertex.glsl';
-import fragment from './shaders/fragment.glsl';
+import vertex from '@/shaders/vertex.glsl';
+import fragment from '@/shaders/fragment.glsl';
 
-export default class WebglInit {
+export class WebglInit {
     constructor(container) {
         this.container = container;
         this.width = this.container.offsetWidth;

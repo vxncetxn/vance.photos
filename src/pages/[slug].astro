@@ -24,14 +24,8 @@ let { name, length } = Astro.props;
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <title>vance.photos // {name}</title>
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
-        <script type="module" src="../../scripts/barba.js"></script>
+        <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
     </head>
-
-    <!-- <script type="module">
-        import WebglInit from '@/webgl/index.js';
-
-        new WebglInit(document.getElementById('webgl-canvas'));
-    </script> -->
 
     <body data-barba="wrapper" class="overflow-hidden">
         <svg
