@@ -1,0 +1,22 @@
+---
+// src/layouts/BaseLayout.astro
+const { name } = Astro.props;
+---
+
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <title>vance.photos // {name}</title>
+        <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
+        <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
+    </head>
+    <body>
+        <!-- <nav>
+            <a href="#">Home</a>
+            <a href="#">Posts</a>
+            <a href="#">Contact</a>
+        </nav> -->
+        <slot />
+    </body>
+</html>

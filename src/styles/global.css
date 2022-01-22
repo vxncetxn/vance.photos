@@ -8,6 +8,21 @@
         url('/PPMonumentExtended-Regular.woff') format('woff');
 }
 
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/PPNeueMontreal-Regular.woff2') format('woff2'), url('/PPNeueMontreal-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Telegraf';
+    src: url('/PPTelegraf-Regular.woff2') format('woff2'), url('/PPTelegraf-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Radio Grotesk';
+    src: url('/PPRadioGrotesk-Regular.woff2') format('woff2'), url('/PPRadioGrotesk-Regular.woff') format('woff');
+}
+
 .text-stroke {
     -webkit-text-stroke: 1px white;
 }

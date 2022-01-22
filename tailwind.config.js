@@ -6,7 +6,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Monument Extended', ...defaultTheme.fontFamily.sans],
+                sans: ['Neue Montreal', ...defaultTheme.fontFamily.sans],
             },
         },
     },

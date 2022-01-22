@@ -19,11 +19,11 @@
     }
 </script>
 
-<div class="py-1 mt-10 overflow-hidden">
+<div class="py-1 overflow-hidden">
     <a
         on:mouseenter={handleMouseEnter}
         href={`/${collection.slug}`}
-        class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white"
+        class="uppercase cursor-pointer text-slate-400 text-[120px] leading-tight hover:text-slate-50"
     >
         <p class="mo-text">{collection.name}</p>
     </a>

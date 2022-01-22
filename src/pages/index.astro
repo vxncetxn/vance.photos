@@ -66,9 +66,13 @@ import CollectionItem from '@/components/CollectionItem.svelte';
             <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"></ellipse>
         </svg>
 
-        <div data-barba="container" data-barba-namespace="index" class="w-screen h-screen px-20 py-20 bg-black">
+        <div
+            data-barba="container"
+            data-barba-namespace="index"
+            class="min-h-screen px-16 py-10 bg-[#1c1c1c] min-w-screen"
+        >
             <div class="py-1 overflow-hidden">
-                <h1 class="text-6xl text-white mo-text">vance.photos</h1>
+                <h1 class="uppercase text-slate-50 text-[120px] mo-text leading-tight">vance.photos</h1>
             </div>
             <div class="relative z-10 flex flex-col items-start">
                 {collections.map(collection => <CollectionItem {collection} client:visible/>)}
