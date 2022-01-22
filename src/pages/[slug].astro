@@ -1,6 +1,6 @@
 ---
 import collections from '@/data/collections.json';
-import CollectionLayout from '../layouts/CollectionLayout.astro';
+import Layout from '../layouts/Layout.astro';
 
 export async function getStaticPaths() {
     return collections.map((collection) => {
@@ -11,15 +11,16 @@ export async function getStaticPaths() {
             props: {
                 name: collection.name,
                 length: collection.length,
+                description: collection.description,
             },
         };
     });
 }
 
-let { name, length } = Astro.props;
+let { name, length, description } = Astro.props;
 ---
 
-<CollectionLayout {name}>
+<Layout title={`vance.photos \\ ${name}`}>
     <svg
         class="sun-one sun-one-collection"
         viewBox="0 0 10 10"
@@ -88,5 +89,6 @@ let { name, length } = Astro.props;
                 />
             ))}
         </div>
+        <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50">{description}</p>
     </div>
-</CollectionLayout>
+</Layout>
