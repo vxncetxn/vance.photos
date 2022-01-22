@@ -56,7 +56,17 @@ barba.init({
             enter(data) {
                 let texts = data.next.container.querySelectorAll('.mo-text');
 
-                animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 });
+                animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 }).finished.then(
+                    () => {
+                        let sunOne = document.querySelector('.sun-one');
+                        let sunTwo = document.querySelector('.sun-two');
+
+                        sunOne.style.animation =
+                            'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        sunTwo.style.animation =
+                            'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                    },
+                );
             },
         },
         {
@@ -102,7 +112,17 @@ barba.init({
             enter(data) {
                 let texts = data.next.container.querySelectorAll('.mo-text');
 
-                animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 });
+                animate(texts, { transform: ['translateY(-120%)', 'translateY(0)'] }, { duration: 0.8 }).finished.then(
+                    () => {
+                        let sunOne = document.querySelector('.sun-one');
+                        let sunTwo = document.querySelector('.sun-two');
+
+                        sunOne.style.animation =
+                            'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        sunTwo.style.animation =
+                            'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                    },
+                );
             },
         },
     ],

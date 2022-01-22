@@ -23,6 +23,7 @@ export class WebglInit {
         // this.scene.add(this.mesh);
 
         this.baseGeometry = new THREE.PlaneBufferGeometry(1, 1, 100, 100);
+        this.imagesGroup = new THREE.Group();
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -107,7 +108,8 @@ export class WebglInit {
 
             let mesh = new THREE.Mesh(this.baseGeometry, material);
             mesh.scale.set(bounds.width, bounds.height, 1);
-            this.scene.add(mesh);
+            // this.scene.add(mesh);
+            this.imagesGroup.add(mesh);
 
             this.widthTotal += bounds.width + 100;
 
@@ -123,6 +125,8 @@ export class WebglInit {
                 extraScroll: 0,
             };
         });
+        this.imagesGroup.rotation.set(0, 0, 0.05);
+        this.scene.add(this.imagesGroup);
     }
 
     setPosition() {

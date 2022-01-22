@@ -10,6 +10,7 @@ export async function getStaticPaths() {
             },
             props: {
                 name: collection.name,
+                slug: collection.slug,
                 length: collection.length,
                 description: collection.description,
             },
@@ -17,7 +18,7 @@ export async function getStaticPaths() {
     });
 }
 
-let { name, length, description } = Astro.props;
+let { name, slug, length, description } = Astro.props;
 ---
 
 <Layout title={`vance.photos \\ ${name}`}>
@@ -70,25 +71,27 @@ let { name, length, description } = Astro.props;
         <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"></ellipse>
     </svg>
 
-    <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-16 py-10 bg-[#1c1c1c]">
+    <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-16 py-6 bg-[#1c1c1c]">
         <!-- <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div> -->
         <div class="py-1 overflow-hidden">
-            <h1 class="uppercase text-[120px] text-slate-50 mo-text leading-tight">{name}</h1>
+            <h1 class="relative uppercase text-[120px] text-slate-50 mo-text leading-tight mix-blend-difference z-10">
+                {name}
+            </h1>
         </div>
         <!-- <div class="py-1 mt-10 overflow-hidden">
                 <a href="/" class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white">
                     <p class="mo-text">Go Back</p>
                 </a>
             </div> -->
-        <div class="flex space-x-[100px]">
+        <!-- <div class=" fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]">
             {[...Array(length).keys()].map((n) => (
                 <img
-                    class="image"
-                    src={`https://vance.imgix.net/anniversary/s${n + 1}.jpg?w=600&h=400&fit=contain&fm=avif`}
+                    class="image w-[525px] h-[350px] object-cover object-center"
+                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain&fm=avif`}
                     alt="bowl"
                 />
             ))}
-        </div>
-        <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50">{description}</p>
+        </div> -->
+        <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50 mix-blend-difference">{description}</p>
     </div>
 </Layout>
