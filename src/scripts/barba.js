@@ -1,14 +1,14 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
-import { WebglInit } from '@/scripts/webgl.js';
+// import { WebglInit } from '@/scripts/webgl.js';
 
 barba.init({
     views: [
         {
             namespace: 'collection',
             beforeEnter() {
-                new WebglInit(document.getElementById('webgl-canvas'));
+                // new WebglInit(document.getElementById('webgl-canvas'));
             },
         },
     ],
@@ -22,6 +22,11 @@ barba.init({
                 let sunOne = document.querySelector('.sun-one');
                 let sunTwo = document.querySelector('.sun-two');
                 let texts = document.querySelectorAll('.mo-text');
+
+                sunOne.classList.remove('sun-one-index-anim');
+                // sunOne.classList.add('sun-one-collection-anim');
+                sunTwo.classList.remove('sun-two-index-anim');
+                // sunTwo.classList.add('sun-two-collection-anim');
 
                 animate(
                     sunOne,
@@ -61,10 +66,15 @@ barba.init({
                         let sunOne = document.querySelector('.sun-one');
                         let sunTwo = document.querySelector('.sun-two');
 
-                        sunOne.style.animation =
-                            'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
-                        sunTwo.style.animation =
-                            'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        // sunOne.style.animation =
+                        //     'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        // sunTwo.style.animation =
+                        //     'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+
+                        // sunOne.classList.remove('sun-one-index-anim');
+                        sunOne.classList.add('sun-one-collection-anim');
+                        // sunTwo.classList.remove('sun-two-index-anim');
+                        sunTwo.classList.add('sun-two-collection-anim');
                     },
                 );
             },
@@ -78,6 +88,11 @@ barba.init({
                 let sunOne = document.querySelector('.sun-one');
                 let sunTwo = document.querySelector('.sun-two');
                 let texts = document.querySelectorAll('.mo-text');
+
+                sunOne.classList.remove('sun-one-collection-anim');
+                // sunOne.classList.add('sun-one-index-anim');
+                sunTwo.classList.remove('sun-two-collection-anim');
+                // sunTwo.classList.add('sun-two-index-anim');
 
                 animate(
                     sunOne,
@@ -117,10 +132,15 @@ barba.init({
                         let sunOne = document.querySelector('.sun-one');
                         let sunTwo = document.querySelector('.sun-two');
 
-                        sunOne.style.animation =
-                            'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
-                        sunTwo.style.animation =
-                            'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        // sunOne.style.animation =
+                        //     'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+                        // sunTwo.style.animation =
+                        //     'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+
+                        // sunOne.classList.remove('sun-one-collection-anim');
+                        sunOne.classList.add('sun-one-index-anim');
+                        // sunTwo.classList.remove('sun-two-collection-anim');
+                        sunTwo.classList.add('sun-two-index-anim');
                     },
                 );
             },

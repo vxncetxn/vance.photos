@@ -31,21 +31,37 @@
 
 .sun-one-index {
     transform: translate(45%, 45%);
-    animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    /* animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-two-index {
     transform: translate(90%, 20%);
-    animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    /* animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-one-collection {
     transform: translate(-50%, -50%);
-    animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    /* animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-two-collection {
     transform: translate(-20%, -20%);
+    /* animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
+}
+
+.sun-one-index-anim {
+    animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+}
+
+.sun-two-index-anim {
+    animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+}
+
+.sun-one-collection-anim {
+    animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+}
+
+.sun-two-collection-anim {
     animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
 }
 

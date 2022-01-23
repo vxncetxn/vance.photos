@@ -23,7 +23,7 @@ let { name, slug, length, description } = Astro.props;
 
 <Layout title={`vance.photos \\ ${name}`}>
     <svg
-        class="sun-one sun-one-collection"
+        class="sun-one sun-one-collection sun-one-collection-anim"
         viewBox="0 0 10 10"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -47,7 +47,7 @@ let { name, slug, length, description } = Astro.props;
         <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"></ellipse>
     </svg>
     <svg
-        class="sun-two sun-two-collection"
+        class="sun-two sun-two-collection sun-two-collection-anim"
         viewBox="0 0 10 10"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -72,7 +72,7 @@ let { name, slug, length, description } = Astro.props;
     </svg>
 
     <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-16 py-6 bg-[#1c1c1c]">
-        <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div>
+        <!-- <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div> -->
         <div class="py-1 overflow-hidden">
             <h1 class="relative uppercase text-[120px] text-slate-50 mo-text leading-tight mix-blend-difference z-10">
                 {name}
