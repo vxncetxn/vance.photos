@@ -30,6 +30,13 @@ export class WebglInit {
         this.renderer.setSize(this.width, this.height);
         this.container.appendChild(this.renderer.domElement);
 
+        this.cursor = {
+            ease: 0.05,
+            current: 0,
+            target: 0,
+            last: 0,
+        };
+
         this.scroll = {
             ease: 0.05,
             current: 0,
@@ -45,6 +52,7 @@ export class WebglInit {
         Promise.all([preloadImages]).then(() => {
             this.addObjects();
             this.onResize();
+            this.setPosition();
             this.render();
             this.addEventListeners();
         });
@@ -131,7 +139,6 @@ export class WebglInit {
 
     setPosition() {
         this.imageStore.forEach((o, i) => {
-            // o.mesh.position.x = -this.asscroll.currentPos + o.left - this.width / 2 + o.width / 2;
             o.mesh.position.x = -this.scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
             o.mesh.position.y = -o.top + this.height / 2 - o.height / 2;
 
@@ -153,6 +160,11 @@ export class WebglInit {
                 o.isAfter = false;
             }
         });
+        this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
+    }
+
+    onMouseMove(event) {
+        this.cursor.target = event.clientY;
     }
 
     onTouchDown(event) {
@@ -189,7 +201,7 @@ export class WebglInit {
         window.addEventListener('wheel', this.onWheel.bind(this));
 
         window.addEventListener('mousedown', this.onTouchDown.bind(this));
-        window.addEventListener('mousemove', this.onTouchMove.bind(this));
+        window.addEventListener('mousemove', this.onMouseMove.bind(this));
         window.addEventListener('mouseup', this.onTouchUp.bind(this));
 
         window.addEventListener('touchstart', this.onTouchDown.bind(this));
@@ -204,9 +216,20 @@ export class WebglInit {
         } else {
             this.direction = 'left';
         }
-        this.scroll.last = this.scroll.current;
 
-        this.setPosition();
+        this.cursor.current = this.lerp(this.cursor.current, this.cursor.target, this.cursor.ease);
+
+        if (
+            Math.abs(this.scroll.last - this.scroll.current) > 0.1 ||
+            Math.abs(this.cursor.last - this.cursor.current) > 0.1
+        ) {
+            this.setPosition();
+            this.renderer.render(this.scene, this.camera);
+        }
+
+        this.scroll.last = this.scroll.current;
+        this.cursor.last = this.cursor.current;
+
         requestAnimationFrame(this.render.bind(this));
         this.renderer.render(this.scene, this.camera);
     }
