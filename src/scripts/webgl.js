@@ -1,5 +1,5 @@
 // import * as THREE from 'three';
-import { Renderer, Camera, Program, Mesh, Plane, Transform } from 'ogl';
+import { Renderer, Camera, Program, Mesh, Plane, Transform, Texture } from 'ogl';
 import normalizeWheel from 'normalize-wheel';
 import imagesLoaded from 'imagesLoaded';
 
@@ -29,14 +29,23 @@ export class WebglInit {
 
         this.geometry = new Plane(this.gl, { width: 150, height: 150 });
         this.program = new Program(this.gl, {
-            vertex,
-            fragment,
+            vertex: `attribute vec3 position;
+
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+            
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+            }`,
+            fragment: `void main() {
+                gl_FragColor = vec4(0.0, 0.5, 0.5, 1.0);
+            }`,
         });
         this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
-        this.mesh.setParent(this.scene);
+        // this.mesh.setParent(this.scene);
 
-        // this.baseGeometry = new THREE.PlaneBufferGeometry(1, 1, 100, 100);
-        // this.imagesGroup = new THREE.Group();
+        this.baseGeometry = new Plane(this.gl, { width: 1, height: 1, widthSegments: 100, heightSegments: 100 });
+        this.imagesGroup = new Transform();
 
         this.cursor = {
             ease: 0.05,
@@ -58,9 +67,9 @@ export class WebglInit {
         });
 
         Promise.all([preloadImages]).then(() => {
-            // this.addObjects();
+            this.addObjects();
             // this.onResize();
-            // this.setPosition();
+            this.setPosition();
             this.render();
             // this.addEventListeners();
         });
@@ -110,22 +119,25 @@ export class WebglInit {
         this.images = [...document.querySelectorAll('.image')];
         this.imageStore = this.images.map((img) => {
             let bounds = img.getBoundingClientRect();
+
             this.requestCORSIfNotSameOrigin(img, img.src);
-            let texture = new THREE.Texture(img);
-            texture.needsUpdate = true;
-            let material = new THREE.ShaderMaterial({
-                // wireframe: true,
+            let texture = new Texture(this.gl, { generateMipmaps: false });
+            texture.image = img;
+
+            let program = new Program(this.gl, {
+                depthTest: false,
+                depthWrite: false,
+                vertex,
+                fragment,
                 uniforms: {
                     uTexture: { value: texture },
                 },
-                vertexShader: vertex,
-                fragmentShader: fragment,
             });
 
-            let mesh = new THREE.Mesh(this.baseGeometry, material);
-            mesh.scale.set(bounds.width, bounds.height, 1);
-            // this.scene.add(mesh);
-            this.imagesGroup.add(mesh);
+            let mesh = new Mesh(this.gl, { geometry: this.baseGeometry, program });
+            mesh.scale.x = bounds.width;
+            mesh.scale.y = bounds.height;
+            mesh.setParent(this.imagesGroup);
 
             return {
                 img,
@@ -139,8 +151,8 @@ export class WebglInit {
                 extraScroll: 0,
             };
         });
-        this.imagesGroup.rotation.set(0, 0, 0.05);
-        this.scene.add(this.imagesGroup);
+        this.imagesGroup.rotation.z = 0.05;
+        this.imagesGroup.setParent(this.scene);
     }
 
     setPosition() {
@@ -166,7 +178,7 @@ export class WebglInit {
                 o.isAfter = false;
             }
         });
-        this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
+        // this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
     }
 
     onMouseMove(event) {
@@ -216,25 +228,25 @@ export class WebglInit {
     }
 
     render() {
-        this.scroll.current = this.lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
-        if (this.scroll.current > this.scroll.last) {
-            this.direction = 'right';
-        } else {
-            this.direction = 'left';
-        }
+        // this.scroll.current = this.lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
+        // if (this.scroll.current > this.scroll.last) {
+        //     this.direction = 'right';
+        // } else {
+        //     this.direction = 'left';
+        // }
 
-        this.cursor.current = this.lerp(this.cursor.current, this.cursor.target, this.cursor.ease);
+        // this.cursor.current = this.lerp(this.cursor.current, this.cursor.target, this.cursor.ease);
 
-        if (
-            Math.abs(this.scroll.last - this.scroll.current) > 0.1 ||
-            Math.abs(this.cursor.last - this.cursor.current) > 0.1
-        ) {
-            this.setPosition();
-            this.renderer.render({ scene: this.scene, camera: this.camera });
-        }
+        // if (
+        //     Math.abs(this.scroll.last - this.scroll.current) > 0.1 ||
+        //     Math.abs(this.cursor.last - this.cursor.current) > 0.1
+        // ) {
+        //     this.setPosition();
+        //     this.renderer.render({ scene: this.scene, camera: this.camera });
+        // }
 
-        this.scroll.last = this.scroll.current;
-        this.cursor.last = this.cursor.current;
+        // this.scroll.last = this.scroll.current;
+        // this.cursor.last = this.cursor.current;
 
         requestAnimationFrame(this.render.bind(this));
         this.renderer.render({ scene: this.scene, camera: this.camera });
