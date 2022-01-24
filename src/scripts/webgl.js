@@ -11,8 +11,9 @@ export class WebglInit {
         this.container = container;
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
+        this.widthTotal = 0;
 
-        this.renderer = new Renderer({ alpha: true });
+        this.renderer = new Renderer({ antialias: true, dpr: Math.min(window.devicePixelRatio, 2), alpha: true });
         this.renderer.setSize(this.width, this.height);
         this.gl = this.renderer.gl;
         this.container.appendChild(this.gl.canvas);
@@ -67,11 +68,11 @@ export class WebglInit {
         });
 
         Promise.all([preloadImages]).then(() => {
+            this.addEventListeners();
             this.addObjects();
             // this.onResize();
             this.setPosition();
             this.render();
-            // this.addEventListeners();
         });
     }
 
@@ -139,6 +140,8 @@ export class WebglInit {
             mesh.scale.y = bounds.height;
             mesh.setParent(this.imagesGroup);
 
+            this.widthTotal += bounds.width + 100;
+
             return {
                 img,
                 mesh,
@@ -156,7 +159,7 @@ export class WebglInit {
     }
 
     setPosition() {
-        this.imageStore.forEach((o, i) => {
+        this.imageStore.forEach((o) => {
             o.mesh.position.x = -this.scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
             o.mesh.position.y = -o.top + this.height / 2 - o.height / 2;
 
@@ -178,7 +181,7 @@ export class WebglInit {
                 o.isAfter = false;
             }
         });
-        // this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
+        this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
     }
 
     onMouseMove(event) {
@@ -228,25 +231,25 @@ export class WebglInit {
     }
 
     render() {
-        // this.scroll.current = this.lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
-        // if (this.scroll.current > this.scroll.last) {
-        //     this.direction = 'right';
-        // } else {
-        //     this.direction = 'left';
-        // }
+        this.scroll.current = this.lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
+        if (this.scroll.current > this.scroll.last) {
+            this.direction = 'right';
+        } else {
+            this.direction = 'left';
+        }
 
-        // this.cursor.current = this.lerp(this.cursor.current, this.cursor.target, this.cursor.ease);
+        this.cursor.current = this.lerp(this.cursor.current, this.cursor.target, this.cursor.ease);
 
-        // if (
-        //     Math.abs(this.scroll.last - this.scroll.current) > 0.1 ||
-        //     Math.abs(this.cursor.last - this.cursor.current) > 0.1
-        // ) {
-        //     this.setPosition();
-        //     this.renderer.render({ scene: this.scene, camera: this.camera });
-        // }
+        if (
+            Math.abs(this.scroll.last - this.scroll.current) > 0.1 ||
+            Math.abs(this.cursor.last - this.cursor.current) > 0.1
+        ) {
+            this.setPosition();
+            this.renderer.render({ scene: this.scene, camera: this.camera });
+        }
 
-        // this.scroll.last = this.scroll.current;
-        // this.cursor.last = this.cursor.current;
+        this.scroll.last = this.scroll.current;
+        this.cursor.last = this.cursor.current;
 
         requestAnimationFrame(this.render.bind(this));
         this.renderer.render({ scene: this.scene, camera: this.camera });
