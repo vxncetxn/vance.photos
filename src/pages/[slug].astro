@@ -23,7 +23,7 @@ let { name, slug, length, description } = Astro.props;
 
 <Layout title={`vance.photos \\ ${name}`}>
     <svg
-        class="sun-one sun-one-collection sun-one-collection-anim"
+        class="sun-one sun-one-collection"
         viewBox="0 0 10 10"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -47,7 +47,7 @@ let { name, slug, length, description } = Astro.props;
         <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"></ellipse>
     </svg>
     <svg
-        class="sun-two sun-two-collection sun-two-collection-anim"
+        class="sun-two sun-two-collection"
         viewBox="0 0 10 10"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -84,13 +84,13 @@ let { name, slug, length, description } = Astro.props;
                 </a>
             </div> -->
         <div class=" fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]">
-            {[...Array(length).keys()].map((n) => (
+            <!-- {[...Array(length).keys()].map((n) => (
                 <img
                     class="image w-[525px] h-[350px] object-cover object-center"
                     src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain&fm=avif`}
                     alt="bowl"
                 />
-            ))}
+            ))} -->
         </div>
         <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50 mix-blend-difference">{description}</p>
     </div>
