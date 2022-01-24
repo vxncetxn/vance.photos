@@ -30,39 +30,39 @@
 }
 
 .sun-one-index {
-    transform: translate(45%, 45%);
+    transform: translate(45%, 45%) scale(1);
     /* animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-two-index {
-    transform: translate(90%, 20%);
+    transform: translate(90%, 20%) scale(1);
     /* animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-one-collection {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
     /* animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-two-collection {
-    transform: translate(-20%, -20%);
+    transform: translate(-20%, -20%) scale(1);
     /* animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
 }
 
 .sun-one-index-anim {
-    animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards;
 }
 
 .sun-two-index-anim {
-    animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards;
 }
 
 .sun-one-collection-anim {
-    animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards;
 }
 
 .sun-two-collection-anim {
-    animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
+    animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards;
 }
 
 .text-leave {
@@ -94,9 +94,9 @@
 }
 
 @keyframes throb-index-one {
-    from {
+    /* from {
         transform: translate(45%, 45%) scale(1);
-    }
+    } */
 
     to {
         transform: translate(45%, 45%) scale(1.6);
@@ -104,9 +104,9 @@
 }
 
 @keyframes throb-index-two {
-    from {
+    /* from {
         transform: translate(90%, 20%) scale(1);
-    }
+    } */
 
     to {
         transform: translate(90%, 20%) scale(1.3);
@@ -114,9 +114,9 @@
 }
 
 @keyframes throb-collection-one {
-    from {
+    /* from {
         transform: translate(-50%, -50%) scale(1);
-    }
+    } */
 
     to {
         transform: translate(-50%, -50%) scale(1.6);
@@ -124,9 +124,9 @@
 }
 
 @keyframes throb-collection-two {
-    from {
+    /* from {
         transform: translate(-20%, -20%) scale(1);
-    }
+    } */
 
     to {
         transform: translate(-20%, -20%) scale(1.3);
