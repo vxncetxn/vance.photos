@@ -34,7 +34,7 @@ barba.init({
                     },
                 ).finished.then(() => {
                     sunOne.style.animation =
-                        'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards';
+                        'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
                 });
 
                 animate(
@@ -48,7 +48,7 @@ barba.init({
                     },
                 ).finished.then(() => {
                     sunTwo.style.animation =
-                        'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards';
+                        'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
                 });
 
                 return animate(
@@ -85,8 +85,7 @@ barba.init({
                         easing: [0.2, 0.125, 0, 0.73],
                     },
                 ).finished.then(() => {
-                    sunOne.style.animation =
-                        'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards';
+                    sunOne.style.animation = 'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
                 });
 
                 animate(
@@ -99,8 +98,7 @@ barba.init({
                         easing: [0.2, 0.125, 0, 0.73],
                     },
                 ).finished.then(() => {
-                    sunTwo.style.animation =
-                        'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite forwards';
+                    sunTwo.style.animation = 'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
                 });
 
                 return animate(
