@@ -1,4 +1,5 @@
-import * as THREE from 'three';
+// import * as THREE from 'three';
+import { Renderer, Camera, Program, Mesh, Plane, Transform } from 'ogl';
 import normalizeWheel from 'normalize-wheel';
 import imagesLoaded from 'imagesLoaded';
 
@@ -10,25 +11,32 @@ export class WebglInit {
         this.container = container;
         this.width = this.container.offsetWidth;
         this.height = this.container.offsetHeight;
-        this.widthTotal = 0;
 
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 10, 1000);
-        this.camera.position.z = 600;
-        this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-
-        this.geometry = new THREE.PlaneGeometry(200, 200);
-        this.material = new THREE.MeshNormalMaterial();
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        // this.scene.add(this.mesh);
-
-        this.baseGeometry = new THREE.PlaneBufferGeometry(1, 1, 100, 100);
-        this.imagesGroup = new THREE.Group();
-
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer = new Renderer({ alpha: true });
         this.renderer.setSize(this.width, this.height);
-        this.container.appendChild(this.renderer.domElement);
+        this.gl = this.renderer.gl;
+        this.container.appendChild(this.gl.canvas);
+
+        this.scene = new Transform();
+
+        this.camera = new Camera(this.gl, {
+            aspect: this.width / this.height,
+            near: 10,
+            far: 1000,
+            fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
+        });
+        this.camera.position.z = 600;
+
+        this.geometry = new Plane(this.gl, { width: 150, height: 150 });
+        this.program = new Program(this.gl, {
+            vertex,
+            fragment,
+        });
+        this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
+        this.mesh.setParent(this.scene);
+
+        // this.baseGeometry = new THREE.PlaneBufferGeometry(1, 1, 100, 100);
+        // this.imagesGroup = new THREE.Group();
 
         this.cursor = {
             ease: 0.05,
@@ -50,11 +58,11 @@ export class WebglInit {
         });
 
         Promise.all([preloadImages]).then(() => {
-            this.addObjects();
-            this.onResize();
-            this.setPosition();
+            // this.addObjects();
+            // this.onResize();
+            // this.setPosition();
             this.render();
-            this.addEventListeners();
+            // this.addEventListeners();
         });
     }
 
@@ -118,8 +126,6 @@ export class WebglInit {
             mesh.scale.set(bounds.width, bounds.height, 1);
             // this.scene.add(mesh);
             this.imagesGroup.add(mesh);
-
-            this.widthTotal += bounds.width + 100;
 
             return {
                 img,
@@ -224,13 +230,13 @@ export class WebglInit {
             Math.abs(this.cursor.last - this.cursor.current) > 0.1
         ) {
             this.setPosition();
-            this.renderer.render(this.scene, this.camera);
+            this.renderer.render({ scene: this.scene, camera: this.camera });
         }
 
         this.scroll.last = this.scroll.current;
         this.cursor.last = this.cursor.current;
 
         requestAnimationFrame(this.render.bind(this));
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render({ scene: this.scene, camera: this.camera });
     }
 }

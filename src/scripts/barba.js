@@ -1,14 +1,14 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
-// import { WebglInit } from '@/scripts/webgl.js';
+import { WebglInit } from '@/scripts/webgl.js';
 
 barba.init({
     views: [
         {
             namespace: 'collection',
             beforeEnter() {
-                // new WebglInit(document.getElementById('webgl-canvas'));
+                new WebglInit(document.getElementById('webgl-canvas'));
             },
         },
     ],
