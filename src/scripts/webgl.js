@@ -68,18 +68,12 @@ export class WebglInit {
         });
 
         Promise.all([preloadImages]).then(() => {
-            this.addEventListeners();
             this.addObjects();
             // this.onResize();
             this.setPosition();
             this.render();
+            this.addEventListeners();
         });
-    }
-
-    requestCORSIfNotSameOrigin(img, url) {
-        if (new URL(url, window.location.href).origin !== window.location.origin) {
-            img.crossOrigin = '';
-        }
     }
 
     lerp(p1, p2, t) {
@@ -121,10 +115,7 @@ export class WebglInit {
         this.imageStore = this.images.map((img) => {
             let bounds = img.getBoundingClientRect();
 
-            this.requestCORSIfNotSameOrigin(img, img.src);
             let texture = new Texture(this.gl, { generateMipmaps: false });
-            texture.image = img;
-
             let program = new Program(this.gl, {
                 depthTest: false,
                 depthWrite: false,
@@ -134,6 +125,13 @@ export class WebglInit {
                     uTexture: { value: texture },
                 },
             });
+
+            let allowedImg = new Image();
+            allowedImg.crossOrigin = 'anonymous';
+            allowedImg.onload = (_) => {
+                texture.image = allowedImg;
+            };
+            allowedImg.src = img.src;
 
             let mesh = new Mesh(this.gl, { geometry: this.baseGeometry, program });
             mesh.scale.x = bounds.width;
