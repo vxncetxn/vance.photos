@@ -6,8 +6,16 @@ import { WebglInit } from '@/scripts/webgl.js';
 barba.init({
     views: [
         {
+            namespace: 'index',
+            beforeEnter() {
+                document.body.style.overflow = 'auto';
+            },
+        },
+        {
             namespace: 'collection',
             beforeEnter() {
+                document.body.style.overflow = 'hidden';
+
                 new WebglInit(document.getElementById('webgl-canvas'));
             },
         },

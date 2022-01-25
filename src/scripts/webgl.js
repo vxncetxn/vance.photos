@@ -81,19 +81,16 @@ export class WebglInit {
     }
 
     onResize() {
-        this.width = this.container.offsetWidth;
-        this.height = this.container.offsetHeight;
-        this.renderer.setSize(this.width, this.height);
-        this.camera.aspect = this.width / this.height;
-        this.camera.updateProjectionMatrix();
-
-        this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-
+        // this.width = this.container.offsetWidth;
+        // this.height = this.container.offsetHeight;
+        // this.renderer.setSize(this.width, this.height);
+        // this.camera.aspect = this.width / this.height;
+        // this.camera.updateProjectionMatrix();
+        // this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
         // this.materials.forEach(m=>{
         //     m.uniforms.uResolution.value.x = this.width;
         //     m.uniforms.uResolution.value.y = this.height;
         // })
-
         // this.imageStore.forEach(i=>{
         //     let bounds = i.img.getBoundingClientRect();
         //     i.mesh.scale.set(bounds.width,bounds.height,1);
@@ -101,10 +98,8 @@ export class WebglInit {
         //     i.left = bounds.left + this.asscroll.currentPos;
         //     i.width = bounds.width;
         //     i.height = bounds.height;
-
         //     i.mesh.material.uniforms.uQuadSize.value.x = bounds.width;
         //     i.mesh.material.uniforms.uQuadSize.value.y = bounds.height;
-
         //     i.mesh.material.uniforms.uTextureSize.value.x = bounds.width;
         //     i.mesh.material.uniforms.uTextureSize.value.y = bounds.height;
         // })

@@ -21,7 +21,7 @@ export async function getStaticPaths() {
 let { name, slug, length, description } = Astro.props;
 ---
 
-<Layout title={`vance.photos \\ ${name}`}>
+<Layout title={`vance.photos \\ ${name}`} route="collection">
     <svg
         class="sun-one sun-one-collection"
         viewBox="0 0 10 10"
@@ -87,7 +87,7 @@ let { name, slug, length, description } = Astro.props;
             {[...Array(length).keys()].map((n) => (
                 <img
                     class="image w-[525px] h-[350px] object-cover object-center"
-                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain&fm=avif`}
+                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain`}
                     alt="bowl"
                 />
             ))}
