@@ -11,7 +11,7 @@ const { title } = Astro.props;
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
         <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
     </head>
-    <body data-barba="wrapper">
+    <body data-barba="wrapper" class="overscroll-none">
         <nav class="fixed z-10 flex flex-col space-y-1 text-xl right-20 top-14 text-slate-50 mix-blend-difference">
             <a href="#">vancetan</a>
             <a href="#">Twitter</a>
