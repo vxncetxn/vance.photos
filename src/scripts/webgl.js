@@ -118,6 +118,8 @@ export class WebglInit {
                 fragment,
                 uniforms: {
                     uTexture: { value: texture },
+                    uViewportSize: { value: [this.width, this.height] },
+                    uStrength: { value: 0 },
                 },
             });
 
@@ -173,6 +175,9 @@ export class WebglInit {
                 o.isBefore = false;
                 o.isAfter = false;
             }
+
+            o.mesh.program.uniforms.uStrength.value =
+                (Math.abs(this.scroll.current - this.scroll.last) / this.width) * 10;
         });
         this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
     }
