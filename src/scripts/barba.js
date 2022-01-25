@@ -1,14 +1,22 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
-// import { WebglInit } from '@/scripts/webgl.js';
+import { WebglInit } from '@/scripts/webgl.js';
 
 barba.init({
     views: [
         {
+            namespace: 'index',
+            beforeEnter() {
+                document.body.style.overflow = 'auto';
+            },
+        },
+        {
             namespace: 'collection',
             beforeEnter() {
-                // new WebglInit(document.getElementById('webgl-canvas'));
+                document.body.style.overflow = 'hidden';
+
+                new WebglInit(document.getElementById('webgl-canvas'));
             },
         },
     ],

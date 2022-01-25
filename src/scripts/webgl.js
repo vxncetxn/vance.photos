@@ -1,4 +1,5 @@
-import * as THREE from 'three';
+// import * as THREE from 'three';
+import { Renderer, Camera, Program, Mesh, Plane, Transform, Texture } from 'ogl';
 import normalizeWheel from 'normalize-wheel';
 import imagesLoaded from 'imagesLoaded';
 
@@ -12,23 +13,40 @@ export class WebglInit {
         this.height = this.container.offsetHeight;
         this.widthTotal = 0;
 
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(30, this.width / this.height, 10, 1000);
-        this.camera.position.z = 600;
-        this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-
-        this.geometry = new THREE.PlaneGeometry(200, 200);
-        this.material = new THREE.MeshNormalMaterial();
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        // this.scene.add(this.mesh);
-
-        this.baseGeometry = new THREE.PlaneBufferGeometry(1, 1, 100, 100);
-        this.imagesGroup = new THREE.Group();
-
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer = new Renderer({ antialias: true, dpr: Math.min(window.devicePixelRatio, 2), alpha: true });
         this.renderer.setSize(this.width, this.height);
-        this.container.appendChild(this.renderer.domElement);
+        this.gl = this.renderer.gl;
+        this.container.appendChild(this.gl.canvas);
+
+        this.scene = new Transform();
+
+        this.camera = new Camera(this.gl, {
+            aspect: this.width / this.height,
+            near: 10,
+            far: 1000,
+            fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
+        });
+        this.camera.position.z = 600;
+
+        this.geometry = new Plane(this.gl, { width: 150, height: 150 });
+        this.program = new Program(this.gl, {
+            vertex: `attribute vec3 position;
+
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+            
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+            }`,
+            fragment: `void main() {
+                gl_FragColor = vec4(0.0, 0.5, 0.5, 1.0);
+            }`,
+        });
+        this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
+        // this.mesh.setParent(this.scene);
+
+        this.baseGeometry = new Plane(this.gl, { width: 1, height: 1, widthSegments: 100, heightSegments: 100 });
+        this.imagesGroup = new Transform();
 
         this.cursor = {
             ease: 0.05,
@@ -51,17 +69,11 @@ export class WebglInit {
 
         Promise.all([preloadImages]).then(() => {
             this.addObjects();
-            this.onResize();
+            // this.onResize();
             this.setPosition();
             this.render();
             this.addEventListeners();
         });
-    }
-
-    requestCORSIfNotSameOrigin(img, url) {
-        if (new URL(url, window.location.href).origin !== window.location.origin) {
-            img.crossOrigin = '';
-        }
     }
 
     lerp(p1, p2, t) {
@@ -69,19 +81,16 @@ export class WebglInit {
     }
 
     onResize() {
-        this.width = this.container.offsetWidth;
-        this.height = this.container.offsetHeight;
-        this.renderer.setSize(this.width, this.height);
-        this.camera.aspect = this.width / this.height;
-        this.camera.updateProjectionMatrix();
-
-        this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-
+        // this.width = this.container.offsetWidth;
+        // this.height = this.container.offsetHeight;
+        // this.renderer.setSize(this.width, this.height);
+        // this.camera.aspect = this.width / this.height;
+        // this.camera.updateProjectionMatrix();
+        // this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
         // this.materials.forEach(m=>{
         //     m.uniforms.uResolution.value.x = this.width;
         //     m.uniforms.uResolution.value.y = this.height;
         // })
-
         // this.imageStore.forEach(i=>{
         //     let bounds = i.img.getBoundingClientRect();
         //     i.mesh.scale.set(bounds.width,bounds.height,1);
@@ -89,10 +98,8 @@ export class WebglInit {
         //     i.left = bounds.left + this.asscroll.currentPos;
         //     i.width = bounds.width;
         //     i.height = bounds.height;
-
         //     i.mesh.material.uniforms.uQuadSize.value.x = bounds.width;
         //     i.mesh.material.uniforms.uQuadSize.value.y = bounds.height;
-
         //     i.mesh.material.uniforms.uTextureSize.value.x = bounds.width;
         //     i.mesh.material.uniforms.uTextureSize.value.y = bounds.height;
         // })
@@ -102,22 +109,31 @@ export class WebglInit {
         this.images = [...document.querySelectorAll('.image')];
         this.imageStore = this.images.map((img) => {
             let bounds = img.getBoundingClientRect();
-            this.requestCORSIfNotSameOrigin(img, img.src);
-            let texture = new THREE.Texture(img);
-            texture.needsUpdate = true;
-            let material = new THREE.ShaderMaterial({
-                // wireframe: true,
+
+            let texture = new Texture(this.gl, { generateMipmaps: false });
+            let program = new Program(this.gl, {
+                depthTest: false,
+                depthWrite: false,
+                vertex,
+                fragment,
                 uniforms: {
                     uTexture: { value: texture },
+                    uViewportSize: { value: [this.width, this.height] },
+                    uStrength: { value: 0 },
                 },
-                vertexShader: vertex,
-                fragmentShader: fragment,
             });
 
-            let mesh = new THREE.Mesh(this.baseGeometry, material);
-            mesh.scale.set(bounds.width, bounds.height, 1);
-            // this.scene.add(mesh);
-            this.imagesGroup.add(mesh);
+            let allowedImg = new Image();
+            allowedImg.crossOrigin = 'anonymous';
+            allowedImg.onload = (_) => {
+                texture.image = allowedImg;
+            };
+            allowedImg.src = img.src;
+
+            let mesh = new Mesh(this.gl, { geometry: this.baseGeometry, program });
+            mesh.scale.x = bounds.width;
+            mesh.scale.y = bounds.height;
+            mesh.setParent(this.imagesGroup);
 
             this.widthTotal += bounds.width + 100;
 
@@ -133,12 +149,12 @@ export class WebglInit {
                 extraScroll: 0,
             };
         });
-        this.imagesGroup.rotation.set(0, 0, 0.05);
-        this.scene.add(this.imagesGroup);
+        this.imagesGroup.rotation.z = 0.05;
+        this.imagesGroup.setParent(this.scene);
     }
 
     setPosition() {
-        this.imageStore.forEach((o, i) => {
+        this.imageStore.forEach((o) => {
             o.mesh.position.x = -this.scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
             o.mesh.position.y = -o.top + this.height / 2 - o.height / 2;
 
@@ -159,6 +175,9 @@ export class WebglInit {
                 o.isBefore = false;
                 o.isAfter = false;
             }
+
+            o.mesh.program.uniforms.uStrength.value =
+                (Math.abs(this.scroll.current - this.scroll.last) / this.width) * 10;
         });
         this.imagesGroup.rotation.set(0, 0, 0.1 + (this.cursor.current / this.height - 0.5) / 20);
     }
@@ -224,13 +243,13 @@ export class WebglInit {
             Math.abs(this.cursor.last - this.cursor.current) > 0.1
         ) {
             this.setPosition();
-            this.renderer.render(this.scene, this.camera);
+            this.renderer.render({ scene: this.scene, camera: this.camera });
         }
 
         this.scroll.last = this.scroll.current;
         this.cursor.last = this.cursor.current;
 
         requestAnimationFrame(this.render.bind(this));
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render({ scene: this.scene, camera: this.camera });
     }
 }
