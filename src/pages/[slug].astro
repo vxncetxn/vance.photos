@@ -72,7 +72,7 @@ let { name, slug, length, description } = Astro.props;
     </svg>
 
     <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-16 py-6 bg-[#1c1c1c]">
-        <div id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></div>
+        <canvas id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></canvas>
         <div class="py-1 overflow-hidden">
             <h1 class="relative uppercase text-[120px] text-slate-50 mo-text leading-tight mix-blend-difference z-10">
                 {name}

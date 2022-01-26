@@ -13,10 +13,14 @@ export class WebglInit {
         this.height = this.container.offsetHeight;
         this.widthTotal = 0;
 
-        this.renderer = new Renderer({ antialias: true, dpr: Math.min(window.devicePixelRatio, 2), alpha: true });
+        this.renderer = new Renderer({
+            canvas: container,
+            antialias: true,
+            dpr: Math.min(window.devicePixelRatio, 2),
+            alpha: true,
+        });
         this.renderer.setSize(this.width, this.height);
         this.gl = this.renderer.gl;
-        this.container.appendChild(this.gl.canvas);
 
         this.scene = new Transform();
 
