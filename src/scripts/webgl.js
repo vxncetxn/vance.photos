@@ -216,7 +216,7 @@ export class WebglInit {
     addEventListeners() {
         window.addEventListener('resize', this.onResize.bind(this));
 
-        window.addEventListener('mousewheel', this.onWheel.bind(this));
+        window.addEventListener('mousewheel', this.onWheel.bind(this), { passive: true });
         window.addEventListener('wheel', this.onWheel.bind(this));
 
         window.addEventListener('mousedown', this.onTouchDown.bind(this));
@@ -249,7 +249,7 @@ export class WebglInit {
         this.scroll.last = this.scroll.current;
         this.cursor.last = this.cursor.current;
 
-        requestAnimationFrame(this.render.bind(this));
         this.renderer.render({ scene: this.scene, camera: this.camera });
+        requestAnimationFrame(this.render.bind(this));
     }
 }
