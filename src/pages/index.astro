@@ -63,7 +63,7 @@ import CollectionItem from '@/components/CollectionItem.svelte';
             <h1 class="uppercase text-slate-50 text-[120px] mo-text leading-tight">vance.photos</h1>
         </div>
         <div class="relative z-10 flex flex-col items-start">
-            {collections.map(collection => <CollectionItem {collection} client:visible/>)}
+            {collections.map(collection => <CollectionItem {collection} client:idle/>)}
         </div>
     </div>
 </Layout>

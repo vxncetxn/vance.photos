@@ -1,0 +1,21 @@
+diff --git a/node_modules/ogl/src/core/Renderer.js b/node_modules/ogl/src/core/Renderer.js
+index 880408b..69b898b 100644
+--- a/node_modules/ogl/src/core/Renderer.js
++++ b/node_modules/ogl/src/core/Renderer.js
+@@ -112,10 +112,12 @@ export class Renderer {
+         this.gl.canvas.width = width * this.dpr;
+         this.gl.canvas.height = height * this.dpr;
+ 
+-        Object.assign(this.gl.canvas.style, {
+-            width: width + 'px',
+-            height: height + 'px',
+-        });
++        if (this.gl.canvas.style) {
++            Object.assign(this.gl.canvas.style, {
++                width: width + 'px',
++                height: height + 'px',
++            });
++        }
+     }
+ 
+     setViewport(width, height, x = 0, y = 0) {

@@ -6,11 +6,13 @@
         "dev": "astro dev",
         "start": "astro dev",
         "build": "astro build",
-        "preview": "astro preview"
+        "preview": "astro preview",
+        "postinstall": "patch-package"
     },
     "devDependencies": {
         "astro": "^0.22.13",
         "autoprefixer": "^10.4.2",
+        "patch-package": "^6.4.7",
         "prettier": "^2.5.1",
         "prettier-plugin-astro": "0.0.11",
         "prettier-plugin-svelte": "^2.6.0",
