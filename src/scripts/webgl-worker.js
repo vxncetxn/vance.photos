@@ -12,10 +12,13 @@ const handlers = {
 
 self.onmessage = function (e) {
     const fn = handlers[e.data.type];
-    if (!fn) {
-        throw new Error('no handler for type: ' + e.data.type);
+    // if (!fn) {
+    //     throw new Error('no handler for type: ' + e.data.type);
+    // }
+    // fn(e.data);
+    if (fn) {
+        fn(e.data);
     }
-    fn(e.data);
 };
 
 function size(data) {

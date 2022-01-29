@@ -17,17 +17,20 @@ barba.init({
             beforeEnter() {
                 document.body.style.overflow = 'hidden';
 
-                // new WebglInit(document.getElementById('webgl-canvas'));
                 const canvas = document.getElementById('webgl-canvas');
-                const offscreen = canvas.transferControlToOffscreen();
-                // const worker = new Worker(document.getElementById('webgl-worker').src);
-                const worker = new WebglWorker();
-                worker.postMessage({
-                    type: 'size',
-                    width: canvas.offsetWidth,
-                    height: canvas.offsetHeight,
-                });
-                worker.postMessage({ type: 'main', canvas: offscreen }, [offscreen]);
+
+                if (canvas.transferControlToOffscreen) {
+                    const offscreen = canvas.transferControlToOffscreen();
+                    const worker = new WebglWorker();
+                    worker.postMessage({
+                        type: 'size',
+                        width: canvas.offsetWidth,
+                        height: canvas.offsetHeight,
+                    });
+                    worker.postMessage({ type: 'main', canvas: offscreen }, [offscreen]);
+                } else {
+                    new WebglInit(canvas);
+                }
             },
         },
     ],
