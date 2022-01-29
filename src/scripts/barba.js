@@ -1,8 +1,13 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
-import WebglWorker from './webgl-worker?worker';
+import imagesLoaded from 'imagesLoaded';
+import normalizeWheel from 'normalize-wheel';
 
+import WebglWorker from './webgl-worker?worker';
 import { WebglInit } from '@/scripts/webgl.js';
+
+let scrollTarget = 0;
+let cursorTarget = 0;
 
 barba.init({
     views: [
@@ -22,12 +27,51 @@ barba.init({
                 if (canvas.transferControlToOffscreen) {
                     const offscreen = canvas.transferControlToOffscreen();
                     const worker = new WebglWorker();
+
+                    function onWheel(event) {
+                        const normalized = normalizeWheel(event);
+                        const speed = normalized.pixelY;
+
+                        scrollTarget += speed * 0.5;
+
+                        worker.postMessage({ type: 'scrollFn', value: scrollTarget });
+                    }
+
+                    function onMouseMove(event) {
+                        cursorTarget = event.clientY;
+
+                        worker.postMessage({ type: 'cursorFn', value: cursorTarget });
+                    }
+
                     worker.postMessage({
                         type: 'size',
                         width: canvas.offsetWidth,
                         height: canvas.offsetHeight,
                     });
-                    worker.postMessage({ type: 'main', canvas: offscreen }, [offscreen]);
+                    const preloadImages = new Promise((resolve, reject) => {
+                        imagesLoaded(document.querySelectorAll('.image'), { background: true }, resolve);
+                    });
+
+                    window.addEventListener('mousewheel', onWheel, { passive: true });
+                    window.addEventListener('wheel', onWheel, { passive: true });
+                    window.addEventListener('mousemove', onMouseMove);
+
+                    Promise.all([preloadImages]).then(() => {
+                        worker.postMessage({
+                            type: 'images',
+                            images: [...document.querySelectorAll('.image')].map((img) => {
+                                const bounds = img.getBoundingClientRect();
+                                return {
+                                    src: img.src,
+                                    top: bounds.top,
+                                    left: bounds.left,
+                                    width: bounds.width,
+                                    height: bounds.height,
+                                };
+                            }),
+                        });
+                        worker.postMessage({ type: 'main', canvas: offscreen }, [offscreen]);
+                    });
                 } else {
                     new WebglInit(canvas);
                 }

@@ -84,13 +84,13 @@ let { name, slug, length, description } = Astro.props;
                 </a>
             </div> -->
         <div class=" fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]">
-            <!-- {[...Array(length).keys()].map((n) => (
+            {[...Array(length).keys()].map((n) => (
                 <img
                     class="image w-[525px] h-[350px] object-cover object-center"
-                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain&fm=avif`}
+                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain`}
                     alt="bowl"
                 />
-            ))} -->
+            ))}
         </div>
         <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50 mix-blend-difference">{description}</p>
     </div>
