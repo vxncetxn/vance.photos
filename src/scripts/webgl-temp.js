@@ -19,6 +19,8 @@ export class WebglInit {
             antialias: true,
             // dpr: Math.min(window.devicePixelRatio, 2),
             alpha: true,
+            depth: false,
+            powerPreference: 'high-performance',
         });
         this.renderer.setSize(this.width, this.height);
         this.gl = this.renderer.gl;
@@ -50,7 +52,7 @@ export class WebglInit {
         // this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
         // this.mesh.setParent(this.scene);
 
-        this.baseGeometry = new Plane(this.gl, { width: 1, height: 1, widthSegments: 100, heightSegments: 100 });
+        this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
         this.imagesGroup = new Transform();
 
         // this.cursor = {

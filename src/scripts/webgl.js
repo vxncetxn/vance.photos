@@ -18,6 +18,8 @@ export class WebglInit {
             antialias: true,
             dpr: Math.min(window.devicePixelRatio, 2),
             alpha: true,
+            depth: false,
+            powerPreference: 'high-performance',
         });
         this.renderer.setSize(this.width, this.height);
         this.gl = this.renderer.gl;
@@ -32,24 +34,24 @@ export class WebglInit {
         });
         this.camera.position.z = 600;
 
-        this.geometry = new Plane(this.gl, { width: 150, height: 150 });
-        this.program = new Program(this.gl, {
-            vertex: `attribute vec3 position;
+        // this.geometry = new Plane(this.gl, { width: 150, height: 150 });
+        // this.program = new Program(this.gl, {
+        //     vertex: `attribute vec3 position;
 
-            uniform mat4 modelViewMatrix;
-            uniform mat4 projectionMatrix;
-            
-            void main() {
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-            }`,
-            fragment: `void main() {
-                gl_FragColor = vec4(0.0, 0.5, 0.5, 1.0);
-            }`,
-        });
-        this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
+        //     uniform mat4 modelViewMatrix;
+        //     uniform mat4 projectionMatrix;
+
+        //     void main() {
+        //         gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        //     }`,
+        //     fragment: `void main() {
+        //         gl_FragColor = vec4(0.0, 0.5, 0.5, 1.0);
+        //     }`,
+        // });
+        // this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
         // this.mesh.setParent(this.scene);
 
-        this.baseGeometry = new Plane(this.gl, { width: 1, height: 1, widthSegments: 100, heightSegments: 100 });
+        this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
         this.imagesGroup = new Transform();
 
         this.cursor = {
