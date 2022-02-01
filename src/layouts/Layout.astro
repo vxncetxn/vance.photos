@@ -11,6 +11,7 @@ const { title, route } = Astro.props;
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
         <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
         <script id="webgl-worker" type="module" src={Astro.resolve('../scripts/webgl-worker.js')}></script>
+        <script id="calc-worker" type="module" src={Astro.resolve('../scripts/calc-worker.js')}></script>
     </head>
     <body data-barba="wrapper" class={`overscroll-none ${route === 'collection' ? 'overflow-hidden' : ''}`}>
         <nav class="fixed z-10 flex flex-col space-y-1 text-xl right-20 top-14 text-slate-50 mix-blend-difference">

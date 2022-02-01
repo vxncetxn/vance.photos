@@ -117,6 +117,7 @@ export class WebglInit {
             let bounds = img.getBoundingClientRect();
 
             let texture = new Texture(this.gl, { generateMipmaps: false });
+            console.log(texture);
             let program = new Program(this.gl, {
                 depthTest: false,
                 depthWrite: false,

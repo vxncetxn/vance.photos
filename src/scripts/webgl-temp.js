@@ -1,9 +1,9 @@
 // import * as THREE from 'three';
-import { Renderer, Camera, Program, Mesh, Plane, Transform, Texture, TextureLoader } from 'ogl';
+import { Renderer, Camera, Program, Mesh, Plane, Transform, TextureLoader } from 'ogl';
 import normalizeWheel from 'normalize-wheel';
 
-import vertex from '@/shaders/vertex.glsl';
-import fragment from '@/shaders/fragment.glsl';
+// import vertex from '@/shaders/vertex.glsl';
+// import fragment from '@/shaders/fragment.glsl';
 
 export class WebglInit {
     constructor(props) {
@@ -123,25 +123,48 @@ export class WebglInit {
             // let texture = new Texture(this.gl, { generateMipmaps: false });
             // let loader = new TextureLoader();
             // console.log(loader);
-            let texture = TextureLoader.load(this.gl, { src });
+            let texture = TextureLoader.load(this.gl, { src, generateMipmaps: false });
             let program = new Program(this.gl, {
                 depthTest: false,
                 depthWrite: false,
-                vertex,
-                fragment,
+                vertex: `#define PI 3.1415926535897932384626433832795
+
+                precision highp float;
+                precision highp int;
+                
+                attribute vec3 position;
+                attribute vec2 uv;
+                
+                uniform mat4 modelViewMatrix;
+                uniform mat4 projectionMatrix;
+                uniform vec2 uViewportSize;
+                uniform float uStrength;
+                
+                varying vec2 vUv;
+                
+                void main() {
+                    vUv = uv;
+                
+                    vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
+                    newPosition.z += min(cos(newPosition.x / uViewportSize.x * PI) * uStrength * 400.0, cos(newPosition.x / uViewportSize.x * PI) * 200.0);
+                
+                    gl_Position = projectionMatrix * newPosition;
+                }`,
+                fragment: `precision highp float;
+
+                uniform sampler2D uTexture;
+                
+                varying vec2 vUv;
+                
+                void main() {
+                    gl_FragColor = texture2D(uTexture, vUv);
+                }`,
                 uniforms: {
                     uTexture: { value: texture },
                     uViewportSize: { value: [this.width, this.height] },
                     uStrength: { value: 0 },
                 },
             });
-
-            // let allowedImg = new Image();
-            // allowedImg.crossOrigin = 'anonymous';
-            // allowedImg.onload = (_) => {
-            //     texture.image = allowedImg;
-            // };
-            // allowedImg.src = src;
 
             let mesh = new Mesh(this.gl, { geometry: this.baseGeometry, program });
             mesh.scale.x = width;
