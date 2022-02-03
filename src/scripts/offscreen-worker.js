@@ -1,13 +1,14 @@
+import * as Comlink from 'comlink';
+import normalizeWheel from 'normalize-wheel';
+
+import { initTransferHandler } from './event.transferhandler';
 import { WebglInit } from './webgl';
+
+initTransferHandler();
 
 function lerp(p1, p2, t) {
     return p1 + (p2 - p1) * t;
 }
-
-const state = {
-    width: 300, // canvas default
-    height: 150, // canvas default
-};
 
 const cursor = {
     ease: 0.05,
@@ -20,76 +21,52 @@ const scroll = {
     current: 0,
     target: 0,
     last: 0,
-};
-let direction = 'right';
-
-let domImages = [];
-
-const handlers = {
-    main,
-    images,
-    size,
-    scrollFn,
-    cursorFn,
+    direction: 'right',
 };
 
-self.onmessage = function (e) {
-    const fn = handlers[e.data.type];
-    // if (!fn) {
-    //     throw new Error('no handler for type: ' + e.data.type);
-    // }
-    // fn(e.data);
-    if (fn) {
-        fn(e.data);
-    }
-};
+const api = {
+    onWheel(ev) {
+        const normalized = normalizeWheel(ev);
+        const speed = normalized.pixelY;
 
-function scrollFn(data) {
-    scroll.target = data.value;
-}
+        scroll.target += speed * 0.5;
+    },
+    onMouseMove(ev) {
+        cursor.target = ev.clientY;
+    },
+    main(props) {
+        let { container, dimensions, images } = props;
+        let webglInited = new WebglInit({
+            container,
+            dimensions,
+            images,
+        });
+        webglInited.setPosition(scroll, cursor);
 
-function cursorFn(data) {
-    cursor.target = data.value;
-}
+        function rafLoop() {
+            scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
+            if (scroll.current > scroll.last) {
+                scroll.direction = 'right';
+            } else {
+                scroll.direction = 'left';
+            }
 
-function size(data) {
-    state.width = data.width;
-    state.height = data.height;
-}
+            cursor.current = lerp(cursor.current, cursor.target, cursor.ease);
 
-function images(data) {
-    domImages = data.images;
-}
+            if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
+                webglInited.setPosition(scroll, cursor);
+                webglInited.render();
+            }
 
-function main(data) {
-    let webglInited = new WebglInit({
-        container: data.canvas,
-        dimensions: { width: state.width, height: state.height },
-        images: domImages,
-    });
-    webglInited.setPosition(scroll, direction, cursor);
+            scroll.last = scroll.current;
+            cursor.last = cursor.current;
 
-    function rafLoop() {
-        scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
-        if (scroll.current > scroll.last) {
-            direction = 'right';
-        } else {
-            direction = 'left';
-        }
-
-        cursor.current = lerp(cursor.current, cursor.target, cursor.ease);
-
-        if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
-            webglInited.setPosition(scroll, direction, cursor);
             webglInited.render();
+            requestAnimationFrame(rafLoop);
         }
 
-        scroll.last = scroll.current;
-        cursor.last = cursor.current;
+        rafLoop();
+    },
+};
 
-        webglInited.render();
-        requestAnimationFrame(rafLoop);
-    }
-
-    rafLoop();
-}
+Comlink.expose(api);
