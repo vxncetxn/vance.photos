@@ -8,6 +8,17 @@ import { WebglInit } from './webgl';
 
 initTransferHandler();
 
+function throttle(callback, offset) {
+    let baseTime = 0;
+    return (...args) => {
+        const currentTime = Date.now();
+        if (baseTime + offset <= currentTime) {
+            baseTime = currentTime;
+            callback(...args);
+        }
+    };
+}
+
 export async function handleWebgl() {
     const canvas = document.getElementById('webgl-canvas');
 
@@ -18,7 +29,7 @@ export async function handleWebgl() {
 
         window.addEventListener('mousewheel', api.onWheel.bind(api), { passive: true });
         window.addEventListener('wheel', api.onWheel.bind(api), { passive: true });
-        window.addEventListener('mousemove', api.onMouseMove.bind(api));
+        window.addEventListener('mousemove', throttle(api.onMouseMove.bind(api), 100));
 
         worker.postMessage({
             type: 'size',
@@ -57,7 +68,7 @@ export async function handleWebgl() {
 
         window.addEventListener('mousewheel', api.onWheel.bind(api), { passive: true });
         window.addEventListener('wheel', api.onWheel.bind(api), { passive: true });
-        window.addEventListener('mousemove', api.onMouseMove.bind(api));
+        window.addEventListener('mousemove', throttle(api.onMouseMove.bind(api), 100));
 
         const preloadImages = new Promise((resolve, reject) => {
             imagesLoaded(document.querySelectorAll('.image'), { background: true }, resolve);
