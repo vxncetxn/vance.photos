@@ -2,10 +2,12 @@ import * as Comlink from 'comlink';
 import imagesLoaded from 'imagesLoaded';
 import normalizeWheel from 'normalize-wheel';
 
-import WebglWorker from './webgl-worker?worker';
+import { initTransferHandler } from './event.transferhandler';
+import OffscreenWorker from './offscreen-worker?worker';
 import CalcWorker from './calc-worker?worker';
-// import { WebglInit } from '@/scripts/webgl.js';
-import { WebglInit } from './webgl-temp';
+import { WebglInit } from './webgl';
+
+initTransferHandler();
 
 let scrollTarget = 0;
 let cursorTarget = 0;
@@ -27,9 +29,9 @@ let direction = 'right';
 export async function handleWebgl() {
     const canvas = document.getElementById('webgl-canvas');
 
-    if (canvas.transferControlToOffscreen) {
+    if (!canvas.transferControlToOffscreen) {
         const offscreen = canvas.transferControlToOffscreen();
-        const worker = new WebglWorker();
+        const worker = new OffscreenWorker();
 
         function onWheel(event) {
             const normalized = normalizeWheel(event);
@@ -77,28 +79,20 @@ export async function handleWebgl() {
         });
     } else {
         const worker = new CalcWorker();
-        const process = Comlink.wrap(worker);
+        const api = Comlink.wrap(worker);
 
-        function onWheel(event) {
-            const normalized = normalizeWheel(event);
-            const speed = normalized.pixelY;
-
-            scroll.target += speed * 0.5;
-        }
-
-        function onMouseMove(event) {
-            cursor.target = event.clientY;
-        }
-
-        window.addEventListener('mousewheel', onWheel, { passive: true });
-        window.addEventListener('wheel', onWheel, { passive: true });
-        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mousewheel', api.onWheel.bind(api), { passive: true });
+        window.addEventListener('wheel', api.onWheel.bind(api), { passive: true });
+        window.addEventListener('mousemove', api.onMouseMove.bind(api));
 
         const preloadImages = new Promise((resolve, reject) => {
             imagesLoaded(document.querySelectorAll('.image'), { background: true }, resolve);
         });
 
-        Promise.all([preloadImages]).then(() => {
+        Promise.all([preloadImages]).then(async () => {
+            const scroll = await api.scroll;
+            const cursor = await api.cursor;
+
             let webglInited = new WebglInit({
                 container: canvas,
                 dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
@@ -113,21 +107,19 @@ export async function handleWebgl() {
                     };
                 }),
             });
-            webglInited.setPosition(scroll, direction, cursor);
+            webglInited.setPosition(scroll, cursor);
 
             async function rafLoop() {
-                let { newScrollCurrent, newDirection, newCursorCurrent } = await process(scroll, cursor);
-                scroll.current = newScrollCurrent;
-                direction = newDirection;
-                cursor.current = newCursorCurrent;
+                await api.process();
+                const scroll = await api.scroll;
+                const cursor = await api.cursor;
 
                 if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
-                    webglInited.setPosition(scroll, direction, cursor);
+                    webglInited.setPosition(scroll, cursor);
                     webglInited.render();
                 }
 
-                scroll.last = scroll.current;
-                cursor.last = cursor.current;
+                await api.makeLast();
 
                 webglInited.render();
                 requestAnimationFrame(rafLoop);

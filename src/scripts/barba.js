@@ -1,10 +1,5 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
-import imagesLoaded from 'imagesLoaded';
-import normalizeWheel from 'normalize-wheel';
-
-import WebglWorker from './webgl-worker?worker';
-import { WebglInit } from '@/scripts/webgl.js';
 
 import { handleWebgl } from './webgl-handler.js';
 

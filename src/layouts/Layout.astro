@@ -10,7 +10,7 @@ const { title, route } = Astro.props;
         <title>{title}</title>
         <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
         <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
-        <script id="webgl-worker" type="module" src={Astro.resolve('../scripts/webgl-worker.js')}></script>
+        <script id="offscreen-worker" type="module" src={Astro.resolve('../scripts/offscreen-worker.js')}></script>
         <script id="calc-worker" type="module" src={Astro.resolve('../scripts/calc-worker.js')}></script>
     </head>
     <body data-barba="wrapper" class={`overscroll-none ${route === 'collection' ? 'overflow-hidden' : ''}`}>
