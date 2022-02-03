@@ -45,6 +45,7 @@ export async function handleWebgl() {
                                 height: bounds.height,
                             };
                         }),
+                        dpr: Math.min(window.devicePixelRatio, 2),
                     },
                     [offscreen],
                 ),
@@ -79,6 +80,7 @@ export async function handleWebgl() {
                         height: bounds.height,
                     };
                 }),
+                dpr: Math.min(window.devicePixelRatio, 2),
             });
             webglInited.setPosition(scroll, cursor);
 
