@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink';
 import imagesLoaded from 'imagesLoaded';
+import normalizeWheel from 'normalize-wheel';
 
 import { initTransferHandler } from './event.transferhandler';
 import OffscreenWorker from './offscreen-worker?worker';
@@ -66,17 +67,42 @@ export async function handleWebgl() {
         const worker = new CalcWorker();
         const api = Comlink.wrap(worker);
 
-        window.addEventListener('mousewheel', api.onWheel.bind(api), { passive: true });
-        window.addEventListener('wheel', api.onWheel.bind(api), { passive: true });
-        window.addEventListener('mousemove', throttle(api.onMouseMove.bind(api), 100));
+        const cursor = {
+            ease: 0.05,
+            current: 0,
+            target: 0,
+            last: 0,
+        };
+        const scroll = {
+            ease: 0.05,
+            current: 0,
+            target: 0,
+            last: 0,
+            direction: 'right',
+        };
+
+        function onWheel(ev) {
+            const normalized = normalizeWheel(ev);
+            const speed = normalized.pixelY;
+
+            scroll.target += speed * 0.5;
+        }
+
+        function onMouseMove(ev) {
+            cursor.target = ev.clientY;
+        }
+
+        window.addEventListener('mousewheel', onWheel, { passive: true });
+        window.addEventListener('wheel', onWheel, { passive: true });
+        window.addEventListener('mousemove', throttle(onMouseMove, 100));
 
         const preloadImages = new Promise((resolve, reject) => {
             imagesLoaded(document.querySelectorAll('.image'), { background: true }, resolve);
         });
 
         Promise.all([preloadImages]).then(async () => {
-            const scroll = await api.scroll;
-            const cursor = await api.cursor;
+            // const scroll = await api.scroll;
+            // const cursor = await api.cursor;
 
             let webglInited = new WebglInit({
                 container: canvas,
@@ -96,16 +122,18 @@ export async function handleWebgl() {
             webglInited.setPosition(scroll, cursor);
 
             async function rafLoop() {
-                await api.process();
-                const scroll = await api.scroll;
-                const cursor = await api.cursor;
+                let { newScrollCurrent, newDirection, newCursorCurrent } = await api.process(scroll, cursor);
+                scroll.current = newScrollCurrent;
+                scroll.direction = newDirection;
+                cursor.current = newCursorCurrent;
 
                 if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
                     webglInited.setPosition(scroll, cursor);
                     webglInited.render();
                 }
 
-                await api.makeLast();
+                scroll.last = scroll.current;
+                cursor.last = cursor.current;
 
                 webglInited.render();
                 requestAnimationFrame(rafLoop);
