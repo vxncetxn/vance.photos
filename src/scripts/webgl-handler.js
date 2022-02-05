@@ -122,15 +122,20 @@ export async function handleWebgl() {
             webglInited.setPosition(scroll, cursor);
 
             async function rafLoop() {
-                let { newScrollCurrent, newDirection, newCursorCurrent } = await api.process(scroll, cursor);
-                scroll.current = newScrollCurrent;
-                scroll.direction = newDirection;
-                cursor.current = newCursorCurrent;
+                if (Math.abs(scroll.target - scroll.current) > 0.1 || Math.abs(cursor.target - cursor.current) > 0.1) {
+                    let { newScrollCurrent, newDirection, newCursorCurrent } = await api.process(scroll, cursor);
+                    scroll.current = newScrollCurrent;
+                    scroll.direction = newDirection;
+                    cursor.current = newCursorCurrent;
 
-                if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
                     webglInited.setPosition(scroll, cursor);
                     webglInited.render();
                 }
+
+                // if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
+                //     webglInited.setPosition(scroll, cursor);
+                //     webglInited.render();
+                // }
 
                 scroll.last = scroll.current;
                 cursor.last = cursor.current;
