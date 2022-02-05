@@ -1,7 +1,7 @@
 import barba from '@barba/core';
 import { animate } from 'motion';
 
-import { WebglInit } from '@/scripts/webgl.js';
+import { handleWebgl } from './webgl-handler.js';
 
 barba.init({
     views: [
@@ -16,7 +16,8 @@ barba.init({
             beforeEnter() {
                 document.body.style.overflow = 'hidden';
 
-                new WebglInit(document.getElementById('webgl-canvas'));
+                handleWebgl();
+                // new WebglInit(document.getElementById('webgl-canvas'));
             },
         },
     ],
