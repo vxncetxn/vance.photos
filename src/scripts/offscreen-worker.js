@@ -44,24 +44,23 @@ const api = {
         webglInited.setPosition(scroll, cursor);
 
         function rafLoop() {
-            scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
-            if (scroll.current > scroll.last) {
-                scroll.direction = 'right';
-            } else {
-                scroll.direction = 'left';
-            }
+            if (Math.abs(scroll.target - scroll.current) > 1 || Math.abs(cursor.target - cursor.current) > 1) {
+                scroll.current = lerp(scroll.current, scroll.target, scroll.ease);
+                if (scroll.current > scroll.last) {
+                    scroll.direction = 'right';
+                } else {
+                    scroll.direction = 'left';
+                }
 
-            cursor.current = lerp(cursor.current, cursor.target, cursor.ease);
+                cursor.current = lerp(cursor.current, cursor.target, cursor.ease);
 
-            if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
                 webglInited.setPosition(scroll, cursor);
+
+                scroll.last = scroll.current;
+                cursor.last = cursor.current;
+
                 webglInited.render();
             }
-
-            scroll.last = scroll.current;
-            cursor.last = cursor.current;
-
-            webglInited.render();
             requestAnimationFrame(rafLoop);
         }
 
