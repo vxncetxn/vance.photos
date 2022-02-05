@@ -101,9 +101,6 @@ export async function handleWebgl() {
         });
 
         Promise.all([preloadImages]).then(async () => {
-            // const scroll = await api.scroll;
-            // const cursor = await api.cursor;
-
             let webglInited = new WebglInit({
                 container: canvas,
                 dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
@@ -130,17 +127,12 @@ export async function handleWebgl() {
 
                     webglInited.setPosition(scroll, cursor);
                     webglInited.render();
+
+                    scroll.last = scroll.current;
+                    cursor.last = cursor.current;
+
+                    webglInited.render();
                 }
-
-                // if (Math.abs(scroll.last - scroll.current) > 0.1 || Math.abs(cursor.last - cursor.current) > 0.1) {
-                //     webglInited.setPosition(scroll, cursor);
-                //     webglInited.render();
-                // }
-
-                scroll.last = scroll.current;
-                cursor.last = cursor.current;
-
-                webglInited.render();
                 requestAnimationFrame(rafLoop);
             }
 

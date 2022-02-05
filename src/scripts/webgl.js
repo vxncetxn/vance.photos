@@ -54,10 +54,7 @@ export class WebglInit {
         this.imagesGroup = new Transform();
 
         this.addObjects(images);
-    }
-
-    lerp(p1, p2, t) {
-        return p1 + (p2 - p1) * t;
+        Promise.all(this.texturesLoaded).then(() => this.render());
     }
 
     onResize() {
@@ -86,7 +83,10 @@ export class WebglInit {
     }
 
     addObjects(images) {
-        this.imageStore = images.map((img) => {
+        this.imageStore = [];
+        this.texturesLoaded = [];
+
+        images.forEach((img) => {
             let { src, top, left, width, height } = img;
 
             let texture = TextureLoader.load(this.gl, { src, generateMipmaps: false });
@@ -139,7 +139,7 @@ export class WebglInit {
 
             this.widthTotal += width + 100;
 
-            return {
+            this.imageStore.push({
                 mesh,
                 width,
                 height,
@@ -148,7 +148,8 @@ export class WebglInit {
                 isBefore: false,
                 isAfter: false,
                 extraScroll: 0,
-            };
+            });
+            this.texturesLoaded.push(texture.loaded);
         });
         this.imagesGroup.rotation.z = 0.05;
         this.imagesGroup.setParent(this.scene);
