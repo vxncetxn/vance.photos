@@ -19,3 +19,56 @@ index 880408b..69b898b 100644
      }
  
      setViewport(width, height, x = 0, y = 0) {
+diff --git a/node_modules/ogl/src/extras/TextureLoader.js b/node_modules/ogl/src/extras/TextureLoader.js
+index 5b43411..109e7dd 100644
+--- a/node_modules/ogl/src/extras/TextureLoader.js
++++ b/node_modules/ogl/src/extras/TextureLoader.js
+@@ -96,6 +96,7 @@ export class TextureLoader {
+                 });
+                 texture.loaded = this.loadKTX(src, texture);
+                 break;
++            case 'avif':
+             case 'webp':
+             case 'jpg':
+             case 'jpeg':
+@@ -139,11 +140,8 @@ export class TextureLoader {
+ 
+         for (const ext in extensions) if (extensions[ext]) supportedExtensions.push(ext);
+ 
+-        // Check for WebP support
+-        if (detectWebP()) supportedExtensions.push('webp');
+-
+         // Formats supported by all
+-        supportedExtensions.push('png', 'jpg');
++        supportedExtensions.push('png', 'jpg', 'jpeg', 'webp', 'avif');
+ 
+         return supportedExtensions;
+     }
+@@ -164,6 +162,7 @@ export class TextureLoader {
+             }
+ 
+             texture.image = imgBmp;
++            imgBmp.src = src;
+ 
+             // For createImageBitmap, close once uploaded
+             texture.onUpdate = () => {
+@@ -180,10 +179,6 @@ export class TextureLoader {
+     }
+ }
+ 
+-function detectWebP() {
+-    return document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
+-}
+-
+ function powerOfTwo(value) {
+     // (width & (width - 1)) !== 0
+     return Math.log2(value) % 1 === 0;
+@@ -193,7 +188,7 @@ function decodeImage(src, flipY) {
+     return new Promise((resolve) => {
+         // Only chrome's implementation of createImageBitmap is fully supported
+         const isChrome = navigator.userAgent.toLowerCase().includes('chrome');
+-        if (!!window.createImageBitmap && isChrome) {
++        if (isChrome) {
+             fetch(src, { mode: 'cors' })
+                 .then(r => r.blob())
+                 .then(b => createImageBitmap(b, { imageOrientation: flipY ? 'flipY' : 'none', premultiplyAlpha: 'none' }))
