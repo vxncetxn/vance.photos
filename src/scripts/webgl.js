@@ -169,7 +169,7 @@ export class WebglInit {
     }
 
     setPosition(scroll, cursor) {
-        this.imageStore.forEach((o, i) => {
+        this.imageStore.forEach((o) => {
             o.posX = -scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
 
             let meshOffset = o.mesh.scale.x / 2;

@@ -85,7 +85,7 @@ export async function handleWebgl() {
             const normalized = normalizeWheel(ev);
             const speed = normalized.pixelY;
 
-            scroll.target += speed * 0.5;
+            scroll.target += Math.min(Math.max(speed, -200), 200) * 0.5;
         }
 
         function onMouseMove(ev) {
