@@ -139,14 +139,27 @@ export class WebglInit {
 
             this.widthTotal += width + 100;
 
+            // Set initial pos
+            let posX = left - this.width / 2 + width / 2;
+            let posY = -top + this.height / 2 - height / 2;
+
+            mesh.position.x = posX;
+            mesh.position.y = posY;
+
+            let meshOffset = mesh.scale.x / 2;
+            let isBefore = posX + meshOffset < -this.width;
+            let isAfter = posY - meshOffset > this.width;
+
             this.imageStore.push({
                 mesh,
                 width,
                 height,
                 top,
                 left,
-                isBefore: false,
-                isAfter: false,
+                posX,
+                posY,
+                isBefore,
+                isAfter,
                 extraScroll: 0,
             });
             this.texturesLoaded.push(texture.loaded);
@@ -156,13 +169,16 @@ export class WebglInit {
     }
 
     setPosition(scroll, cursor) {
-        this.imageStore.forEach((o) => {
-            o.mesh.position.x = -scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
-            o.mesh.position.y = -o.top + this.height / 2 - o.height / 2;
+        this.imageStore.forEach((o, i) => {
+            o.posX = -scroll.current + o.left - this.width / 2 + o.width / 2 - o.extraScroll;
 
             let meshOffset = o.mesh.scale.x / 2;
-            o.isBefore = o.mesh.position.x + meshOffset < -this.width;
-            o.isAfter = o.mesh.position.x - meshOffset > this.width;
+            o.isBefore = o.posX + meshOffset < -this.width;
+            o.isAfter = o.posX - meshOffset > this.width;
+
+            if (!o.isBefore && !o.isAfter) {
+                o.mesh.position.x = o.posX;
+            }
 
             if (scroll.direction === 'right' && o.isBefore) {
                 o.extraScroll -= this.widthTotal;
