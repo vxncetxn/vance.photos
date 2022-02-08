@@ -5,7 +5,7 @@ import { Renderer, Camera, Program, Mesh, Plane, Transform, TextureLoader } from
 
 export class WebglInit {
     constructor(props) {
-        let { container, dimensions, images, dpr } = props;
+        let { container, dimensions, images } = props;
 
         this.container = container;
         this.width = dimensions.width;
@@ -15,7 +15,6 @@ export class WebglInit {
         this.renderer = new Renderer({
             canvas: container,
             antialias: true,
-            dpr,
             alpha: true,
             depth: false,
             powerPreference: 'high-performance',

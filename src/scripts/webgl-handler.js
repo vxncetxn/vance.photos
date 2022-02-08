@@ -83,9 +83,16 @@ export async function handleWebgl() {
 
         function onWheel(ev) {
             const normalized = normalizeWheel(ev);
-            const speed = normalized.pixelY;
+            const { pixelX, pixelY } = normalized;
+            let speed;
 
-            scroll.target += Math.min(Math.max(speed, -200), 200) * 0.5;
+            if (Math.abs(pixelX) > Math.abs(pixelY)) {
+                speed = pixelX;
+            } else {
+                speed = pixelY;
+            }
+
+            scroll.target += Math.min(Math.max(speed, -150), 150) * 0.5;
         }
 
         function onMouseMove(ev) {
@@ -114,7 +121,6 @@ export async function handleWebgl() {
                         height: bounds.height,
                     };
                 }),
-                dpr: Math.min(window.devicePixelRatio, 2),
             });
             webglInited.setPosition(scroll, cursor);
 
