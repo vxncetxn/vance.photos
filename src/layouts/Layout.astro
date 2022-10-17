@@ -154,11 +154,11 @@ const { title, route } = Astro.props;
     class={`overscroll-none ${route === "collection" ? "overflow-hidden" : ""}`}
   >
     <nav
-      class="fixed z-10 flex flex-col space-y-1 text-xl right-20 top-14 text-slate-50 mix-blend-difference"
+      class="fixed z-10 flex flex-col space-y-4 right-20 top-16 text-slate-50 mix-blend-difference"
     >
-      <a href="#">vancetan</a>
-      <a href="#">Twitter</a>
-      <a href="#">Settings</a>
+      <a href="#" class="font-sans text-xl capsize">vancetan</a>
+      <a href="#" class="font-sans text-xl capsize">Twitter</a>
+      <a href="#" class="font-sans text-xl capsize">Settings</a>
     </nav>
     <slot />
   </body>

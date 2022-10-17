@@ -26,8 +26,12 @@
   <a
     on:mouseenter={handleMouseEnter}
     href={`/${collection.slug}`}
-    class="uppercase cursor-pointer text-slate-400 text-[120px] leading-tight hover:text-slate-50"
+    class="cursor-pointer hover:text-slate-50"
   >
-    <p class="mo-text">{collection.name}</p>
+    <p
+      class="font-sans text-[120px] capsize text-slate-400 leading-tight uppercase mo-text"
+    >
+      {collection.name}
+    </p>
   </a>
 </div>
