@@ -14,8 +14,6 @@ const { title, route } = Astro.props;
       import barba from "@barba/core";
       import { animate } from "motion";
 
-      import { handleWebgl } from "../scripts/webgl-handler.js";
-
       barba.init({
         views: [
           {
@@ -28,9 +26,6 @@ const { title, route } = Astro.props;
             namespace: "collection",
             beforeEnter() {
               document.body.style.overflow = "hidden";
-
-              handleWebgl();
-              // new WebglInit(document.getElementById('webgl-canvas'));
             },
           },
         ],
