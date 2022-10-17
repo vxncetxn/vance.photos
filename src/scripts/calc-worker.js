@@ -1,24 +1,24 @@
-import * as Comlink from 'comlink';
+import * as Comlink from "comlink";
 
 function lerp(p1, p2, t) {
-    return p1 + (p2 - p1) * t;
+  return p1 + (p2 - p1) * t;
 }
 
 const api = {
-    process(scroll, cursor) {
-        let newScrollCurrent, newDirection, newCursorCurrent;
+  process(scroll, cursor) {
+    let newScrollCurrent, newDirection, newCursorCurrent;
 
-        newScrollCurrent = lerp(scroll.current, scroll.target, scroll.ease);
-        if (newScrollCurrent > scroll.last) {
-            newDirection = 'right';
-        } else {
-            newDirection = 'left';
-        }
+    newScrollCurrent = lerp(scroll.current, scroll.target, scroll.ease);
+    if (newScrollCurrent > scroll.last) {
+      newDirection = "right";
+    } else {
+      newDirection = "left";
+    }
 
-        newCursorCurrent = lerp(cursor.current, cursor.target, cursor.ease);
+    newCursorCurrent = lerp(cursor.current, cursor.target, cursor.ease);
 
-        return { newScrollCurrent, newDirection, newCursorCurrent };
-    },
+    return { newScrollCurrent, newDirection, newCursorCurrent };
+  },
 };
 
 Comlink.expose(api);

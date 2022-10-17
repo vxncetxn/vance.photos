@@ -1,24 +1,165 @@
 ---
-// src/layouts/BaseLayout.astro
+import "../styles/global.css";
 const { title, route } = Astro.props;
 ---
 
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <title>{title}</title>
-        <link rel="stylesheet" type="text/css" href={Astro.resolve('../styles/global.css')} />
-        <script type="module" src={Astro.resolve('../scripts/barba.js')}></script>
-        <script id="offscreen-worker" type="module" src={Astro.resolve('../scripts/offscreen-worker.js')}></script>
-        <script id="calc-worker" type="module" src={Astro.resolve('../scripts/calc-worker.js')}></script>
-    </head>
-    <body data-barba="wrapper" class={`overscroll-none ${route === 'collection' ? 'overflow-hidden' : ''}`}>
-        <nav class="fixed z-10 flex flex-col space-y-1 text-xl right-20 top-14 text-slate-50 mix-blend-difference">
-            <a href="#">vancetan</a>
-            <a href="#">Twitter</a>
-            <a href="#">Settings</a>
-        </nav>
-        <slot />
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <script>
+      import barba from "@barba/core";
+      import { animate } from "motion";
+
+      import { handleWebgl } from "../scripts/webgl-handler.js";
+
+      barba.init({
+        views: [
+          {
+            namespace: "index",
+            beforeEnter() {
+              document.body.style.overflow = "auto";
+            },
+          },
+          {
+            namespace: "collection",
+            beforeEnter() {
+              document.body.style.overflow = "hidden";
+
+              handleWebgl();
+              // new WebglInit(document.getElementById('webgl-canvas'));
+            },
+          },
+        ],
+        transitions: [
+          {
+            name: "sun-from-index",
+            from: {
+              namespace: ["index"],
+            },
+            leave() {
+              let sunOne = document.querySelector(".sun-one");
+              let sunTwo = document.querySelector(".sun-two");
+              let texts = document.querySelectorAll(".mo-text");
+
+              animate(
+                sunOne,
+                {
+                  transform: "translate(-50%, -50%)",
+                },
+                {
+                  duration: 1.6,
+                  easing: [0.2, 0.125, 0, 0.73],
+                }
+              ).finished.then(() => {
+                // sunOne.style.animation =
+                //     'throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+              });
+
+              animate(
+                sunTwo,
+                {
+                  transform: "translate(-20%, -20%)",
+                },
+                {
+                  duration: 1.6,
+                  easing: [0.2, 0.125, 0, 0.73],
+                }
+              ).finished.then(() => {
+                // sunTwo.style.animation =
+                //     'throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+              });
+
+              return animate(
+                texts,
+                {
+                  transform: "translateY(120%)",
+                },
+                { duration: 0.8 }
+              ).finished;
+            },
+            enter(data) {
+              let texts = data.next.container.querySelectorAll(".mo-text");
+
+              animate(
+                texts,
+                { transform: ["translateY(-120%)", "translateY(0)"] },
+                { duration: 0.8 }
+              );
+            },
+          },
+          {
+            name: "sun-from-collection",
+            from: {
+              namespace: ["collection"],
+            },
+            leave() {
+              let sunOne = document.querySelector(".sun-one");
+              let sunTwo = document.querySelector(".sun-two");
+              let texts = document.querySelectorAll(".mo-text");
+
+              animate(
+                sunOne,
+                {
+                  transform: "translate(45%, 45%)",
+                },
+                {
+                  duration: 1.6,
+                  easing: [0.2, 0.125, 0, 0.73],
+                }
+              ).finished.then(() => {
+                // sunOne.style.animation = 'throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+              });
+
+              animate(
+                sunTwo,
+                {
+                  transform: "translate(90%, 20%)",
+                },
+                {
+                  duration: 1.6,
+                  easing: [0.2, 0.125, 0, 0.73],
+                }
+              ).finished.then(() => {
+                // sunTwo.style.animation = 'throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite';
+              });
+
+              return animate(
+                texts,
+                {
+                  transform: "translateY(120%)",
+                },
+                { duration: 0.8 }
+              ).finished;
+            },
+            enter(data) {
+              let texts = data.next.container.querySelectorAll(".mo-text");
+
+              animate(
+                texts,
+                { transform: ["translateY(-120%)", "translateY(0)"] },
+                { duration: 0.8 }
+              );
+            },
+          },
+        ],
+      });
+    </script>
+  </head>
+  <body
+    data-barba="wrapper"
+    class={`overscroll-none ${route === "collection" ? "overflow-hidden" : ""}`}
+  >
+    <nav
+      class="fixed z-10 flex flex-col space-y-1 text-xl right-20 top-14 text-slate-50 mix-blend-difference"
+    >
+      <a href="#">vancetan</a>
+      <a href="#">Twitter</a>
+      <a href="#">Settings</a>
+    </nav>
+    <slot />
+  </body>
 </html>
