@@ -1,97 +1,116 @@
 ---
-import collections from '@/data/collections.json';
-import Layout from '../layouts/Layout.astro';
+import collections from "../data/collections.json";
+import Layout from "../layouts/Layout.astro";
+import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 
 export async function getStaticPaths() {
-    return collections.map((collection) => {
-        return {
-            params: {
-                slug: collection.slug,
-            },
-            props: {
-                name: collection.name,
-                slug: collection.slug,
-                length: collection.length,
-                description: collection.description,
-            },
-        };
-    });
+  return collections.map((collection) => {
+    return {
+      params: {
+        slug: collection.slug,
+      },
+      props: {
+        name: collection.name,
+        slug: collection.slug,
+        length: collection.length,
+        description: collection.description,
+      },
+    };
+  });
 }
 
 let { name, slug, length, description } = Astro.props;
 ---
 
 <Layout title={`vance.photos \\ ${name}`} route="collection">
-    <svg
-        class="sun-one sun-one-collection"
-        viewBox="0 0 10 10"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-        <defs>
-            <radialGradient cy="40%" id="sunGradientOne">
-                <stop offset="5%" stop-color="#6a82fb">
-                    <animate
-                        id="sun-one-animate"
-                        attributeName="stop-color"
-                        from="#6a82fb"
-                        to="#6a82fb"
-                        dur="0.8s"
-                        repeatCount="1"
-                        restart="always"
-                        fill="freeze"></animate>
-                </stop>
-                <stop offset="70%" stop-color="transparent"></stop>
-            </radialGradient>
-        </defs>
-        <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"></ellipse>
-    </svg>
-    <svg
-        class="sun-two sun-two-collection"
-        viewBox="0 0 10 10"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-        <defs>
-            <radialGradient cy="40%" id="sunGradientTwo">
-                <stop offset="5%" stop-color="#fc5c7d">
-                    <animate
-                        id="sun-two-animate"
-                        attributeName="stop-color"
-                        from="#fc5c7d"
-                        to="#fc5c7d"
-                        dur="0.8s"
-                        repeatCount="1"
-                        restart="always"
-                        fill="freeze"></animate>
-                </stop>
-                <stop offset="70%" stop-color="transparent"></stop>
-            </radialGradient>
-        </defs>
-        <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"></ellipse>
-    </svg>
+  <svg
+    class="sun-one sun-one-collection"
+    viewBox="0 0 10 10"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+    <defs>
+      <radialGradient cy="40%" id="sunGradientOne">
+        <stop offset="5%" stop-color="#6a82fb">
+          <animate
+            id="sun-one-animate"
+            attributeName="stop-color"
+            from="#6a82fb"
+            to="#6a82fb"
+            dur="0.8s"
+            repeatCount="1"
+            restart="always"
+            fill="freeze"></animate>
+        </stop>
+        <stop offset="70%" stop-color="transparent"></stop>
+      </radialGradient>
+    </defs>
+    <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientOne')"
+    ></ellipse>
+  </svg>
+  <svg
+    class="sun-two sun-two-collection"
+    viewBox="0 0 10 10"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+  >
+    <defs>
+      <radialGradient cy="40%" id="sunGradientTwo">
+        <stop offset="5%" stop-color="#fc5c7d">
+          <animate
+            id="sun-two-animate"
+            attributeName="stop-color"
+            from="#fc5c7d"
+            to="#fc5c7d"
+            dur="0.8s"
+            repeatCount="1"
+            restart="always"
+            fill="freeze"></animate>
+        </stop>
+        <stop offset="70%" stop-color="transparent"></stop>
+      </radialGradient>
+    </defs>
+    <ellipse cx="5" cy="5" rx="15" ry="35" fill="url('#sunGradientTwo')"
+    ></ellipse>
+  </svg>
 
-    <div data-barba="container" data-barba-namespace="collection" class="w-screen h-screen px-16 py-6 bg-[#1c1c1c]">
-        <canvas id="webgl-canvas" class="fixed top-0 left-0 w-screen h-screen overflow-hidden"></canvas>
-        <div class="py-1 overflow-hidden">
-            <h1 class="relative uppercase text-[120px] text-slate-50 mo-text leading-tight mix-blend-difference z-10">
-                {name}
-            </h1>
-        </div>
-        <!-- <div class="py-1 mt-10 overflow-hidden">
+  <div
+    data-barba="container"
+    data-barba-namespace="collection"
+    class="w-screen h-screen px-16 py-16 bg-[#1c1c1c]"
+  >
+    <CanvasControlFlow client:idle />
+    <div class="py-1 overflow-hidden">
+      <h1
+        class="relative uppercase font-sans text-[120px] capsize text-slate-50 mo-text leading-tight mix-blend-difference z-10"
+      >
+        {name}
+      </h1>
+    </div>
+    <!-- <div class="py-1 mt-10 overflow-hidden">
                 <a href="/" class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white">
                     <p class="mo-text">Go Back</p>
                 </a>
             </div> -->
-        <div class=" fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]">
-            {[...Array(length).keys()].map((n) => (
-                <img
-                    class="image w-[525px] h-[350px] object-cover object-center"
-                    src={`https://vance.imgix.net/${slug}/s${n + 1}.jpg?w=900&h=600&fit=contain`}
-                    alt="bowl"
-                />
-            ))}
-        </div>
-        <p class="fixed max-w-sm text-xl bottom-10 right-16 text-slate-50 mix-blend-difference">{description}</p>
+    <div
+      class="fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]"
+    >
+      {
+        [...Array(length).keys()].map((n) => (
+          <img
+            class="image w-[525px] h-[350px] object-cover object-center"
+            src={`https://vance.imgix.net/${slug}/s${
+              n + 1
+            }.jpg?w=900&h=600&fit=contain`}
+            alt="bowl"
+          />
+        ))
+      }
     </div>
+    <p
+      class="fixed max-w-sm font-sans text-xl capsize bottom-16 right-16 text-slate-50 mix-blend-difference"
+    >
+      {description}
+    </p>
+  </div>
 </Layout>

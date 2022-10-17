@@ -1,29 +1,36 @@
 {
-    "name": "@example/with-tailwindcss",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-        "dev": "astro dev",
-        "start": "astro dev",
-        "build": "astro build",
-        "preview": "astro preview",
-        "postinstall": "patch-package"
-    },
-    "devDependencies": {
-        "astro": "^0.22.13",
-        "autoprefixer": "^10.4.2",
-        "patch-package": "^6.4.7",
-        "prettier": "^2.5.1",
-        "prettier-plugin-astro": "0.0.11",
-        "prettier-plugin-svelte": "^2.6.0",
-        "tailwindcss": "^3.0.15",
-        "vite-plugin-glsl": "0.0.8"
-    },
-    "dependencies": {
-        "@barba/core": "^2.9.7",
-        "comlink": "^4.3.1",
-        "motion": "^10.5.2",
-        "normalize-wheel": "^1.0.1",
-        "ogl": "0.0.81"
+  "name": "@example/with-tailwindcss",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "@astrojs/svelte": "^1.0.2",
+    "@astrojs/tailwind": "^1.0.0",
+    "astro": "1.1.5",
+    "prettier": "^2.7.1",
+    "prettier-plugin-astro": "0.5.5",
+    "rollup-plugin-visualizer": "^5.8.3",
+    "tailwindcss": "^3.1.8",
+    "tailwindcss-capsize": "^3.0.2",
+    "vite-plugin-glsl": "0.0.8"
+  },
+  "dependencies": {
+    "@barba/core": "^2.9.7",
+    "comlink": "^4.3.1",
+    "imagesloaded": "^5.0.0",
+    "motion": "^10.5.2",
+    "normalize-wheel": "^1.0.1",
+    "ogl": "0.0.81",
+    "svelte": "^3.52.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "ogl@0.0.81": "patches/ogl@0.0.81.patch"
     }
+  }
 }

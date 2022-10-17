@@ -1,18 +1,21 @@
-import glsl from 'vite-plugin-glsl';
+import { defineConfig } from "astro/config";
+import svelte from "@astrojs/svelte";
+import tailwind from "@astrojs/tailwind";
+import glsl from "vite-plugin-glsl";
+import { visualizer } from "rollup-plugin-visualizer";
 
-// Full Astro Configuration API Documentation:
-// https://docs.astro.build/reference/configuration-reference
-
-// @type-check enabled!
-// VSCode and other TypeScript-enabled text editors will provide auto-completion,
-// helpful tooltips, and warnings if your exported object is invalid.
-// You can disable this by removing "@ts-check" and `@type` comments below.
-
-// @ts-check
-export default /** @type {import('astro').AstroUserConfig} */ ({
-    // Enable the Preact renderer to support Preact JSX components.
-    renderers: ['@astrojs/renderer-svelte'],
-    vite: {
-        plugins: [glsl.default()],
+// https://astro.build/config
+export default defineConfig({
+  integrations: [
+    svelte(),
+    tailwind({
+      config: { applyBaseStyles: false },
+    }),
+  ],
+  vite: {
+    ssr: {
+      noExternal: [],
     },
+    plugins: [glsl.default(), visualizer()],
+  },
 });

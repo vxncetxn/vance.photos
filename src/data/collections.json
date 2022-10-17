@@ -1,30 +1,30 @@
 [
-    {
-        "name": "anniversary",
-        "slug": "anniversary",
-        "colors": ["#6a82fb", "#fc5c7d"],
-        "length": 12,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
-    },
-    {
-        "name": "covid suppers",
-        "slug": "covid-suppers",
-        "colors": ["#56B4D3", "#348F50"],
-        "length": 12,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
-    },
-    {
-        "name": "easter",
-        "slug": "easter",
-        "colors": ["#ff6e7f", "#bfe9ff"],
-        "length": 16,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
-    },
-    {
-        "name": "europe solo",
-        "slug": "europe-solo",
-        "colors": ["#3CA55C", "#B5AC49"],
-        "length": 0,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
-    }
+  {
+    "name": "anniversary",
+    "slug": "anniversary",
+    "colors": ["#6a82fb", "#fc5c7d"],
+    "length": 12,
+    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+  },
+  {
+    "name": "covid suppers",
+    "slug": "covid-suppers",
+    "colors": ["#56B4D3", "#348F50"],
+    "length": 12,
+    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+  },
+  {
+    "name": "easter",
+    "slug": "easter",
+    "colors": ["#ff6e7f", "#bfe9ff"],
+    "length": 16,
+    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+  },
+  {
+    "name": "europe solo",
+    "slug": "europe-solo",
+    "colors": ["#3CA55C", "#B5AC49"],
+    "length": 0,
+    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+  }
 ]
