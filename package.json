@@ -6,14 +6,12 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "postinstall": "patch-package"
+    "preview": "astro preview"
   },
   "devDependencies": {
     "@astrojs/svelte": "^1.0.2",
     "@astrojs/tailwind": "^1.0.0",
     "astro": "1.1.5",
-    "patch-package": "^6.4.7",
     "prettier": "^2.7.1",
     "prettier-plugin-astro": "0.5.5",
     "rollup-plugin-visualizer": "^5.8.3",
@@ -29,5 +27,10 @@
     "normalize-wheel": "^1.0.1",
     "ogl": "0.0.81",
     "svelte": "^3.52.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "ogl@0.0.81": "patches/ogl@0.0.81.patch"
+    }
   }
 }
