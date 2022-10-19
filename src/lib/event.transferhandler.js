@@ -16,6 +16,8 @@ export function initTransferHandler() {
           deltaX: ev && ev.deltaX,
           deltaMode: ev && ev.deltaMode,
           clientY: ev && ev.clientY,
+          pathname: ev && ev.pathname,
+          domImages: ev && ev.domImages,
         },
         [],
       ];

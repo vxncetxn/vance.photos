@@ -16,13 +16,23 @@ const cursor = {
   target: 0,
   last: 0,
 };
-const scroll = {
+let scroll = {
   ease: 0.05,
   current: 0,
   target: 0,
   last: 0,
   direction: "right",
 };
+
+function initCollection(slug, domImages) {
+  webglInited.addCollection(slug, domImages);
+  webglInited.setCollection(slug);
+  webglInited.setPosition(scroll, cursor);
+  // webglInited.render();
+  setTimeout(() => webglInited.render(), 0);
+}
+
+let webglInited;
 
 const api = {
   onWheel(ev) {
@@ -41,15 +51,32 @@ const api = {
   onMouseMove(ev) {
     cursor.target = ev.clientY;
   },
-  onPageChange(ev) {},
+  onPageChange(ev) {
+    scroll = {
+      ease: 0.05,
+      current: 0,
+      target: 0,
+      last: 0,
+      direction: "right",
+    };
+    if (ev.pathname) {
+      if (webglInited.checkCollection(ev.pathname)) {
+        webglInited.setCollection(ev.pathname);
+      } else {
+        initCollection(ev.pathname, ev.domImages);
+      }
+    } else {
+      webglInited.hideCollection();
+    }
+  },
   main(props) {
-    let { container, dimensions, images } = props;
-    let webglInited = new WebglInit({
+    let { container, dimensions, pathname, domImages } = props;
+    webglInited = new WebglInit({
       container,
       dimensions,
-      images,
     });
-    webglInited.setPosition(scroll, cursor);
+    initCollection(pathname, domImages);
+    // webglInited.setPosition(scroll, cursor);
 
     function rafLoop() {
       if (

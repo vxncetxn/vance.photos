@@ -32,7 +32,6 @@ export class WebglInit {
     this.gl = this.renderer.gl;
 
     this.scene = new Transform();
-
     this.camera = new Camera(this.gl, {
       aspect: this.width / this.height,
       near: 10,
@@ -40,7 +39,6 @@ export class WebglInit {
       fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
     });
     this.camera.position.z = 600;
-
     this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
 
     this.activeCollection = undefined;
@@ -59,6 +57,7 @@ export class WebglInit {
         widthTotal: 0,
       };
     });
+
     this.preloadLQIPTextures();
   }
 
@@ -162,10 +161,8 @@ export class WebglInit {
   }
 
   addCollection(slug, domImages) {
-    console.log("adding collection: ", slug);
     let group = new Transform();
     let collection = this.collections[slug];
-    // let images = this.collections[slug].images;
 
     domImages.forEach((img, i) => {
       let { src, top, left, width, height } = img;
@@ -277,75 +274,3 @@ export class WebglInit {
     this.renderer.render({ scene: this.scene, camera: this.camera });
   }
 }
-
-// addObjects(images) {
-//   this.texturesAdded = [];
-
-//   images.forEach((img) => {
-//     let { src, top, left, width, height } = img;
-
-//     let texture = TextureLoader.load(this.gl, {
-//       src: `${src}?w=300&h=200&fit=contain&format=auto&blur=200`,
-//       generateMipmaps: false,
-//     });
-//     let program = new Program(this.gl, {
-//       depthTest: false,
-//       depthWrite: false,
-//       vertex,
-//       fragment,
-//       uniforms: {
-//         uTexture: { value: undefined },
-//         uViewportSize: { value: [this.width, this.height] },
-//         uStrength: { value: 0 },
-//       },
-//     });
-
-//     let mesh = new Mesh(this.gl, { geometry: this.baseGeometry, program });
-//     mesh.scale.x = width;
-//     mesh.scale.y = height;
-//     mesh.setParent(this.imagesGroup);
-
-//     this.widthTotal += width + 100;
-
-//     // Set initial pos
-//     let posX = left - this.width / 2 + width / 2;
-//     let posY = -top + this.height / 2 - height / 2;
-
-//     mesh.position.x = posX;
-//     mesh.position.y = posY;
-
-//     let meshOffset = mesh.scale.x / 2;
-//     let isBefore = posX + meshOffset < -this.width;
-//     let isAfter = posY - meshOffset > this.width;
-
-//     this.imageStore.push({
-//       mesh,
-//       width,
-//       height,
-//       top,
-//       left,
-//       posX,
-//       posY,
-//       isBefore,
-//       isAfter,
-//       extraScroll: 0,
-//     });
-//     // this.texturesAdded.push(
-//     //   texture.loaded.then(() => {
-//     //     program.uniforms.uTexture.value = texture;
-//     //   })
-//     // );
-//     this.texturesAdded.push(
-//       texture.loaded.then(() => (program.uniforms.uTexture.value = texture))
-//     );
-//     let actualTexture = TextureLoader.load(this.gl, {
-//       src: `${src}?w=900&h=600&fit=contain&format=auto`,
-//       generateMipmaps: false,
-//     });
-//     actualTexture.loaded.then(
-//       () => (program.uniforms.uTexture.value = actualTexture)
-//     );
-//   });
-//   this.imagesGroup.rotation.z = 0.05;
-//   this.imagesGroup.setParent(this.scene);
-// }

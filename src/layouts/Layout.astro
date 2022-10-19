@@ -25,6 +25,7 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
             afterEnter() {
               let customEv = new CustomEvent("pagechange");
               customEv["pathname"] = "";
+              customEv["domImages"] = undefined;
               window.dispatchEvent(customEv);
             },
           },
@@ -35,9 +36,24 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
             },
             afterEnter() {
               let customEv = new CustomEvent("pagechange");
+              let domImages = [...document.querySelectorAll(".image")].map(
+                (img) => {
+                  const bounds = img.getBoundingClientRect();
+                  const url = new URL(img.src);
+                  return {
+                    src: url.origin + url.pathname,
+                    top: bounds.top,
+                    left: bounds.left,
+                    width: bounds.width,
+                    height: bounds.height,
+                  };
+                }
+              );
+
               customEv["pathname"] = new URL(
                 window.location.href
               ).pathname.slice(1);
+              customEv["domImages"] = domImages;
               window.dispatchEvent(customEv);
             },
           },

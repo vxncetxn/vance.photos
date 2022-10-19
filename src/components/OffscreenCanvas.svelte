@@ -1,7 +1,7 @@
 <script lang="js">
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
-  import imagesLoaded from "imagesloaded";
+  // import imagesLoaded from "imagesloaded";
 
   const offscreenWorker = new Worker(
     new URL("../lib/offscreen-worker", import.meta.url),
@@ -34,40 +34,70 @@
       width: canvas.offsetWidth,
       height: canvas.offsetHeight,
     });
-    const preloadImages = new Promise((resolve, reject) => {
-      imagesLoaded(
-        document.querySelectorAll(".image"),
-        { background: true },
-        resolve
-      );
-    });
 
-    Promise.all([preloadImages]).then(async () => {
-      await api.main(
-        Comlink.transfer(
-          {
-            container: offscreen,
-            dimensions: {
-              width: canvas.offsetWidth,
-              height: canvas.offsetHeight,
-            },
-            images: [...document.querySelectorAll(".image")].map((img) => {
-              const bounds = img.getBoundingClientRect();
-              const url = new URL(img.src);
-              return {
-                src: url.origin + url.pathname,
-                top: bounds.top,
-                left: bounds.left,
-                width: bounds.width,
-                height: bounds.height,
-              };
-            }),
-            dpr: Math.min(window.devicePixelRatio, 2),
+    let pathname = new URL(window.location.href).pathname.slice(1);
+    api.main(
+      Comlink.transfer(
+        {
+          container: offscreen,
+          dimensions: {
+            width: canvas.offsetWidth,
+            height: canvas.offsetHeight,
           },
-          [offscreen]
-        )
-      );
-    });
+          pathname,
+          domImages: pathname
+            ? [...document.querySelectorAll(".image")].map((img) => {
+                const bounds = img.getBoundingClientRect();
+                const url = new URL(img.src);
+                return {
+                  src: url.origin + url.pathname,
+                  top: bounds.top,
+                  left: bounds.left,
+                  width: bounds.width,
+                  height: bounds.height,
+                };
+              })
+            : null,
+          dpr: Math.min(window.devicePixelRatio, 2),
+        },
+        [offscreen]
+      )
+    );
+
+    // const preloadImages = new Promise((resolve, reject) => {
+    //   imagesLoaded(
+    //     document.querySelectorAll(".image"),
+    //     { background: true },
+    //     resolve
+    //   );
+    // });
+
+    // Promise.all([preloadImages]).then(async () => {
+    //   await api.main(
+    //     Comlink.transfer(
+    //       {
+    //         container: offscreen,
+    //         dimensions: {
+    //           width: canvas.offsetWidth,
+    //           height: canvas.offsetHeight,
+    //         },
+    //         images: [...document.querySelectorAll(".image")].map((img) => {
+    //           const bounds = img.getBoundingClientRect();
+    //           const url = new URL(img.src);
+    //           return {
+    //             src: url.origin + url.pathname,
+    //             top: bounds.top,
+    //             left: bounds.left,
+    //             width: bounds.width,
+    //             height: bounds.height,
+    //           };
+    //         }),
+    //         dpr: Math.min(window.devicePixelRatio, 2),
+    //       },
+    //       [offscreen]
+    //     )
+    //   );
+    // });
   });
 </script>
 

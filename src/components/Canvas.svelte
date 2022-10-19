@@ -1,7 +1,7 @@
 <script lang="js">
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
-  import imagesLoaded from "imagesloaded";
+  // import imagesLoaded from "imagesloaded";
   import normalizeWheel from "normalize-wheel";
 
   const calcWorker = new Worker(
