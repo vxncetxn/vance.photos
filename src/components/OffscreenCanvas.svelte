@@ -27,6 +27,7 @@
       "mousemove",
       throttle(api.onMouseMove.bind(api), 100)
     );
+    window.addEventListener("pagechange", api.onPageChange.bind(api));
 
     offscreenWorker.postMessage({
       type: "size",
@@ -71,6 +72,7 @@
 </script>
 
 <canvas
+  id="canvas"
   bind:this={canvas}
   class="fixed top-0 left-0 w-screen h-screen overflow-hidden"
 />

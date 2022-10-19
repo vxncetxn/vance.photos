@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 const { title, route } = Astro.props;
+import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 ---
 
 <html>
@@ -26,6 +27,13 @@ const { title, route } = Astro.props;
             namespace: "collection",
             beforeEnter() {
               document.body.style.overflow = "hidden";
+            },
+            afterEnter() {
+              let customEv = new CustomEvent("pagechange");
+              customEv["collectionName"] = new URL(
+                window.location.href
+              ).pathname.slice(1);
+              window.dispatchEvent(customEv);
             },
           },
         ],
@@ -155,6 +163,7 @@ const { title, route } = Astro.props;
       <a href="#" class="font-sans text-xl capsize">Twitter</a>
       <a href="#" class="font-sans text-xl capsize">Settings</a>
     </nav>
+    <CanvasControlFlow client:idle />
     <slot />
   </body>
 </html>

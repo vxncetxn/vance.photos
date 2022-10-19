@@ -52,58 +52,123 @@
       cursor.target = ev.clientY;
     }
 
+    function onPageChange(ev) {
+      let images = [...document.querySelectorAll(".image")].map((img) => {
+        const bounds = img.getBoundingClientRect();
+        const url = new URL(img.src);
+        return {
+          src: url.origin + url.pathname,
+          top: bounds.top,
+          left: bounds.left,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      });
+      webglInited.addCollection(ev.collectionName, images);
+      webglInited.setPosition(scroll, cursor);
+      // webglInited.render();
+      setTimeout(() => webglInited.render(), 0);
+    }
+
+    let webglInited = new WebglInit({
+      container: canvas,
+      dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
+    });
+    let currentPath = new URL(window.location.href).pathname.slice(1);
+    if (currentPath) {
+      let images = [...document.querySelectorAll(".image")].map((img) => {
+        const bounds = img.getBoundingClientRect();
+        const url = new URL(img.src);
+        return {
+          src: url.origin + url.pathname,
+          top: bounds.top,
+          left: bounds.left,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      });
+      webglInited.addCollection(currentPath, images);
+      webglInited.setPosition(scroll, cursor);
+      // webglInited.render();
+      setTimeout(() => webglInited.render(), 0);
+    }
+
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
+    window.addEventListener("pagechange", onPageChange);
 
-    const preloadImages = new Promise((resolve, reject) => {
-      imagesLoaded(
-        document.querySelectorAll(".image"),
-        { background: true },
-        resolve
-      );
-    });
+    async function rafLoop() {
+      if (
+        Math.abs(scroll.target - scroll.current) > 1 ||
+        Math.abs(cursor.target - cursor.current) > 1
+      ) {
+        let { newScrollCurrent, newDirection, newCursorCurrent } =
+          await api.process(scroll, cursor);
+        scroll.current = newScrollCurrent;
+        scroll.direction = newDirection;
+        cursor.current = newCursorCurrent;
 
-    Promise.all([preloadImages]).then(async () => {
-      let webglInited = new WebglInit({
-        container: canvas,
-        dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
-        images: [...document.querySelectorAll(".image")].map((img) => {
-          const bounds = img.getBoundingClientRect();
-          return {
-            src: img.src,
-            top: bounds.top,
-            left: bounds.left,
-            width: bounds.width,
-            height: bounds.height,
-          };
-        }),
-      });
-      webglInited.setPosition(scroll, cursor);
+        webglInited.setPosition(scroll, cursor);
 
-      async function rafLoop() {
-        if (
-          Math.abs(scroll.target - scroll.current) > 1 ||
-          Math.abs(cursor.target - cursor.current) > 1
-        ) {
-          let { newScrollCurrent, newDirection, newCursorCurrent } =
-            await api.process(scroll, cursor);
-          scroll.current = newScrollCurrent;
-          scroll.direction = newDirection;
-          cursor.current = newCursorCurrent;
+        scroll.last = scroll.current;
+        cursor.last = cursor.current;
 
-          webglInited.setPosition(scroll, cursor);
-
-          scroll.last = scroll.current;
-          cursor.last = cursor.current;
-
-          webglInited.render();
-        }
-        requestAnimationFrame(rafLoop);
+        webglInited.render();
       }
+      requestAnimationFrame(rafLoop);
+    }
 
-      rafLoop();
-    });
+    rafLoop();
+
+    // const preloadImages = new Promise((resolve, reject) => {
+    //   imagesLoaded(
+    //     document.querySelectorAll(".image"),
+    //     { background: true },
+    //     resolve
+    //   );
+    // });
+
+    // Promise.all([preloadImages]).then(async () => {
+    //   let webglInited = new WebglInit({
+    //     container: canvas,
+    //     dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
+    //     images: [...document.querySelectorAll(".image")].map((img) => {
+    //       const bounds = img.getBoundingClientRect();
+    //       return {
+    //         src: img.src,
+    //         top: bounds.top,
+    //         left: bounds.left,
+    //         width: bounds.width,
+    //         height: bounds.height,
+    //       };
+    //     }),
+    //   });
+    //   webglInited.setPosition(scroll, cursor);
+
+    // async function rafLoop() {
+    //   if (
+    //     Math.abs(scroll.target - scroll.current) > 1 ||
+    //     Math.abs(cursor.target - cursor.current) > 1
+    //   ) {
+    //     let { newScrollCurrent, newDirection, newCursorCurrent } =
+    //       await api.process(scroll, cursor);
+    //     scroll.current = newScrollCurrent;
+    //     scroll.direction = newDirection;
+    //     cursor.current = newCursorCurrent;
+
+    //     webglInited.setPosition(scroll, cursor);
+
+    //     scroll.last = scroll.current;
+    //     cursor.last = cursor.current;
+
+    //     webglInited.render();
+    //   }
+    //   requestAnimationFrame(rafLoop);
+    // }
+
+    // rafLoop();
+    // });
   });
 </script>
 

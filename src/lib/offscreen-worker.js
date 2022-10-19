@@ -41,6 +41,7 @@ const api = {
   onMouseMove(ev) {
     cursor.target = ev.clientY;
   },
+  onPageChange(ev) {},
   main(props) {
     let { container, dimensions, images } = props;
     let webglInited = new WebglInit({
