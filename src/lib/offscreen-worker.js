@@ -75,7 +75,9 @@ const api = {
       container,
       dimensions,
     });
-    initCollection(pathname, domImages);
+    if (pathname) {
+      initCollection(pathname, domImages);
+    }
     // webglInited.setPosition(scroll, cursor);
 
     function rafLoop() {

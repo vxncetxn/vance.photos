@@ -60,6 +60,12 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
         ],
         transitions: [
           {
+            name: "loading",
+            once() {
+              console.log("once!");
+            },
+          },
+          {
             name: "sun-from-index",
             from: {
               namespace: ["index"],
@@ -184,7 +190,7 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
       <a href="#" class="font-sans text-xl capsize">Twitter</a>
       <a href="#" class="font-sans text-xl capsize">Settings</a>
     </nav>
-    <CanvasControlFlow client:idle />
     <slot />
+    <CanvasControlFlow client:idle />
   </body>
 </html>
