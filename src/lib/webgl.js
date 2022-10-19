@@ -8,8 +8,8 @@ import {
   TextureLoader,
 } from "ogl";
 
-// import vertex from '@/shaders/vertex.glsl';
-// import fragment from '@/shaders/fragment.glsl';
+import vertex from "../shaders/vertex.glsl";
+import fragment from "../shaders/fragment.glsl";
 
 export class WebglInit {
   constructor(props) {
@@ -39,23 +39,6 @@ export class WebglInit {
       fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
     });
     this.camera.position.z = 600;
-
-    // this.geometry = new Plane(this.gl, { width: 150, height: 150 });
-    // this.program = new Program(this.gl, {
-    //     vertex: `attribute vec3 position;
-
-    //     uniform mat4 modelViewMatrix;
-    //     uniform mat4 projectionMatrix;
-
-    //     void main() {
-    //         gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-    //     }`,
-    //     fragment: `void main() {
-    //         gl_FragColor = vec4(0.0, 0.5, 0.5, 1.0);
-    //     }`,
-    // });
-    // this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
-    // this.mesh.setParent(this.scene);
 
     this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
     this.imagesGroup = new Transform();
@@ -103,47 +86,8 @@ export class WebglInit {
       let program = new Program(this.gl, {
         depthTest: false,
         depthWrite: false,
-        vertex: `#define PI 3.1415926535897932384626433832795
-
-                precision highp float;
-                precision highp int;
-                
-                attribute vec3 position;
-                attribute vec2 uv;
-                
-                uniform mat4 modelViewMatrix;
-                uniform mat4 projectionMatrix;
-                uniform vec2 uViewportSize;
-                uniform float uStrength;
-                
-                varying vec2 vUv;
-                
-                void main() {
-                    vUv = uv;
-                
-                    vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
-                    newPosition.z += min(cos(newPosition.x / uViewportSize.x * PI) * uStrength * 400.0, cos(newPosition.x / uViewportSize.x * PI) * 200.0);
-                
-                    gl_Position = projectionMatrix * newPosition;
-                }`,
-        fragment: `precision highp float;
-
-                uniform sampler2D uTexture;
-                
-                varying vec2 vUv;
-                
-                void main() {
-                    vec4 textureResult = texture2D(uTexture, vUv);
-                    if(vUv.y > 1.0) 
-                    {
-                        textureResult.a = 0.0;
-                    }
-                    else
-                    {
-                        textureResult.a = 1.0;
-                    }
-                    gl_FragColor = textureResult;
-                }`,
+        vertex,
+        fragment,
         uniforms: {
           uTexture: { value: undefined },
           uViewportSize: { value: [this.width, this.height] },
