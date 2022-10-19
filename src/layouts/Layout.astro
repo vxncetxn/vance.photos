@@ -22,6 +22,11 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
             beforeEnter() {
               document.body.style.overflow = "auto";
             },
+            afterEnter() {
+              let customEv = new CustomEvent("pagechange");
+              customEv["pathname"] = "";
+              window.dispatchEvent(customEv);
+            },
           },
           {
             namespace: "collection",
@@ -30,7 +35,7 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
             },
             afterEnter() {
               let customEv = new CustomEvent("pagechange");
-              customEv["collectionName"] = new URL(
+              customEv["pathname"] = new URL(
                 window.location.href
               ).pathname.slice(1);
               window.dispatchEvent(customEv);

@@ -16,6 +16,7 @@
 
   initTransferHandler();
   let canvas;
+  let scroll;
 
   onMount(() => {
     const api = Comlink.wrap(calcWorker);
@@ -26,13 +27,32 @@
       target: 0,
       last: 0,
     };
-    const scroll = {
+    scroll = {
       ease: 0.05,
       current: 0,
       target: 0,
       last: 0,
       direction: "right",
     };
+
+    function initCollection(slug) {
+      let domImages = [...document.querySelectorAll(".image")].map((img) => {
+        const bounds = img.getBoundingClientRect();
+        const url = new URL(img.src);
+        return {
+          src: url.origin + url.pathname,
+          top: bounds.top,
+          left: bounds.left,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      });
+      webglInited.addCollection(slug, domImages);
+      webglInited.setCollection(slug);
+      webglInited.setPosition(scroll, cursor);
+      // webglInited.render();
+      setTimeout(() => webglInited.render(), 0);
+    }
 
     function onWheel(ev) {
       const normalized = normalizeWheel(ev);
@@ -53,44 +73,31 @@
     }
 
     function onPageChange(ev) {
-      let images = [...document.querySelectorAll(".image")].map((img) => {
-        const bounds = img.getBoundingClientRect();
-        const url = new URL(img.src);
-        return {
-          src: url.origin + url.pathname,
-          top: bounds.top,
-          left: bounds.left,
-          width: bounds.width,
-          height: bounds.height,
-        };
-      });
-      webglInited.addCollection(ev.collectionName, images);
-      webglInited.setPosition(scroll, cursor);
-      // webglInited.render();
-      setTimeout(() => webglInited.render(), 0);
+      scroll = {
+        ease: 0.05,
+        current: 0,
+        target: 0,
+        last: 0,
+        direction: "right",
+      };
+      if (ev.pathname) {
+        if (webglInited.checkCollection(ev.pathname)) {
+          webglInited.setCollection(ev.pathname);
+        } else {
+          initCollection(ev.pathname);
+        }
+      } else {
+        webglInited.hideCollection();
+      }
     }
 
     let webglInited = new WebglInit({
       container: canvas,
       dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
     });
-    let currentPath = new URL(window.location.href).pathname.slice(1);
-    if (currentPath) {
-      let images = [...document.querySelectorAll(".image")].map((img) => {
-        const bounds = img.getBoundingClientRect();
-        const url = new URL(img.src);
-        return {
-          src: url.origin + url.pathname,
-          top: bounds.top,
-          left: bounds.left,
-          width: bounds.width,
-          height: bounds.height,
-        };
-      });
-      webglInited.addCollection(currentPath, images);
-      webglInited.setPosition(scroll, cursor);
-      // webglInited.render();
-      setTimeout(() => webglInited.render(), 0);
+    let pathname = new URL(window.location.href).pathname.slice(1);
+    if (pathname) {
+      initCollection(pathname);
     }
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
