@@ -52,8 +52,9 @@
             },
             images: [...document.querySelectorAll(".image")].map((img) => {
               const bounds = img.getBoundingClientRect();
+              const url = new URL(img.src);
               return {
-                src: img.src,
+                src: url.origin + url.pathname,
                 top: bounds.top,
                 left: bounds.left,
                 width: bounds.width,

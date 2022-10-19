@@ -61,7 +61,7 @@ export class WebglInit {
     this.imagesGroup = new Transform();
 
     this.addObjects(images);
-    Promise.all(this.texturesLoaded).then(() => this.render());
+    Promise.all(this.texturesAdded).then(() => this.render());
   }
 
   onResize() {
@@ -91,13 +91,13 @@ export class WebglInit {
 
   addObjects(images) {
     this.imageStore = [];
-    this.texturesLoaded = [];
+    this.texturesAdded = [];
 
     images.forEach((img) => {
       let { src, top, left, width, height } = img;
 
       let texture = TextureLoader.load(this.gl, {
-        src,
+        src: `${src}?w=300&h=200&fit=contain&format=auto&blur=200`,
         generateMipmaps: false,
       });
       let program = new Program(this.gl, {
@@ -145,7 +145,7 @@ export class WebglInit {
                     gl_FragColor = textureResult;
                 }`,
         uniforms: {
-          uTexture: { value: texture },
+          uTexture: { value: undefined },
           uViewportSize: { value: [this.width, this.height] },
           uStrength: { value: 0 },
         },
@@ -181,7 +181,21 @@ export class WebglInit {
         isAfter,
         extraScroll: 0,
       });
-      this.texturesLoaded.push(texture.loaded);
+      // this.texturesAdded.push(
+      //   texture.loaded.then(() => {
+      //     program.uniforms.uTexture.value = texture;
+      //   })
+      // );
+      this.texturesAdded.push(
+        texture.loaded.then(() => (program.uniforms.uTexture.value = texture))
+      );
+      let actualTexture = TextureLoader.load(this.gl, {
+        src: `${src}?w=900&h=600&fit=contain&format=auto`,
+        generateMipmaps: false,
+      });
+      actualTexture.loaded.then(
+        () => (program.uniforms.uTexture.value = actualTexture)
+      );
     });
     this.imagesGroup.rotation.z = 0.05;
     this.imagesGroup.setParent(this.scene);
