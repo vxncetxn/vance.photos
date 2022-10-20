@@ -73,12 +73,11 @@ export class WebglInit {
           src: img.src,
           generateMipmaps: false,
         });
-        this.lqipTexturesAdded.push(
-          texture.loaded.then(() => {
-            this.collections[slug].images[i].lqipTexture = texture;
-            this.progress.set(this.progress.get() + 0.905);
-          })
-        );
+        this.lqipTexturesAdded.push(texture.loaded);
+        texture.loaded.then(() => {
+          this.collections[slug].images[i].lqipTexture = texture;
+          this.progress.set(this.progress.get() + 0.905);
+        });
       });
     });
   }
@@ -121,50 +120,54 @@ export class WebglInit {
 
   hideCollection() {
     let collection = this.collections[this.activeCollection];
-    collection.group.visible = false;
+    if (collection) {
+      collection.group.visible = false;
 
-    // Reset mesh values back to initial pos
-    collection.images.forEach((img, i) => {
-      let {
-        mesh,
-        width,
-        height,
-        top,
-        left,
-        posX,
-        posY,
-        isBefore,
-        isAfter,
-        extraScroll,
-      } = img;
+      // Reset mesh values back to initial pos
+      collection.images.forEach((img, i) => {
+        let {
+          mesh,
+          width,
+          height,
+          top,
+          left,
+          posX,
+          posY,
+          isBefore,
+          isAfter,
+          extraScroll,
+        } = img;
 
-      posX = left - this.width / 2 + width / 2;
-      posY = -top + this.height / 2 - height / 2;
+        posX = left - this.width / 2 + width / 2;
+        posY = -top + this.height / 2 - height / 2;
 
-      mesh.position.x = posX;
-      mesh.position.y = posY;
+        mesh.position.x = posX;
+        mesh.position.y = posY;
 
-      let meshOffset = mesh.scale.x / 2;
-      isBefore = posX + meshOffset < -this.width;
-      isAfter = posY - meshOffset > this.width;
+        let meshOffset = mesh.scale.x / 2;
+        isBefore = posX + meshOffset < -this.width;
+        isAfter = posY - meshOffset > this.width;
 
-      extraScroll = 0;
+        extraScroll = 0;
 
-      collection.images[i] = {
-        ...collection.images[i],
-        mesh,
-        posX,
-        posY,
-        isBefore,
-        isAfter,
-        extraScroll,
-      };
-    });
+        collection.images[i] = {
+          ...collection.images[i],
+          mesh,
+          posX,
+          posY,
+          isBefore,
+          isAfter,
+          extraScroll,
+        };
+      });
 
-    this.activeCollection = undefined;
+      this.activeCollection = undefined;
+    }
   }
 
-  addCollection(slug, domImages) {
+  async addCollection(slug, domImages) {
+    await Promise.all(this.lqipTexturesAdded);
+
     let group = new Transform();
     let collection = this.collections[slug];
 

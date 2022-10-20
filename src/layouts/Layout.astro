@@ -15,6 +15,7 @@ import Progress from "../components/Progress.svelte";
     <script>
       import barba from "@barba/core";
       import { animate } from "motion";
+      import imagesLoaded from "imagesloaded";
       import { progress } from "../stores/progress";
 
       barba.init({
@@ -38,25 +39,34 @@ import Progress from "../components/Progress.svelte";
             },
             afterEnter() {
               let customEv = new CustomEvent("pagechange");
-              let domImages = [...document.querySelectorAll(".image")].map(
-                (img) => {
-                  const bounds = img.getBoundingClientRect();
-                  const url = new URL(img.src);
-                  return {
-                    src: url.origin + url.pathname,
-                    top: bounds.top,
-                    left: bounds.left,
-                    width: bounds.width,
-                    height: bounds.height,
-                  };
-                }
-              );
+              const preloadImages = new Promise((resolve, reject) => {
+                imagesLoaded(
+                  document.querySelectorAll(".image"),
+                  { background: true },
+                  resolve
+                );
+              });
+              Promise.all([preloadImages]).then(() => {
+                let domImages = [...document.querySelectorAll(".image")].map(
+                  (img) => {
+                    const bounds = img.getBoundingClientRect();
+                    const url = new URL(img.src);
+                    return {
+                      src: url.origin + url.pathname,
+                      top: bounds.top,
+                      left: bounds.left,
+                      width: bounds.width,
+                      height: bounds.height,
+                    };
+                  }
+                );
 
-              customEv["pathname"] = new URL(
-                window.location.href
-              ).pathname.slice(1);
-              customEv["domImages"] = domImages;
-              window.dispatchEvent(customEv);
+                customEv["pathname"] = new URL(
+                  window.location.href
+                ).pathname.slice(1);
+                customEv["domImages"] = domImages;
+                window.dispatchEvent(customEv);
+              });
             },
           },
         ],

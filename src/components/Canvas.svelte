@@ -36,7 +36,7 @@
       direction: "right",
     };
 
-    function initCollection(slug) {
+    async function initCollection(slug) {
       let domImages = [...document.querySelectorAll(".image")].map((img) => {
         const bounds = img.getBoundingClientRect();
         const url = new URL(img.src);
@@ -48,7 +48,7 @@
           height: bounds.height,
         };
       });
-      webglInited.addCollection(slug, domImages);
+      await webglInited.addCollection(slug, domImages);
       webglInited.setCollection(slug);
       webglInited.setPosition(scroll, cursor);
       // webglInited.render();
