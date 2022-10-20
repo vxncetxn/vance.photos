@@ -115,6 +115,7 @@ export class WebglInit {
     if (slug) {
       this.activeCollection = slug;
       this.collections[slug].group.visible = true;
+      this.render();
     }
   }
 
@@ -162,6 +163,7 @@ export class WebglInit {
       });
 
       this.activeCollection = undefined;
+      this.render();
     }
   }
 

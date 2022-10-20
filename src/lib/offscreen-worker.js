@@ -29,8 +29,6 @@ async function initCollection(slug, domImages) {
   await webglInited.addCollection(slug, domImages);
   webglInited.setCollection(slug);
   webglInited.setPosition(scroll, cursor);
-  // webglInited.render();
-  setTimeout(() => webglInited.render(), 0);
 }
 
 let webglInited;
