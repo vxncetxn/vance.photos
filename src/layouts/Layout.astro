@@ -2,6 +2,7 @@
 import "../styles/global.css";
 const { title, route } = Astro.props;
 import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
+import Progress from "../components/Progress.svelte";
 ---
 
 <html>
@@ -14,6 +15,7 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
     <script>
       import barba from "@barba/core";
       import { animate } from "motion";
+      import { progress } from "../stores/progress";
 
       barba.init({
         views: [
@@ -61,8 +63,33 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
         transitions: [
           {
             name: "loading",
-            once() {
-              console.log("once!");
+            async once() {
+              progress.set(progress.get() + 31.5);
+
+              let loadOutTexts = document.querySelectorAll(".load-out-text");
+              let loadInTexts = document.querySelectorAll(".load-in-text");
+
+              await new Promise((resolve) => {
+                const intervalId = setInterval(() => {
+                  if (progress.get() >= 100) {
+                    resolve(clearInterval(intervalId));
+                  }
+                }, 200);
+              });
+
+              await animate(
+                loadOutTexts,
+                {
+                  transform: "translateY(120%)",
+                  display: "none",
+                },
+                { duration: 0.8 }
+              ).finished;
+              return animate(
+                loadInTexts,
+                { transform: ["translateY(-120%)", "translateY(0)"] },
+                { duration: 0.8 }
+              ).finished;
             },
           },
           {
@@ -186,11 +213,24 @@ import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
     <nav
       class="fixed z-10 flex flex-col space-y-4 right-20 top-16 text-slate-50 mix-blend-difference"
     >
-      <a href="#" class="font-sans text-xl capsize">vancetan</a>
-      <a href="#" class="font-sans text-xl capsize">Twitter</a>
-      <a href="#" class="font-sans text-xl capsize">Settings</a>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">vancetan</p>
+        </a>
+      </div>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">Twitter</p>
+        </a>
+      </div>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">Email</p>
+        </a>
+      </div>
     </nav>
     <slot />
+    <Progress client:idle />
     <CanvasControlFlow client:idle />
   </body>
 </html>

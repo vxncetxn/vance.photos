@@ -101,3 +101,7 @@
 .image {
   opacity: 0;
 }
+
+.load-in-text {
+  transform: translateY(-120%);
+}

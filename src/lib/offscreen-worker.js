@@ -1,5 +1,6 @@
 import * as Comlink from "comlink";
 import normalizeWheel from "normalize-wheel";
+import { atom } from "nanostores";
 
 import { initTransferHandler } from "./event.transferhandler";
 import { WebglInit } from "./webgl";
@@ -33,8 +34,12 @@ function initCollection(slug, domImages) {
 }
 
 let webglInited;
+let progress = atom(48.8);
 
 const api = {
+  getProgress() {
+    return progress.get();
+  },
   onWheel(ev) {
     const normalized = normalizeWheel(ev);
     const { pixelX, pixelY } = normalized;
@@ -74,6 +79,7 @@ const api = {
     webglInited = new WebglInit({
       container,
       dimensions,
+      progress,
     });
     if (pathname) {
       initCollection(pathname, domImages);

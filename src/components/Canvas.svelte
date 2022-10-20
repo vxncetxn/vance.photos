@@ -3,6 +3,7 @@
   import * as Comlink from "comlink";
   // import imagesLoaded from "imagesloaded";
   import normalizeWheel from "normalize-wheel";
+  import { progress } from "../stores/progress";
 
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
@@ -94,6 +95,7 @@
     let webglInited = new WebglInit({
       container: canvas,
       dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
+      progress,
     });
     let pathname = new URL(window.location.href).pathname.slice(1);
     if (pathname) {

@@ -13,6 +13,7 @@ specifiers:
   comlink: ^4.3.1
   imagesloaded: ^5.0.0
   motion: ^10.5.2
+  nanostores: ^0.7.0
   normalize-wheel: ^1.0.1
   ogl: 0.0.81
   prettier: ^2.7.1
@@ -28,6 +29,7 @@ dependencies:
   comlink: 4.3.1
   imagesloaded: 5.0.0
   motion: 10.14.2
+  nanostores: 0.7.0
   normalize-wheel: 1.0.1
   ogl: 0.0.81_sryjxyjvgzzbsxw6cndkthdeae
   svelte: 3.52.0
@@ -2704,6 +2706,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
+
+  /nanostores/0.7.0:
+    resolution: {integrity: sha512-y+ma9MVXuPzXKEXaRYW/iL/xG/HtMwB8fmFcMfUqt5fCNR/na2kDubbZGV4furUMTgmxfySJs0cQjORWhaPDyA==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
+    dev: false
 
   /nlcst-to-string/2.0.4:
     resolution: {integrity: sha512-3x3jwTd6UPG7vi5k4GEzvxJ5rDA7hVUIRNHPblKuMVP9Z3xmlsd9cgLcpAMkc5uPOBna82EeshROFhsPkbnTZg==}

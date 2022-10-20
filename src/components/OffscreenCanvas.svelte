@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
   // import imagesLoaded from "imagesloaded";
+  import { progress } from "../stores/progress";
 
   const offscreenWorker = new Worker(
     new URL("../lib/offscreen-worker", import.meta.url),
@@ -15,7 +16,9 @@
   initTransferHandler();
   let canvas;
 
-  onMount(() => {
+  onMount(async () => {
+    progress.set(progress.get() + 17.3);
+
     const offscreen = canvas.transferControlToOffscreen();
     const api = Comlink.wrap(offscreenWorker);
 
@@ -36,7 +39,7 @@
     });
 
     let pathname = new URL(window.location.href).pathname.slice(1);
-    api.main(
+    await api.main(
       Comlink.transfer(
         {
           container: offscreen,
@@ -63,6 +66,15 @@
         [offscreen]
       )
     );
+
+    const intervalId = setInterval(async () => {
+      let receivedProgress = await api.getProgress();
+      progress.set(receivedProgress);
+
+      if (receivedProgress >= 100) {
+        clearInterval(intervalId);
+      }
+    }, 100);
 
     // const preloadImages = new Promise((resolve, reject) => {
     //   imagesLoaded(

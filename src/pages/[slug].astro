@@ -107,10 +107,12 @@ let { name, slug, length, description } = Astro.props;
         ))
       }
     </div>
-    <p
-      class="fixed z-10 max-w-sm font-sans text-xl capsize bottom-16 right-16 text-slate-50 mix-blend-difference"
-    >
-      {description}
-    </p>
+    <div class="fixed z-10 max-w-sm overflow-hidden bottom-16 right-16">
+      <p
+        class="font-sans text-xl capsize text-slate-50 mix-blend-difference mo-text load-in-text"
+      >
+        {description}
+      </p>
+    </div>
   </div>
 </Layout>
