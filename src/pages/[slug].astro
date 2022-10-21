@@ -1,7 +1,7 @@
 ---
 import collections from "../data/collections.json";
 import Layout from "../layouts/Layout.astro";
-import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
+// import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 
 export async function getStaticPaths() {
   return collections.map((collection) => {
@@ -79,7 +79,7 @@ let { name, slug, length, description } = Astro.props;
     data-barba-namespace="collection"
     class="w-screen h-screen px-16 py-16 bg-[#1c1c1c]"
   >
-    <CanvasControlFlow client:idle />
+    <!-- <CanvasControlFlow client:idle /> -->
     <div class="py-1 overflow-hidden">
       <h1
         class="relative uppercase font-sans text-[120px] capsize text-slate-50 mo-text leading-tight mix-blend-difference z-10"
@@ -101,16 +101,18 @@ let { name, slug, length, description } = Astro.props;
             class="image w-[525px] h-[350px] object-cover object-center"
             src={`https://vance.imgix.net/${slug}/s${
               n + 1
-            }.jpg?w=900&h=600&fit=contain`}
+            }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`}
             alt="bowl"
           />
         ))
       }
     </div>
-    <p
-      class="fixed max-w-sm font-sans text-xl capsize bottom-16 right-16 text-slate-50 mix-blend-difference"
-    >
-      {description}
-    </p>
+    <div class="fixed z-10 max-w-sm overflow-hidden bottom-16 right-16">
+      <p
+        class="font-sans text-xl capsize text-slate-50 mix-blend-difference mo-text load-in-text"
+      >
+        {description}
+      </p>
+    </div>
   </div>
 </Layout>

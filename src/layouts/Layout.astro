@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 const { title, route } = Astro.props;
+import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
+import Progress from "../components/Progress.svelte";
 ---
 
 <html>
@@ -13,6 +15,8 @@ const { title, route } = Astro.props;
     <script>
       import barba from "@barba/core";
       import { animate } from "motion";
+      import imagesLoaded from "imagesloaded";
+      import { progress } from "../stores/progress";
 
       barba.init({
         views: [
@@ -30,6 +34,68 @@ const { title, route } = Astro.props;
           },
         ],
         transitions: [
+          {
+            name: "loading",
+            async once() {
+              progress.set(progress.get() + 31.5);
+
+              let loadOutTexts = document.querySelectorAll(".load-out-text");
+              let loadInTexts = document.querySelectorAll(".load-in-text");
+
+              await new Promise((resolve) => {
+                const intervalId = setInterval(() => {
+                  if (progress.get() >= 100) {
+                    resolve(clearInterval(intervalId));
+                  }
+                }, 200);
+              });
+
+              await animate(
+                loadOutTexts,
+                {
+                  transform: "translateY(120%)",
+                  display: "none",
+                },
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
+              ).finished;
+
+              let customEv = new CustomEvent("pagechange");
+              const preloadImages = new Promise((resolve, reject) => {
+                imagesLoaded(
+                  document.querySelectorAll(".image"),
+                  { background: true },
+                  resolve
+                );
+              });
+              Promise.all([preloadImages]).then(() => {
+                let domImages = [...document.querySelectorAll(".image")].map(
+                  (img) => {
+                    const bounds = img.getBoundingClientRect();
+                    const url = new URL(img.src);
+                    return {
+                      src: url.origin + url.pathname,
+                      top: bounds.top,
+                      left: bounds.left,
+                      width: bounds.width,
+                      height: bounds.height,
+                    };
+                  }
+                );
+
+                customEv["pathname"] = new URL(
+                  window.location.href
+                ).pathname.slice(1);
+                customEv["domImages"] = domImages;
+                window.dispatchEvent(customEv);
+              });
+
+              return animate(
+                loadInTexts,
+                { transform: ["translateY(-120%)", "translateY(0)"] },
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
+              ).finished;
+            },
+          },
           {
             name: "sun-from-index",
             from: {
@@ -73,16 +139,46 @@ const { title, route } = Astro.props;
                 {
                   transform: "translateY(120%)",
                 },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
             },
             enter(data) {
               let texts = data.next.container.querySelectorAll(".mo-text");
 
+              let customEv = new CustomEvent("pagechange");
+              const preloadImages = new Promise((resolve, reject) => {
+                imagesLoaded(
+                  document.querySelectorAll(".image"),
+                  { background: true },
+                  resolve
+                );
+              });
+              Promise.all([preloadImages]).then(() => {
+                let domImages = [...document.querySelectorAll(".image")].map(
+                  (img) => {
+                    const bounds = img.getBoundingClientRect();
+                    const url = new URL(img.src);
+                    return {
+                      src: url.origin + url.pathname,
+                      top: bounds.top,
+                      left: bounds.left,
+                      width: bounds.width,
+                      height: bounds.height,
+                    };
+                  }
+                );
+
+                customEv["pathname"] = new URL(
+                  window.location.href
+                ).pathname.slice(1);
+                customEv["domImages"] = domImages;
+                window.dispatchEvent(customEv);
+              });
+
               animate(
                 texts,
                 { transform: ["translateY(-120%)", "translateY(0)"] },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               );
             },
           },
@@ -95,6 +191,11 @@ const { title, route } = Astro.props;
               let sunOne = document.querySelector(".sun-one");
               let sunTwo = document.querySelector(".sun-two");
               let texts = document.querySelectorAll(".mo-text");
+
+              let customEv = new CustomEvent("pagechange");
+              customEv["pathname"] = "";
+              customEv["domImages"] = undefined;
+              window.dispatchEvent(customEv);
 
               animate(
                 sunOne,
@@ -127,7 +228,7 @@ const { title, route } = Astro.props;
                 {
                   transform: "translateY(120%)",
                 },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
             },
             enter(data) {
@@ -136,7 +237,7 @@ const { title, route } = Astro.props;
               animate(
                 texts,
                 { transform: ["translateY(-120%)", "translateY(0)"] },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               );
             },
           },
@@ -151,10 +252,24 @@ const { title, route } = Astro.props;
     <nav
       class="fixed z-10 flex flex-col space-y-4 right-20 top-16 text-slate-50 mix-blend-difference"
     >
-      <a href="#" class="font-sans text-xl capsize">vancetan</a>
-      <a href="#" class="font-sans text-xl capsize">Twitter</a>
-      <a href="#" class="font-sans text-xl capsize">Settings</a>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">vancetan</p>
+        </a>
+      </div>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">Twitter</p>
+        </a>
+      </div>
+      <div class="overflow-hidden">
+        <a href="#"
+          ><p class="font-sans text-xl capsize load-in-text">Email</p>
+        </a>
+      </div>
     </nav>
     <slot />
+    <Progress client:idle />
+    <CanvasControlFlow client:idle />
   </body>
 </html>

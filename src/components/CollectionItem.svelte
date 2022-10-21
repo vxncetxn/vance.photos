@@ -29,7 +29,7 @@
     class="cursor-pointer hover:text-slate-50"
   >
     <p
-      class="font-sans text-[120px] capsize text-slate-400 leading-tight uppercase mo-text"
+      class="font-sans text-[120px] capsize text-slate-400 leading-tight uppercase mo-text load-in-text"
     >
       {collection.name}
     </p>

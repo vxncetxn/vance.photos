@@ -16,6 +16,6 @@ export default defineConfig({
     ssr: {
       noExternal: [],
     },
-    plugins: [glsl.default(), visualizer()],
+    plugins: [glsl(), visualizer()],
   },
 });

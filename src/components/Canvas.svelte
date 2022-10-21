@@ -1,8 +1,8 @@
 <script lang="js">
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
-  import imagesLoaded from "imagesloaded";
   import normalizeWheel from "normalize-wheel";
+  import { progress } from "../stores/progress";
 
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
@@ -16,8 +16,11 @@
 
   initTransferHandler();
   let canvas;
+  let scroll;
 
   onMount(() => {
+    progress.set(progress.get() + 17.3);
+
     const api = Comlink.wrap(calcWorker);
 
     const cursor = {
@@ -26,13 +29,32 @@
       target: 0,
       last: 0,
     };
-    const scroll = {
+    scroll = {
       ease: 0.05,
       current: 0,
       target: 0,
       last: 0,
       direction: "right",
     };
+    let transitionStartTime = null;
+    let transitionFactor = 1.0;
+
+    async function initCollection(slug) {
+      let domImages = [...document.querySelectorAll(".image")].map((img) => {
+        const bounds = img.getBoundingClientRect();
+        const url = new URL(img.src);
+        return {
+          src: url.origin + url.pathname,
+          top: bounds.top,
+          left: bounds.left,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      });
+      await webglInited.addCollection(slug, domImages);
+      webglInited.setCollection(slug);
+      webglInited.setPosition(scroll, cursor);
+    }
 
     function onWheel(ev) {
       const normalized = normalizeWheel(ev);
@@ -52,58 +74,79 @@
       cursor.target = ev.clientY;
     }
 
+    function onPageChange(ev) {
+      scroll = {
+        ease: 0.05,
+        current: 0,
+        target: 0,
+        last: 0,
+        direction: "right",
+      };
+      if (ev.pathname) {
+        if (webglInited.checkCollection(ev.pathname)) {
+          webglInited.setCollection(ev.pathname);
+          transitionFactor = 1.0;
+          transitionStartTime = new Date();
+          setTimeout(() => (transitionStartTime = null), 820);
+        } else {
+          initCollection(ev.pathname);
+          transitionFactor = 1.0;
+          transitionStartTime = new Date();
+          setTimeout(() => (transitionStartTime = null), 820);
+        }
+      } else {
+        transitionFactor = -1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => {
+          transitionStartTime = null;
+          webglInited.hideCollection();
+        }, 820);
+      }
+    }
+
+    let webglInited = new WebglInit({
+      container: canvas,
+      dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
+      progress,
+    });
+    let pathname = new URL(window.location.href).pathname.slice(1);
+    if (pathname) {
+      initCollection(pathname);
+    }
+
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
+    window.addEventListener("pagechange", onPageChange);
 
-    const preloadImages = new Promise((resolve, reject) => {
-      imagesLoaded(
-        document.querySelectorAll(".image"),
-        { background: true },
-        resolve
-      );
-    });
+    async function rafLoop() {
+      if (
+        Math.abs(scroll.target - scroll.current) > 1 ||
+        Math.abs(cursor.target - cursor.current) > 1
+      ) {
+        let { newScrollCurrent, newDirection, newCursorCurrent } =
+          await api.process(scroll, cursor);
+        scroll.current = newScrollCurrent;
+        scroll.direction = newDirection;
+        cursor.current = newCursorCurrent;
 
-    Promise.all([preloadImages]).then(async () => {
-      let webglInited = new WebglInit({
-        container: canvas,
-        dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
-        images: [...document.querySelectorAll(".image")].map((img) => {
-          const bounds = img.getBoundingClientRect();
-          return {
-            src: img.src,
-            top: bounds.top,
-            left: bounds.left,
-            width: bounds.width,
-            height: bounds.height,
-          };
-        }),
-      });
-      webglInited.setPosition(scroll, cursor);
+        webglInited.setPosition(scroll, cursor);
 
-      async function rafLoop() {
-        if (
-          Math.abs(scroll.target - scroll.current) > 1 ||
-          Math.abs(cursor.target - cursor.current) > 1
-        ) {
-          let { newScrollCurrent, newDirection, newCursorCurrent } =
-            await api.process(scroll, cursor);
-          scroll.current = newScrollCurrent;
-          scroll.direction = newDirection;
-          cursor.current = newCursorCurrent;
+        scroll.last = scroll.current;
+        cursor.last = cursor.current;
 
-          webglInited.setPosition(scroll, cursor);
-
-          scroll.last = scroll.current;
-          cursor.last = cursor.current;
-
-          webglInited.render();
-        }
-        requestAnimationFrame(rafLoop);
+        webglInited.render();
       }
 
-      rafLoop();
-    });
+      if (transitionStartTime) {
+        webglInited.transition(transitionStartTime, transitionFactor);
+        webglInited.render();
+      }
+
+      requestAnimationFrame(rafLoop);
+    }
+
+    rafLoop();
   });
 </script>
 

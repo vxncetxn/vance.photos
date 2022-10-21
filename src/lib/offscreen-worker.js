@@ -1,5 +1,6 @@
 import * as Comlink from "comlink";
 import normalizeWheel from "normalize-wheel";
+import { atom } from "nanostores";
 
 import { initTransferHandler } from "./event.transferhandler";
 import { WebglInit } from "./webgl";
@@ -16,15 +17,29 @@ const cursor = {
   target: 0,
   last: 0,
 };
-const scroll = {
+let scroll = {
   ease: 0.05,
   current: 0,
   target: 0,
   last: 0,
   direction: "right",
 };
+let transitionStartTime = null;
+let transitionFactor = 1.0;
+
+async function initCollection(slug, domImages) {
+  await webglInited.addCollection(slug, domImages);
+  webglInited.setCollection(slug);
+  webglInited.setPosition(scroll, cursor);
+}
+
+let webglInited;
+let progress = atom(48.8);
 
 const api = {
+  getProgress() {
+    return progress.get();
+  },
   onWheel(ev) {
     const normalized = normalizeWheel(ev);
     const { pixelX, pixelY } = normalized;
@@ -41,14 +56,46 @@ const api = {
   onMouseMove(ev) {
     cursor.target = ev.clientY;
   },
+  async onPageChange(ev) {
+    scroll = {
+      ease: 0.05,
+      current: 0,
+      target: 0,
+      last: 0,
+      direction: "right",
+    };
+    if (ev.pathname) {
+      if (webglInited.checkCollection(ev.pathname)) {
+        webglInited.setCollection(ev.pathname);
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
+      } else {
+        await initCollection(ev.pathname, ev.domImages);
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
+      }
+    } else {
+      transitionFactor = -1.0;
+      transitionStartTime = new Date();
+      setTimeout(() => {
+        transitionStartTime = null;
+        webglInited.hideCollection();
+      }, 820);
+    }
+  },
   main(props) {
-    let { container, dimensions, images } = props;
-    let webglInited = new WebglInit({
+    let { container, dimensions, pathname, domImages } = props;
+    webglInited = new WebglInit({
       container,
       dimensions,
-      images,
+      progress,
     });
-    webglInited.setPosition(scroll, cursor);
+    if (pathname) {
+      initCollection(pathname, domImages);
+    }
+    // webglInited.setPosition(scroll, cursor);
 
     function rafLoop() {
       if (
@@ -71,6 +118,12 @@ const api = {
 
         webglInited.render();
       }
+
+      if (transitionStartTime) {
+        webglInited.transition(transitionStartTime, transitionFactor);
+        webglInited.render();
+      }
+
       requestAnimationFrame(rafLoop);
     }
 
