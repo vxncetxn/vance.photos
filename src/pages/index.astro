@@ -63,16 +63,18 @@ import CollectionItem from "../components/CollectionItem.svelte";
   <div
     data-barba="container"
     data-barba-namespace="index"
-    class="min-h-screen px-16 py-16 bg-[#1c1c1c] min-w-screen"
+    class="min-h-screen min-w-screen"
   >
     <div class="py-1 overflow-hidden">
       <h1
-        class="uppercase text-slate-50 font-sans text-[120px] capsize mo-text leading-tight"
+        class="uppercase text-slate-50 font-sans text-[36px] mobile:text-[44px] tablet:text-[72px] desktop:text-[104px] capsize mo-text leading-tight"
       >
         vance.photos
       </h1>
     </div>
-    <div class="relative z-10 flex flex-col items-start mt-16 gap-y-16">
+    <div
+      class="relative z-10 flex flex-col items-start mt-20 mobile:mt-24 tablet:mt-40 desktop:mt-64 gap-y-20 mobile:gap-y-24 tablet:gap-y-40 desktop:gap-y-64"
+    >
       {
         collections.map((collection) => (
           <CollectionItem {collection} client:idle />
