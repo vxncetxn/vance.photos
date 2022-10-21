@@ -17,9 +17,9 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  filter: blur(100px);
-  width: 400px;
-  height: 400px;
+  filter: blur(5vw);
+  width: 28vw;
+  height: 28vw;
   opacity: 0.6;
   /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
 }
