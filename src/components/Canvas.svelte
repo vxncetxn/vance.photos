@@ -19,6 +19,8 @@
   let scroll;
 
   onMount(() => {
+    progress.set(progress.get() + 17.3);
+
     const api = Comlink.wrap(calcWorker);
 
     const cursor = {
@@ -82,7 +84,6 @@
       if (ev.pathname) {
         if (webglInited.checkCollection(ev.pathname)) {
           webglInited.setCollection(ev.pathname);
-          console.log("WHY!");
           // transitionStartTime = new Date();
           // setTimeout(() => (transitionStartTime = null), 800);
         } else {
