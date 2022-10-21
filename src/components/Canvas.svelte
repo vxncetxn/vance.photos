@@ -37,6 +37,7 @@
       direction: "right",
     };
     let transitionStartTime = null;
+    let transitionFactor = 1.0;
 
     async function initCollection(slug) {
       let domImages = [...document.querySelectorAll(".image")].map((img) => {
@@ -84,13 +85,22 @@
       if (ev.pathname) {
         if (webglInited.checkCollection(ev.pathname)) {
           webglInited.setCollection(ev.pathname);
-          // transitionStartTime = new Date();
-          // setTimeout(() => (transitionStartTime = null), 800);
+          transitionFactor = 1.0;
+          transitionStartTime = new Date();
+          setTimeout(() => (transitionStartTime = null), 820);
         } else {
           initCollection(ev.pathname);
+          transitionFactor = 1.0;
+          transitionStartTime = new Date();
+          setTimeout(() => (transitionStartTime = null), 820);
         }
       } else {
-        webglInited.hideCollection();
+        transitionFactor = -1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => {
+          transitionStartTime = null;
+          webglInited.hideCollection();
+        }, 820);
       }
     }
 
@@ -129,7 +139,7 @@
       }
 
       if (transitionStartTime) {
-        webglInited.transition(transitionStartTime);
+        webglInited.transition(transitionStartTime, transitionFactor);
         webglInited.render();
       }
 

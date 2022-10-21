@@ -67,7 +67,6 @@ const api = {
     if (ev.pathname) {
       if (webglInited.checkCollection(ev.pathname)) {
         webglInited.setCollection(ev.pathname);
-        // console.log("WHY!");
         transitionFactor = 1.0;
         transitionStartTime = new Date();
         setTimeout(() => (transitionStartTime = null), 820);
