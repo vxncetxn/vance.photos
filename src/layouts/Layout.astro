@@ -25,19 +25,40 @@ import Progress from "../components/Progress.svelte";
             beforeEnter() {
               document.body.style.overflow = "auto";
             },
-            afterEnter() {
-              let customEv = new CustomEvent("pagechange");
-              customEv["pathname"] = "";
-              customEv["domImages"] = undefined;
-              window.dispatchEvent(customEv);
-            },
           },
           {
             namespace: "collection",
             beforeEnter() {
               document.body.style.overflow = "hidden";
             },
-            afterEnter() {
+          },
+        ],
+        transitions: [
+          {
+            name: "loading",
+            async once() {
+              progress.set(progress.get() + 31.5);
+
+              let loadOutTexts = document.querySelectorAll(".load-out-text");
+              let loadInTexts = document.querySelectorAll(".load-in-text");
+
+              await new Promise((resolve) => {
+                const intervalId = setInterval(() => {
+                  if (progress.get() >= 100) {
+                    resolve(clearInterval(intervalId));
+                  }
+                }, 200);
+              });
+
+              await animate(
+                loadOutTexts,
+                {
+                  transform: "translateY(120%)",
+                  display: "none",
+                },
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
+              ).finished;
+
               let customEv = new CustomEvent("pagechange");
               const preloadImages = new Promise((resolve, reject) => {
                 imagesLoaded(
@@ -67,38 +88,11 @@ import Progress from "../components/Progress.svelte";
                 customEv["domImages"] = domImages;
                 window.dispatchEvent(customEv);
               });
-            },
-          },
-        ],
-        transitions: [
-          {
-            name: "loading",
-            async once() {
-              progress.set(progress.get() + 31.5);
 
-              let loadOutTexts = document.querySelectorAll(".load-out-text");
-              let loadInTexts = document.querySelectorAll(".load-in-text");
-
-              await new Promise((resolve) => {
-                const intervalId = setInterval(() => {
-                  if (progress.get() >= 100) {
-                    resolve(clearInterval(intervalId));
-                  }
-                }, 200);
-              });
-
-              await animate(
-                loadOutTexts,
-                {
-                  transform: "translateY(120%)",
-                  display: "none",
-                },
-                { duration: 0.8 }
-              ).finished;
               return animate(
                 loadInTexts,
                 { transform: ["translateY(-120%)", "translateY(0)"] },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
             },
           },
@@ -145,16 +139,46 @@ import Progress from "../components/Progress.svelte";
                 {
                   transform: "translateY(120%)",
                 },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
             },
             enter(data) {
               let texts = data.next.container.querySelectorAll(".mo-text");
 
+              let customEv = new CustomEvent("pagechange");
+              const preloadImages = new Promise((resolve, reject) => {
+                imagesLoaded(
+                  document.querySelectorAll(".image"),
+                  { background: true },
+                  resolve
+                );
+              });
+              Promise.all([preloadImages]).then(() => {
+                let domImages = [...document.querySelectorAll(".image")].map(
+                  (img) => {
+                    const bounds = img.getBoundingClientRect();
+                    const url = new URL(img.src);
+                    return {
+                      src: url.origin + url.pathname,
+                      top: bounds.top,
+                      left: bounds.left,
+                      width: bounds.width,
+                      height: bounds.height,
+                    };
+                  }
+                );
+
+                customEv["pathname"] = new URL(
+                  window.location.href
+                ).pathname.slice(1);
+                customEv["domImages"] = domImages;
+                window.dispatchEvent(customEv);
+              });
+
               animate(
                 texts,
                 { transform: ["translateY(-120%)", "translateY(0)"] },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               );
             },
           },
@@ -167,6 +191,11 @@ import Progress from "../components/Progress.svelte";
               let sunOne = document.querySelector(".sun-one");
               let sunTwo = document.querySelector(".sun-two");
               let texts = document.querySelectorAll(".mo-text");
+
+              let customEv = new CustomEvent("pagechange");
+              customEv["pathname"] = "";
+              customEv["domImages"] = undefined;
+              window.dispatchEvent(customEv);
 
               animate(
                 sunOne,
@@ -199,7 +228,7 @@ import Progress from "../components/Progress.svelte";
                 {
                   transform: "translateY(120%)",
                 },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
             },
             enter(data) {
@@ -208,7 +237,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 texts,
                 { transform: ["translateY(-120%)", "translateY(0)"] },
-                { duration: 0.8 }
+                { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               );
             },
           },

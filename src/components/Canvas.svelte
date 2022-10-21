@@ -1,7 +1,6 @@
 <script lang="js">
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
-  // import imagesLoaded from "imagesloaded";
   import normalizeWheel from "normalize-wheel";
   import { progress } from "../stores/progress";
 
@@ -35,6 +34,7 @@
       last: 0,
       direction: "right",
     };
+    let transitionStartTime = null;
 
     async function initCollection(slug) {
       let domImages = [...document.querySelectorAll(".image")].map((img) => {
@@ -82,6 +82,9 @@
       if (ev.pathname) {
         if (webglInited.checkCollection(ev.pathname)) {
           webglInited.setCollection(ev.pathname);
+          console.log("WHY!");
+          // transitionStartTime = new Date();
+          // setTimeout(() => (transitionStartTime = null), 800);
         } else {
           initCollection(ev.pathname);
         }
@@ -123,59 +126,16 @@
 
         webglInited.render();
       }
+
+      if (transitionStartTime) {
+        webglInited.transition(transitionStartTime);
+        webglInited.render();
+      }
+
       requestAnimationFrame(rafLoop);
     }
 
     rafLoop();
-
-    // const preloadImages = new Promise((resolve, reject) => {
-    //   imagesLoaded(
-    //     document.querySelectorAll(".image"),
-    //     { background: true },
-    //     resolve
-    //   );
-    // });
-
-    // Promise.all([preloadImages]).then(async () => {
-    //   let webglInited = new WebglInit({
-    //     container: canvas,
-    //     dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
-    //     images: [...document.querySelectorAll(".image")].map((img) => {
-    //       const bounds = img.getBoundingClientRect();
-    //       return {
-    //         src: img.src,
-    //         top: bounds.top,
-    //         left: bounds.left,
-    //         width: bounds.width,
-    //         height: bounds.height,
-    //       };
-    //     }),
-    //   });
-    //   webglInited.setPosition(scroll, cursor);
-
-    // async function rafLoop() {
-    //   if (
-    //     Math.abs(scroll.target - scroll.current) > 1 ||
-    //     Math.abs(cursor.target - cursor.current) > 1
-    //   ) {
-    //     let { newScrollCurrent, newDirection, newCursorCurrent } =
-    //       await api.process(scroll, cursor);
-    //     scroll.current = newScrollCurrent;
-    //     scroll.direction = newDirection;
-    //     cursor.current = newCursorCurrent;
-
-    //     webglInited.setPosition(scroll, cursor);
-
-    //     scroll.last = scroll.current;
-    //     cursor.last = cursor.current;
-
-    //     webglInited.render();
-    //   }
-    //   requestAnimationFrame(rafLoop);
-    // }
-
-    // rafLoop();
-    // });
   });
 </script>
 

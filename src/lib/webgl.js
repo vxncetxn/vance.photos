@@ -205,25 +205,31 @@ export class WebglInit {
         fragment: `precision highp float;
 
         uniform sampler2D uTexture;
+        uniform float uTime;
+        uniform float uTransitionFactor;
         
         varying vec2 vUv;
         
         void main() {
             vec4 textureResult = texture2D(uTexture, vUv);
-            if(vUv.y > 1.0) 
+            float func;
+            if (2.0 * uTime / 800.0 < 1.0)
             {
-                textureResult.a = 0.0;
+              func = -1.0 / 2.0 * pow(2.0 * uTime / 800.0, 3.0) + 1.0;
             }
             else
             {
-                textureResult.a = 1.0;
+              func = -1.0 / 2.0 * (pow((2.0 * uTime / 800.0) - 2.0, 3.0) + 2.0) + 1.0;
             }
+            textureResult.a = ceil(max((vUv.y - func) * uTransitionFactor, 0.0));
             gl_FragColor = textureResult;
         }`,
         uniforms: {
           uTexture: { value: collection.images[i].lqipTexture },
           uViewportSize: { value: [this.width, this.height] },
           uStrength: { value: 0 },
+          uTime: { value: 0 },
+          uTransitionFactor: { value: 1.0 },
         },
       });
 
@@ -315,6 +321,17 @@ export class WebglInit {
         0,
         0.1 + (cursor.current / this.height - 0.5) / 20
       );
+    }
+  }
+
+  transition(startTime, transitionFactor) {
+    if (this.activeCollection) {
+      let collection = this.collections[this.activeCollection];
+      let now = new Date();
+      collection.images.forEach((img) => {
+        img.mesh.program.uniforms.uTransitionFactor.value = transitionFactor;
+        img.mesh.program.uniforms.uTime.value = now - startTime;
+      });
     }
   }
 

@@ -24,6 +24,8 @@ let scroll = {
   last: 0,
   direction: "right",
 };
+let transitionStartTime = null;
+let transitionFactor = 1.0;
 
 async function initCollection(slug, domImages) {
   await webglInited.addCollection(slug, domImages);
@@ -54,7 +56,7 @@ const api = {
   onMouseMove(ev) {
     cursor.target = ev.clientY;
   },
-  onPageChange(ev) {
+  async onPageChange(ev) {
     scroll = {
       ease: 0.05,
       current: 0,
@@ -65,11 +67,23 @@ const api = {
     if (ev.pathname) {
       if (webglInited.checkCollection(ev.pathname)) {
         webglInited.setCollection(ev.pathname);
+        // console.log("WHY!");
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
       } else {
-        initCollection(ev.pathname, ev.domImages);
+        await initCollection(ev.pathname, ev.domImages);
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
       }
     } else {
-      webglInited.hideCollection();
+      transitionFactor = -1.0;
+      transitionStartTime = new Date();
+      setTimeout(() => {
+        transitionStartTime = null;
+        webglInited.hideCollection();
+      }, 820);
     }
   },
   main(props) {
@@ -105,6 +119,12 @@ const api = {
 
         webglInited.render();
       }
+
+      if (transitionStartTime) {
+        webglInited.transition(transitionStartTime, transitionFactor);
+        webglInited.render();
+      }
+
       requestAnimationFrame(rafLoop);
     }
 
