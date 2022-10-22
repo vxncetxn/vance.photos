@@ -40,7 +40,10 @@ export class WebglInit {
       fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
     });
     this.camera.position.z = 600;
-    this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
+    this.baseGeometry = new Plane(this.gl, {
+      widthSegments: 10,
+      heightSegments: 10,
+    });
 
     this.activeCollection = undefined;
     this.collections = {};
@@ -179,7 +182,32 @@ export class WebglInit {
       let program = new Program(this.gl, {
         depthTest: false,
         depthWrite: false,
-        vertex: `#define PI 3.1415926535897932384626433832795
+        vertex:
+          this.width <= 768
+            ? `#define PI 3.1415926535897932384626433832795
+
+        precision highp float;
+        precision highp int;
+        
+        attribute vec3 position;
+        attribute vec2 uv;
+        
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform vec2 uViewportSize;
+        uniform float uStrength;
+        
+        varying vec2 vUv;
+        
+        void main() {
+            vUv = uv;
+        
+            vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
+            newPosition.z += min(cos(newPosition.y / uViewportSize.y * PI) * uStrength * 60.0, cos(newPosition.y / uViewportSize.y * PI) * 40.0);
+        
+            gl_Position = projectionMatrix * newPosition;
+        }`
+            : `#define PI 3.1415926535897932384626433832795
 
         precision highp float;
         precision highp int;
@@ -283,33 +311,38 @@ export class WebglInit {
     if (this.activeCollection) {
       let collection = this.collections[this.activeCollection];
       collection.images.forEach((o) => {
-        o.posX =
-          -scroll.current +
-          o.left -
-          this.width / 2 +
-          o.width / 2 -
-          o.extraScroll;
+        if (this.width <= 768) {
+          o.posY = scroll.current - o.top + this.height / 2 - o.height / 2;
+          o.mesh.position.y = o.posY;
+        } else {
+          o.posX =
+            -scroll.current +
+            o.left -
+            this.width / 2 +
+            o.width / 2 -
+            o.extraScroll;
 
-        let meshOffset = o.mesh.scale.x / 2;
-        o.isBefore = o.posX + meshOffset < -this.width;
-        o.isAfter = o.posX - meshOffset > this.width;
+          let meshOffset = o.mesh.scale.x / 2;
+          o.isBefore = o.posX + meshOffset < -this.width;
+          o.isAfter = o.posX - meshOffset > this.width;
 
-        if (!o.isBefore && !o.isAfter) {
-          o.mesh.position.x = o.posX;
-        }
+          if (!o.isBefore && !o.isAfter) {
+            o.mesh.position.x = o.posX;
+          }
 
-        if (scroll.direction === "right" && o.isBefore) {
-          o.extraScroll -= collection.widthTotal;
+          if (scroll.direction === "right" && o.isBefore) {
+            o.extraScroll -= collection.widthTotal;
 
-          o.isBefore = false;
-          o.isAfter = false;
-        }
+            o.isBefore = false;
+            o.isAfter = false;
+          }
 
-        if (scroll.direction === "left" && o.isAfter) {
-          o.extraScroll += collection.widthTotal;
+          if (scroll.direction === "left" && o.isAfter) {
+            o.extraScroll += collection.widthTotal;
 
-          o.isBefore = false;
-          o.isAfter = false;
+            o.isBefore = false;
+            o.isAfter = false;
+          }
         }
 
         o.mesh.program.uniforms.uStrength.value =

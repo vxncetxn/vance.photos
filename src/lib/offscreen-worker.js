@@ -11,6 +11,10 @@ function lerp(p1, p2, t) {
   return p1 + (p2 - p1) * t;
 }
 
+let dimensions;
+
+let scrollHeight;
+
 const cursor = {
   ease: 0.05,
   current: 0,
@@ -52,6 +56,13 @@ const api = {
     }
 
     scroll.target += Math.min(Math.max(speed, -150), 150) * 0.5;
+
+    if (dimensions.width <= 768) {
+      scroll.target = Math.min(
+        Math.max(scroll.target, 0),
+        scrollHeight - dimensions.height + 40
+      );
+    }
   },
   onMouseMove(ev) {
     cursor.target = ev.clientY;
@@ -86,10 +97,20 @@ const api = {
     }
   },
   main(props) {
-    let { container, dimensions, pathname, domImages } = props;
+    let {
+      container,
+      dimensions: trfDimensions,
+      scrollHeight: trfScrollHeight,
+      pathname,
+      domImages,
+    } = props;
+
+    dimensions = trfDimensions;
+    scrollHeight = trfScrollHeight;
+
     webglInited = new WebglInit({
       container,
-      dimensions,
+      dimensions: trfDimensions,
       progress,
     });
     if (pathname) {

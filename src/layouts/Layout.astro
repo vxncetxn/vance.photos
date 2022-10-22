@@ -42,13 +42,13 @@ import Progress from "../components/Progress.svelte";
               let loadOutTexts = document.querySelectorAll(".load-out-text");
               let loadInTexts = document.querySelectorAll(".load-in-text");
 
-              // await new Promise((resolve) => {
-              //   const intervalId = setInterval(() => {
-              //     if (progress.get() >= 100) {
-              //       resolve(clearInterval(intervalId));
-              //     }
-              //   }, 200);
-              // });
+              await new Promise((resolve) => {
+                const intervalId = setInterval(() => {
+                  if (progress.get() >= 100) {
+                    resolve(clearInterval(intervalId));
+                  }
+                }, 200);
+              });
 
               await animate(
                 loadOutTexts,
@@ -59,35 +59,35 @@ import Progress from "../components/Progress.svelte";
                 { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
 
-              // let customEv = new CustomEvent("pagechange");
-              // const preloadImages = new Promise((resolve, reject) => {
-              //   imagesLoaded(
-              //     document.querySelectorAll(".image"),
-              //     { background: true },
-              //     resolve
-              //   );
-              // });
-              // Promise.all([preloadImages]).then(() => {
-              //   let domImages = [...document.querySelectorAll(".image")].map(
-              //     (img) => {
-              //       const bounds = img.getBoundingClientRect();
-              //       const url = new URL(img.src);
-              //       return {
-              //         src: url.origin + url.pathname,
-              //         top: bounds.top,
-              //         left: bounds.left,
-              //         width: bounds.width,
-              //         height: bounds.height,
-              //       };
-              //     }
-              //   );
+              let customEv = new CustomEvent("pagechange");
+              const preloadImages = new Promise((resolve, reject) => {
+                imagesLoaded(
+                  document.querySelectorAll(".image"),
+                  { background: true },
+                  resolve
+                );
+              });
+              Promise.all([preloadImages]).then(() => {
+                let domImages = [...document.querySelectorAll(".image")].map(
+                  (img) => {
+                    const bounds = img.getBoundingClientRect();
+                    const url = new URL(img.src);
+                    return {
+                      src: url.origin + url.pathname,
+                      top: bounds.top,
+                      left: bounds.left,
+                      width: bounds.width,
+                      height: bounds.height,
+                    };
+                  }
+                );
 
-              //   customEv["pathname"] = new URL(
-              //     window.location.href
-              //   ).pathname.slice(1);
-              //   customEv["domImages"] = domImages;
-              //   window.dispatchEvent(customEv);
-              // });
+                customEv["pathname"] = new URL(
+                  window.location.href
+                ).pathname.slice(1);
+                customEv["domImages"] = domImages;
+                window.dispatchEvent(customEv);
+              });
 
               return animate(
                 loadInTexts,
@@ -284,6 +284,6 @@ import Progress from "../components/Progress.svelte";
     </nav>
     <slot />
     <Progress client:idle />
-    <!-- <CanvasControlFlow client:idle /> -->
+    <CanvasControlFlow client:idle />
   </body>
 </html>

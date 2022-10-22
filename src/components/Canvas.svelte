@@ -3,6 +3,7 @@
   import * as Comlink from "comlink";
   import normalizeWheel from "normalize-wheel";
   import { progress } from "../stores/progress";
+  import imagesLoaded from "imagesloaded";
 
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
@@ -18,10 +19,27 @@
   let canvas;
   let scroll;
 
-  onMount(() => {
+  onMount(async () => {
     progress.set(progress.get() + 17.3);
 
     const api = Comlink.wrap(calcWorker);
+
+    let dimensions = {
+      width: canvas.offsetWidth,
+      height: canvas.offsetHeight,
+    };
+
+    const preloadImages = new Promise((resolve, reject) => {
+      imagesLoaded(
+        document.querySelectorAll(".image"),
+        { background: true },
+        resolve
+      );
+    });
+    let scrollHeight;
+    await Promise.all([preloadImages]).then(async () => {
+      scrollHeight = document.documentElement.scrollHeight;
+    });
 
     const cursor = {
       ease: 0.05,
@@ -68,6 +86,13 @@
       }
 
       scroll.target += Math.min(Math.max(speed, -150), 150) * 0.5;
+
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        scroll.target = Math.min(
+          Math.max(scroll.target, 0),
+          scrollHeight - dimensions.height + 40
+        );
+      }
     }
 
     function onMouseMove(ev) {

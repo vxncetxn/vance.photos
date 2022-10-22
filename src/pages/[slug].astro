@@ -102,7 +102,7 @@ let { name, slug, length, description } = Astro.props;
       {
         [...Array(length).keys()].map((n) => (
           <img
-            class="image tablet:w-[37.5vw] tablet:h-[25vw] object-cover object-center"
+            class="image w-full tablet:w-[37.5vw] tablet:h-[25vw] object-cover object-center"
             src={`https://vance.imgix.net/${slug}/s${
               n + 1
             }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`}
