@@ -59,35 +59,35 @@ import Progress from "../components/Progress.svelte";
                 { duration: 0.8, easing: [0.65, 0, 0.35, 1] }
               ).finished;
 
-              let customEv = new CustomEvent("pagechange");
-              const preloadImages = new Promise((resolve, reject) => {
-                imagesLoaded(
-                  document.querySelectorAll(".image"),
-                  { background: true },
-                  resolve
-                );
-              });
-              Promise.all([preloadImages]).then(() => {
-                let domImages = [...document.querySelectorAll(".image")].map(
-                  (img) => {
-                    const bounds = img.getBoundingClientRect();
-                    const url = new URL(img.src);
-                    return {
-                      src: url.origin + url.pathname,
-                      top: bounds.top,
-                      left: bounds.left,
-                      width: bounds.width,
-                      height: bounds.height,
-                    };
-                  }
-                );
+              // let customEv = new CustomEvent("pagechange");
+              // const preloadImages = new Promise((resolve, reject) => {
+              //   imagesLoaded(
+              //     document.querySelectorAll(".image"),
+              //     { background: true },
+              //     resolve
+              //   );
+              // });
+              // Promise.all([preloadImages]).then(() => {
+              //   let domImages = [...document.querySelectorAll(".image")].map(
+              //     (img) => {
+              //       const bounds = img.getBoundingClientRect();
+              //       const url = new URL(img.src);
+              //       return {
+              //         src: url.origin + url.pathname,
+              //         top: bounds.top,
+              //         left: bounds.left,
+              //         width: bounds.width,
+              //         height: bounds.height,
+              //       };
+              //     }
+              //   );
 
-                customEv["pathname"] = new URL(
-                  window.location.href
-                ).pathname.slice(1);
-                customEv["domImages"] = domImages;
-                window.dispatchEvent(customEv);
-              });
+              //   customEv["pathname"] = new URL(
+              //     window.location.href
+              //   ).pathname.slice(1);
+              //   customEv["domImages"] = domImages;
+              //   window.dispatchEvent(customEv);
+              // });
 
               return animate(
                 loadInTexts,
@@ -109,7 +109,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunOne,
                 {
-                  transform: "translate(-50%, -50%)",
+                  transform: "translate(calc(-50vw + 30%), calc(-50vh + 80%))",
                 },
                 {
                   duration: 1.6,
@@ -123,7 +123,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunTwo,
                 {
-                  transform: "translate(-20%, -20%)",
+                  transform: "translate(calc(-50vw + 70%), calc(-50vh + 65%))",
                 },
                 {
                   duration: 1.6,
@@ -200,7 +200,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunOne,
                 {
-                  transform: "translate(45%, 45%)",
+                  transform: "translate(-25%, 60%)",
                 },
                 {
                   duration: 1.6,
@@ -213,7 +213,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunTwo,
                 {
-                  transform: "translate(90%, 20%)",
+                  transform: "translate(20%, 20%)",
                 },
                 {
                   duration: 1.6,
