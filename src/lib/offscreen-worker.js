@@ -75,6 +75,7 @@ const api = {
       last: 0,
       direction: "right",
     };
+    scrollHeight = ev.scrollHeight;
     if (ev.pathname) {
       if (webglInited.checkCollection(ev.pathname)) {
         webglInited.setCollection(ev.pathname);

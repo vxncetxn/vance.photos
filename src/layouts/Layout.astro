@@ -172,6 +172,8 @@ import Progress from "../components/Progress.svelte";
                   window.location.href
                 ).pathname.slice(1);
                 customEv["domImages"] = domImages;
+                customEv["scrollHeight"] =
+                  document.documentElement.scrollHeight;
                 window.dispatchEvent(customEv);
               });
 
@@ -195,6 +197,7 @@ import Progress from "../components/Progress.svelte";
               let customEv = new CustomEvent("pagechange");
               customEv["pathname"] = "";
               customEv["domImages"] = undefined;
+              customEv["scrollHeight"] = document.documentElement.scrollHeight;
               window.dispatchEvent(customEv);
 
               animate(

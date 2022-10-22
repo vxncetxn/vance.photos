@@ -18,6 +18,7 @@ export function initTransferHandler() {
           clientY: ev && ev.clientY,
           pathname: ev && ev.pathname,
           domImages: ev && ev.domImages,
+          scrollHeight: ev && ev.scrollHeight,
         },
         [],
       ];
