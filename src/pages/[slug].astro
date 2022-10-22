@@ -74,11 +74,7 @@ let { name, slug, length, description } = Astro.props;
     ></ellipse>
   </svg>
 
-  <div
-    data-barba="container"
-    data-barba-namespace="collection"
-    class="w-screen h-screen"
-  >
+  <div data-barba="container" data-barba-namespace="collection">
     <div class="py-1 overflow-hidden">
       <h1
         class="relative uppercase font-sans text-[36px] mobile:text-[44px] tablet:text-[72px] desktop:text-[104px] capsize text-slate-50 mo-text leading-tight mix-blend-difference z-10"
@@ -100,13 +96,13 @@ let { name, slug, length, description } = Astro.props;
                     <p class="mo-text">Go Back</p>
                 </a>
             </div> -->
-    <!-- <div
-      class="fixed left-0 top-0 transform -translate-x-[12%] translate-y-1/2 flex space-x-[100px]"
+    <div
+      class="tablet:fixed tablet:left-0 tablet:top-0 transform tablet:-translate-x-[12%] tablet:translate-y-1/2 flex flex-col tablet:flex-row gap-[6vw] mt-20 mobile:mt-24"
     >
       {
         [...Array(length).keys()].map((n) => (
           <img
-            class="image w-[37.5vw] h-[25vw] object-cover object-center"
+            class="image tablet:w-[37.5vw] tablet:h-[25vw] object-cover object-center"
             src={`https://vance.imgix.net/${slug}/s${
               n + 1
             }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`}
@@ -114,6 +110,6 @@ let { name, slug, length, description } = Astro.props;
           />
         ))
       }
-    </div> -->
+    </div>
   </div>
 </Layout>
