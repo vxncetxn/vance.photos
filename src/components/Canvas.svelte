@@ -135,10 +135,6 @@
       dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
       progress,
     });
-    let pathname = new URL(window.location.href).pathname.slice(1);
-    if (pathname) {
-      initCollection(pathname);
-    }
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
