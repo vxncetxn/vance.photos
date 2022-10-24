@@ -102,8 +102,6 @@ const api = {
       container,
       dimensions: trfDimensions,
       scrollHeight: trfScrollHeight,
-      pathname,
-      domImages,
     } = props;
 
     dimensions = trfDimensions;
@@ -114,10 +112,6 @@ const api = {
       dimensions: trfDimensions,
       progress,
     });
-    if (pathname) {
-      initCollection(pathname, domImages);
-    }
-    // webglInited.setPosition(scroll, cursor);
 
     function rafLoop() {
       if (

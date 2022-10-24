@@ -86,6 +86,8 @@ import Progress from "../components/Progress.svelte";
                   window.location.href
                 ).pathname.slice(1);
                 customEv["domImages"] = domImages;
+                customEv["scrollHeight"] =
+                  document.documentElement.scrollHeight;
                 window.dispatchEvent(customEv);
               });
 

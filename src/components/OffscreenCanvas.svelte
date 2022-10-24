@@ -57,20 +57,6 @@
               height: canvas.offsetHeight,
             },
             scrollHeight: document.documentElement.scrollHeight,
-            pathname,
-            domImages: pathname
-              ? [...document.querySelectorAll(".image")].map((img) => {
-                  const bounds = img.getBoundingClientRect();
-                  const url = new URL(img.src);
-                  return {
-                    src: url.origin + url.pathname,
-                    top: bounds.top,
-                    left: bounds.left,
-                    width: bounds.width,
-                    height: bounds.height,
-                  };
-                })
-              : null,
             dpr: Math.min(window.devicePixelRatio, 2),
           },
           [offscreen]
