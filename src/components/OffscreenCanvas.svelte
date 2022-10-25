@@ -31,14 +31,13 @@
       throttle(api.onMouseMove.bind(api), 100)
     );
     window.addEventListener("pagechange", api.onPageChange.bind(api));
+    window.addEventListener("resize", api.onResize.bind(api));
 
     offscreenWorker.postMessage({
       type: "size",
       width: canvas.offsetWidth,
       height: canvas.offsetHeight,
     });
-
-    let pathname = new URL(window.location.href).pathname.slice(1);
 
     const preloadImages = new Promise((resolve, reject) => {
       imagesLoaded(
@@ -53,8 +52,8 @@
           {
             container: offscreen,
             dimensions: {
-              width: canvas.offsetWidth,
-              height: canvas.offsetHeight,
+              width: window.innerWidth,
+              height: window.innerHeight,
             },
             scrollHeight: document.documentElement.scrollHeight,
             dpr: Math.min(window.devicePixelRatio, 2),

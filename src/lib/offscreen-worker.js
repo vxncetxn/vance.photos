@@ -31,8 +31,8 @@ let scroll = {
 let transitionStartTime = null;
 let transitionFactor = 1.0;
 
-async function initCollection(slug, domImages) {
-  await webglInited.addCollection(slug, domImages);
+async function initCollection(slug) {
+  await webglInited.addCollection(slug);
   webglInited.setCollection(slug);
   webglInited.setPosition(scroll, cursor);
 }
@@ -83,7 +83,7 @@ const api = {
         transitionStartTime = new Date();
         setTimeout(() => (transitionStartTime = null), 820);
       } else {
-        await initCollection(ev.pathname, ev.domImages);
+        await initCollection(ev.pathname);
         transitionFactor = 1.0;
         transitionStartTime = new Date();
         setTimeout(() => (transitionStartTime = null), 820);
@@ -96,6 +96,12 @@ const api = {
         webglInited.hideCollection();
       }, 820);
     }
+  },
+  onResize(ev) {
+    webglInited.resize({
+      width: ev.width,
+      height: ev.height,
+    });
   },
   main(props) {
     let {

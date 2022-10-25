@@ -51,9 +51,7 @@ export class WebglInit {
       this.collections[collection.slug] = {
         images: [...Array(collection.length).keys()].map((i) => {
           return {
-            src: `https://vance.imgix.net/${collection.slug}/s${
-              i + 1
-            }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`,
+            origin: `https://vance.imgix.net/${collection.slug}/s${i + 1}.jpg`,
             lqipTexture: undefined,
           };
         }),
@@ -73,7 +71,7 @@ export class WebglInit {
     Object.entries(this.collections).forEach(([slug, data]) => {
       data.images.forEach((img, i) => {
         let texture = TextureLoader.load(this.gl, {
-          src: img.src,
+          src: `${img.origin}?w=300&h=200&fit=contain&format=auto&blur=200`,
           generateMipmaps: false,
         });
         this.lqipTexturesAdded.push(texture.loaded);
@@ -85,29 +83,63 @@ export class WebglInit {
     });
   }
 
-  onResize() {
-    // this.width = this.container.offsetWidth;
-    // this.height = this.container.offsetHeight;
-    // this.renderer.setSize(this.width, this.height);
-    // this.camera.aspect = this.width / this.height;
-    // this.camera.updateProjectionMatrix();
+  resize(dimensions) {
+    this.width = dimensions.width;
+    this.height = dimensions.height;
+    this.renderer.setSize(this.width, this.height);
+    this.camera.aspect = this.width / this.height;
     // this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-    // this.materials.forEach(m=>{
-    //     m.uniforms.uResolution.value.x = this.width;
-    //     m.uniforms.uResolution.value.y = this.height;
-    // })
-    // this.imageStore.forEach(i=>{
-    //     let bounds = i.img.getBoundingClientRect();
-    //     i.mesh.scale.set(bounds.width,bounds.height,1);
-    //     i.top = bounds.top;
-    //     i.left = bounds.left + this.asscroll.currentPos;
-    //     i.width = bounds.width;
-    //     i.height = bounds.height;
-    //     i.mesh.material.uniforms.uQuadSize.value.x = bounds.width;
-    //     i.mesh.material.uniforms.uQuadSize.value.y = bounds.height;
-    //     i.mesh.material.uniforms.uTextureSize.value.x = bounds.width;
-    //     i.mesh.material.uniforms.uTextureSize.value.y = bounds.height;
-    // })
+    this.camera.perspective();
+
+    Object.entries(this.collections).forEach(([slug, data]) => {
+      let collection = this.collections[slug];
+      collection.widthTotal = 0;
+
+      data.images.forEach((img, i) => {
+        if (img.mesh) {
+          let gap = (6 / 100) * this.width;
+          let width = (37.5 / 100) * this.width;
+          let height = width / 1.5;
+          let top = (1 / 2) * this.height - (1 / 2) * height;
+          let left = collection.widthTotal - (12 / 100) * this.width;
+
+          img.mesh.program.uniforms.uViewportSize.value = [
+            this.width,
+            this.height,
+          ];
+
+          img.mesh.scale.x = width;
+          img.mesh.scale.y = height;
+
+          collection.widthTotal += width + gap;
+
+          // Set initial pos
+          let posX = left - this.width / 2 + width / 2;
+          let posY = -top + this.height / 2 - height / 2;
+
+          img.mesh.position.x = posX;
+          img.mesh.position.y = posY;
+
+          let meshOffset = img.mesh.scale.x / 2;
+          let isBefore = posX + meshOffset < -this.width;
+          let isAfter = posY - meshOffset > this.width;
+
+          collection.images[i] = {
+            ...collection.images[i],
+            width,
+            height,
+            top,
+            left,
+            posX,
+            posY,
+            isBefore,
+            isAfter,
+            extraScroll: 0,
+          };
+        }
+      });
+      this.render();
+    });
   }
 
   checkCollection(slug) {
@@ -170,14 +202,19 @@ export class WebglInit {
     }
   }
 
-  async addCollection(slug, domImages) {
+  async addCollection(slug) {
     await Promise.all(this.lqipTexturesAdded);
 
     let group = new Transform();
     let collection = this.collections[slug];
 
-    domImages.forEach((img, i) => {
-      let { src, top, left, width, height } = img;
+    collection.images.forEach((img, i) => {
+      // dom-independent calcs
+      let gap = (6 / 100) * this.width;
+      let width = (37.5 / 100) * this.width;
+      let height = width / 1.5;
+      let top = (1 / 2) * this.height - (1 / 2) * height;
+      let left = collection.widthTotal - (12 / 100) * this.width;
 
       let program = new Program(this.gl, {
         depthTest: false,
@@ -266,7 +303,7 @@ export class WebglInit {
       mesh.scale.y = height;
       mesh.setParent(group);
 
-      collection.widthTotal += width + 100;
+      collection.widthTotal += width + gap;
 
       // Set initial pos
       let posX = left - this.width / 2 + width / 2;
@@ -294,7 +331,7 @@ export class WebglInit {
       };
 
       let actualTexture = TextureLoader.load(this.gl, {
-        src: `${src}?w=900&h=600&fit=contain&format=auto`,
+        src: `${img.origin}?w=900&h=600&fit=contain&format=auto`,
         generateMipmaps: false,
       });
       actualTexture.loaded.then(() => {

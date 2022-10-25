@@ -58,18 +58,7 @@
     let transitionFactor = 1.0;
 
     async function initCollection(slug) {
-      let domImages = [...document.querySelectorAll(".image")].map((img) => {
-        const bounds = img.getBoundingClientRect();
-        const url = new URL(img.src);
-        return {
-          src: url.origin + url.pathname,
-          top: bounds.top,
-          left: bounds.left,
-          width: bounds.width,
-          height: bounds.height,
-        };
-      });
-      await webglInited.addCollection(slug, domImages);
+      await webglInited.addCollection(slug);
       webglInited.setCollection(slug);
       webglInited.setPosition(scroll, cursor);
     }
