@@ -3,7 +3,7 @@
   import * as Comlink from "comlink";
   import normalizeWheel from "normalize-wheel";
   import { progress } from "../stores/progress";
-  import imagesLoaded from "imagesloaded";
+  import collectionsData from "../data/collections.json";
 
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
@@ -17,29 +17,28 @@
 
   initTransferHandler();
   let canvas;
+  let dimensions = {
+    width: canvas.offsetWidth,
+    height: canvas.offsetHeight,
+  };
   let scroll;
+  let scrollHeight;
+  let currentPath;
+
+  function calcScrollHeight(slug) {
+    let gap = (6 / 100) * dimensions.width;
+    let padding = dimensions.width <= 376 ? 16 : 20;
+    let width = dimensions.width - 2 * padding;
+    let height = width / 1.5;
+    scrollHeight =
+      collectionsData.find((c) => c.slug === slug).length * (height + gap) +
+      (1 / 2) * dimensions.height;
+  }
 
   onMount(async () => {
     progress.set(progress.get() + 17.3);
 
     const api = Comlink.wrap(calcWorker);
-
-    let dimensions = {
-      width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
-    };
-
-    const preloadImages = new Promise((resolve, reject) => {
-      imagesLoaded(
-        document.querySelectorAll(".image"),
-        { background: true },
-        resolve
-      );
-    });
-    let scrollHeight;
-    await Promise.all([preloadImages]).then(async () => {
-      scrollHeight = document.documentElement.scrollHeight;
-    });
 
     const cursor = {
       ease: 0.05,
@@ -96,15 +95,16 @@
         last: 0,
         direction: "right",
       };
-      scrollHeight = ev.scrollHeight;
-      if (ev.pathname) {
-        if (webglInited.checkCollection(ev.pathname)) {
-          webglInited.setCollection(ev.pathname);
+      currentPath = ev.pathname;
+      calcScrollHeight(currentPath);
+      if (currentPath) {
+        if (webglInited.checkCollection(currentPath)) {
+          webglInited.setCollection(currentPath);
           transitionFactor = 1.0;
           transitionStartTime = new Date();
           setTimeout(() => (transitionStartTime = null), 820);
         } else {
-          initCollection(ev.pathname);
+          initCollection(currentPath);
           transitionFactor = 1.0;
           transitionStartTime = new Date();
           setTimeout(() => (transitionStartTime = null), 820);
@@ -119,6 +119,15 @@
       }
     }
 
+    function onResize(ev) {
+      dimensions = {
+        width: ev.width,
+        height: ev.height,
+      };
+      calcScrollHeight(currentPath);
+      webglInited.resize(dimensions);
+    }
+
     let webglInited = new WebglInit({
       container: canvas,
       dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
@@ -129,6 +138,7 @@
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
     window.addEventListener("pagechange", onPageChange);
+    window.addEventListener("resize", onResize);
 
     async function rafLoop() {
       if (

@@ -4,6 +4,7 @@ import { atom } from "nanostores";
 
 import { initTransferHandler } from "./event.transferhandler";
 import { WebglInit } from "./webgl";
+import collectionsData from "../data/collections.json";
 
 initTransferHandler();
 
@@ -30,11 +31,22 @@ let scroll = {
 };
 let transitionStartTime = null;
 let transitionFactor = 1.0;
+let currentPath;
 
 async function initCollection(slug) {
   await webglInited.addCollection(slug);
   webglInited.setCollection(slug);
   webglInited.setPosition(scroll, cursor);
+}
+
+function calcScrollHeight(slug) {
+  let gap = (6 / 100) * dimensions.width;
+  let padding = dimensions.width <= 376 ? 16 : 20;
+  let width = dimensions.width - 2 * padding;
+  let height = width / 1.5;
+  scrollHeight =
+    collectionsData.find((c) => c.slug === slug).length * (height + gap) +
+    (1 / 2) * dimensions.height;
 }
 
 let webglInited;
@@ -75,15 +87,18 @@ const api = {
       last: 0,
       direction: "right",
     };
-    scrollHeight = ev.scrollHeight;
-    if (ev.pathname) {
-      if (webglInited.checkCollection(ev.pathname)) {
-        webglInited.setCollection(ev.pathname);
+    currentPath = ev.pathname;
+    calcScrollHeight(currentPath);
+    console.log(scrollHeight);
+
+    if (currentPath) {
+      if (webglInited.checkCollection(currentPath)) {
+        webglInited.setCollection(currentPath);
         transitionFactor = 1.0;
         transitionStartTime = new Date();
         setTimeout(() => (transitionStartTime = null), 820);
       } else {
-        await initCollection(ev.pathname);
+        await initCollection(currentPath);
         transitionFactor = 1.0;
         transitionStartTime = new Date();
         setTimeout(() => (transitionStartTime = null), 820);
@@ -98,10 +113,12 @@ const api = {
     }
   },
   onResize(ev) {
-    webglInited.resize({
+    dimensions = {
       width: ev.width,
       height: ev.height,
-    });
+    };
+    calcScrollHeight(currentPath);
+    webglInited.resize(dimensions);
   },
   main(props) {
     let {

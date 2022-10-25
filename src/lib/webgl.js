@@ -57,6 +57,7 @@ export class WebglInit {
         }),
         group: undefined,
         widthTotal: 0,
+        heightTotal: 0,
       };
     });
 
@@ -94,14 +95,28 @@ export class WebglInit {
     Object.entries(this.collections).forEach(([slug, data]) => {
       let collection = this.collections[slug];
       collection.widthTotal = 0;
+      collection.heightTotal = 0;
 
       data.images.forEach((img, i) => {
         if (img.mesh) {
           let gap = (6 / 100) * this.width;
-          let width = (37.5 / 100) * this.width;
-          let height = width / 1.5;
-          let top = (1 / 2) * this.height - (1 / 2) * height;
-          let left = collection.widthTotal - (12 / 100) * this.width;
+          let width;
+          let height;
+          let top;
+          let left;
+
+          if (this.width <= 768) {
+            let padding = this.width <= 376 ? 16 : 20;
+            width = this.width - 2 * padding;
+            height = width / 1.5;
+            top = collection.heightTotal + (1 / 2) * this.height;
+            left = padding;
+          } else {
+            width = (37.5 / 100) * this.width;
+            height = width / 1.5;
+            top = (1 / 2) * this.height - (1 / 2) * height;
+            left = collection.widthTotal - (12 / 100) * this.width;
+          }
 
           img.mesh.program.uniforms.uViewportSize.value = [
             this.width,
@@ -112,6 +127,7 @@ export class WebglInit {
           img.mesh.scale.y = height;
 
           collection.widthTotal += width + gap;
+          collection.heightTotal += height + gap;
 
           // Set initial pos
           let posX = left - this.width / 2 + width / 2;
@@ -211,10 +227,23 @@ export class WebglInit {
     collection.images.forEach((img, i) => {
       // dom-independent calcs
       let gap = (6 / 100) * this.width;
-      let width = (37.5 / 100) * this.width;
-      let height = width / 1.5;
-      let top = (1 / 2) * this.height - (1 / 2) * height;
-      let left = collection.widthTotal - (12 / 100) * this.width;
+      let width;
+      let height;
+      let top;
+      let left;
+
+      if (this.width <= 768) {
+        let padding = this.width <= 376 ? 16 : 20;
+        width = this.width - 2 * padding;
+        height = width / 1.5;
+        top = collection.heightTotal + (1 / 2) * this.height;
+        left = padding;
+      } else {
+        width = (37.5 / 100) * this.width;
+        height = width / 1.5;
+        top = (1 / 2) * this.height - (1 / 2) * height;
+        left = collection.widthTotal - (12 / 100) * this.width;
+      }
 
       let program = new Program(this.gl, {
         depthTest: false,
@@ -304,6 +333,7 @@ export class WebglInit {
       mesh.setParent(group);
 
       collection.widthTotal += width + gap;
+      collection.heightTotal += height + gap;
 
       // Set initial pos
       let posX = left - this.width / 2 + width / 2;
@@ -339,7 +369,7 @@ export class WebglInit {
         this.render();
       });
     });
-    group.rotation.z = 0.05;
+    // group.rotation.z = 0.05;
     group.setParent(this.scene);
     collection.group = group;
   }
@@ -386,11 +416,11 @@ export class WebglInit {
           (Math.abs(scroll.current - scroll.last) / this.width) * 10;
       });
 
-      collection.group.rotation.set(
-        0,
-        0,
-        0.1 + (cursor.current / this.height - 0.5) / 20
-      );
+      // collection.group.rotation.set(
+      //   0,
+      //   0,
+      //   0.1 + (cursor.current / this.height - 0.5) / 20
+      // );
     }
   }
 

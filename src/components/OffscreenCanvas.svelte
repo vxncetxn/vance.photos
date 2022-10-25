@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import * as Comlink from "comlink";
   import { progress } from "../stores/progress";
-  import imagesLoaded from "imagesloaded";
 
   const offscreenWorker = new Worker(
     new URL("../lib/offscreen-worker", import.meta.url),
@@ -39,29 +38,20 @@
       height: canvas.offsetHeight,
     });
 
-    const preloadImages = new Promise((resolve, reject) => {
-      imagesLoaded(
-        document.querySelectorAll(".image"),
-        { background: true },
-        resolve
-      );
-    });
-    await Promise.all([preloadImages]).then(async () => {
-      await api.main(
-        Comlink.transfer(
-          {
-            container: offscreen,
-            dimensions: {
-              width: window.innerWidth,
-              height: window.innerHeight,
-            },
-            scrollHeight: document.documentElement.scrollHeight,
-            dpr: Math.min(window.devicePixelRatio, 2),
+    await api.main(
+      Comlink.transfer(
+        {
+          container: offscreen,
+          dimensions: {
+            width: window.innerWidth,
+            height: window.innerHeight,
           },
-          [offscreen]
-        )
-      );
-    });
+          scrollHeight: document.documentElement.scrollHeight,
+          dpr: Math.min(window.devicePixelRatio, 2),
+        },
+        [offscreen]
+      )
+    );
 
     const intervalId = setInterval(async () => {
       let receivedProgress = await api.getProgress();
