@@ -49,10 +49,11 @@ export class WebglInit {
     this.collections = {};
     collectionsData.forEach((collection) => {
       this.collections[collection.slug] = {
-        images: [...Array(collection.length).keys()].map((i) => {
+        images: collection.isLandscape.map((isLandscape, i) => {
           return {
             origin: `https://vance.imgix.net/${collection.slug}/s${i + 1}.jpg`,
             lqipTexture: undefined,
+            isLandscape,
           };
         }),
         group: undefined,
@@ -108,12 +109,12 @@ export class WebglInit {
           if (this.width <= 768) {
             let padding = this.width <= 376 ? 16 : 20;
             width = this.width - 2 * padding;
-            height = width / 1.5;
+            height = img.isLandscape ? width / 1.5 : width / (2 / 3);
             top = collection.heightTotal + (1 / 2) * this.height;
             left = padding;
           } else {
-            width = (37.5 / 100) * this.width;
-            height = width / 1.5;
+            height = 0.25 * this.width;
+            width = img.isLandscape ? 1.5 * height : (2 / 3) * height;
             top = (1 / 2) * this.height - (1 / 2) * height;
             left = collection.widthTotal - (12 / 100) * this.width;
           }
@@ -235,12 +236,12 @@ export class WebglInit {
       if (this.width <= 768) {
         let padding = this.width <= 376 ? 16 : 20;
         width = this.width - 2 * padding;
-        height = width / 1.5;
+        height = img.isLandscape ? width / 1.5 : width / (2 / 3);
         top = collection.heightTotal + (1 / 2) * this.height;
         left = padding;
       } else {
-        width = (37.5 / 100) * this.width;
-        height = width / 1.5;
+        height = 0.25 * this.width;
+        width = img.isLandscape ? 1.5 * height : (2 / 3) * height;
         top = (1 / 2) * this.height - (1 / 2) * height;
         left = collection.widthTotal - (12 / 100) * this.width;
       }
@@ -369,7 +370,7 @@ export class WebglInit {
         this.render();
       });
     });
-    // group.rotation.z = 0.05;
+    group.rotation.z = 0.05;
     group.setParent(this.scene);
     collection.group = group;
   }
@@ -416,11 +417,11 @@ export class WebglInit {
           (Math.abs(scroll.current - scroll.last) / this.width) * 10;
       });
 
-      // collection.group.rotation.set(
-      //   0,
-      //   0,
-      //   0.1 + (cursor.current / this.height - 0.5) / 20
-      // );
+      collection.group.rotation.set(
+        0,
+        0,
+        0.1 + (cursor.current / this.height - 0.5) / 20
+      );
     }
   }
 

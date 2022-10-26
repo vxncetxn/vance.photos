@@ -4,6 +4,20 @@
     "slug": "anniversary",
     "colors": ["#6a82fb", "#fc5c7d"],
     "length": 12,
+    "isLandscape": [
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ],
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
   },
   {
@@ -11,6 +25,20 @@
     "slug": "covid-suppers",
     "colors": ["#56B4D3", "#348F50"],
     "length": 12,
+    "isLandscape": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false
+    ],
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
   },
   {
@@ -18,6 +46,24 @@
     "slug": "easter",
     "colors": ["#ff6e7f", "#bfe9ff"],
     "length": 16,
+    "isLandscape": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ],
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
   },
   {
@@ -25,6 +71,7 @@
     "slug": "europe-solo",
     "colors": ["#3CA55C", "#B5AC49"],
     "length": 0,
+    "isLandscape": [],
     "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
   }
 ]

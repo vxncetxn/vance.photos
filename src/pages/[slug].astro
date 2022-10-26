@@ -1,7 +1,6 @@
 ---
 import collections from "../data/collections.json";
 import Layout from "../layouts/Layout.astro";
-// import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 
 export async function getStaticPaths() {
   return collections.map((collection) => {
@@ -96,7 +95,7 @@ let { name, slug, length, description } = Astro.props;
                     <p class="mo-text">Go Back</p>
                 </a>
             </div> -->
-    <div
+    <!-- <div
       class="tablet:fixed tablet:-left-[12%] tablet:top-1/2 transform tablet:-translate-y-1/2 flex flex-col tablet:flex-row gap-[6vw] mt-20 mobile:mt-24 tablet:mt-0"
     >
       {
@@ -110,6 +109,6 @@ let { name, slug, length, description } = Astro.props;
           />
         ))
       }
-    </div>
+    </div> -->
   </div>
 </Layout>
