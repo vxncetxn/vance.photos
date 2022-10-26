@@ -8,8 +8,9 @@ import {
   TextureLoader,
 } from "ogl";
 
-// import vertex from "../shaders/vertex.glsl";
-// import fragment from "../shaders/fragment.glsl";
+import vertScrollVertex from "../shaders/vert-scroll-vertex.glsl";
+import horiScrollVertex from "../shaders/hori-scroll-vertex.glsl";
+import fragment from "../shaders/fragment.glsl";
 
 import collectionsData from "../data/collections.json";
 
@@ -119,10 +120,17 @@ export class WebglInit {
             left = collection.widthTotal - (12 / 100) * this.width;
           }
 
-          img.mesh.program.uniforms.uViewportSize.value = [
-            this.width,
-            this.height,
-          ];
+          let program = new Program(this.gl, {
+            depthTest: false,
+            depthWrite: false,
+            vertex: this.width <= 768 ? vertScrollVertex : horiScrollVertex,
+            fragment,
+            uniforms: {
+              ...img.mesh.program.uniforms,
+              uViewportSize: { value: [this.width, this.height] },
+            },
+          });
+          img.mesh.program = program;
 
           img.mesh.scale.x = width;
           img.mesh.scale.y = height;
@@ -249,76 +257,8 @@ export class WebglInit {
       let program = new Program(this.gl, {
         depthTest: false,
         depthWrite: false,
-        vertex:
-          this.width <= 768
-            ? `#define PI 3.1415926535897932384626433832795
-
-        precision highp float;
-        precision highp int;
-        
-        attribute vec3 position;
-        attribute vec2 uv;
-        
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        uniform vec2 uViewportSize;
-        uniform float uStrength;
-        
-        varying vec2 vUv;
-        
-        void main() {
-            vUv = uv;
-        
-            vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
-            newPosition.z += min(cos(newPosition.y / uViewportSize.y * PI) * uStrength * 60.0, cos(newPosition.y / uViewportSize.y * PI) * 40.0);
-        
-            gl_Position = projectionMatrix * newPosition;
-        }`
-            : `#define PI 3.1415926535897932384626433832795
-
-        precision highp float;
-        precision highp int;
-        
-        attribute vec3 position;
-        attribute vec2 uv;
-        
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        uniform vec2 uViewportSize;
-        uniform float uStrength;
-        
-        varying vec2 vUv;
-        
-        void main() {
-            vUv = uv;
-        
-            vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
-            newPosition.z += min(cos(newPosition.x / uViewportSize.x * PI) * uStrength * 400.0, cos(newPosition.x / uViewportSize.x * PI) * 200.0);
-        
-            gl_Position = projectionMatrix * newPosition;
-        }`,
-        fragment: `precision highp float;
-
-        uniform sampler2D uTexture;
-        uniform float uTime;
-        uniform float uTransitionFactor;
-        
-        varying vec2 vUv;
-        
-        void main() {
-            vec4 textureResult = texture2D(uTexture, vUv);
-            float func;
-            if (2.0 * uTime / 800.0 < 1.0)
-            {
-              func = -1.0 / 2.0 * pow(2.0 * uTime / 800.0, 3.0) + 1.0;
-            }
-            else
-            {
-              func = -1.0 / 2.0 * (pow((2.0 * uTime / 800.0) - 2.0, 3.0) + 2.0) + 1.0;
-            }
-            textureResult.a = ceil(max((vUv.y - func) * uTransitionFactor, 0.0));
-            gl_FragColor = textureResult;
-        }`,
+        vertex: this.width <= 768 ? vertScrollVertex : horiScrollVertex,
+        fragment,
         uniforms: {
           uTexture: { value: collection.images[i].lqipTexture },
           uViewportSize: { value: [this.width, this.height] },

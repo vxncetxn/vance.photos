@@ -93,7 +93,6 @@ const api = {
     };
     currentPath = ev.pathname;
     calcScrollHeight(currentPath);
-    console.log(scrollHeight);
 
     if (currentPath) {
       if (webglInited.checkCollection(currentPath)) {
