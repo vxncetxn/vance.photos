@@ -18,7 +18,7 @@ export async function getStaticPaths() {
   });
 }
 
-let { name, slug, length, description } = Astro.props;
+let { name, description } = Astro.props;
 ---
 
 <Layout title={`vance.photos \\ ${name}`} route="collection">
@@ -90,25 +90,5 @@ let { name, slug, length, description } = Astro.props;
         {description}
       </p>
     </div>
-    <!-- <div class="py-1 mt-10 overflow-hidden">
-                <a href="/" class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white">
-                    <p class="mo-text">Go Back</p>
-                </a>
-            </div> -->
-    <!-- <div
-      class="tablet:fixed tablet:-left-[12%] tablet:top-1/2 transform tablet:-translate-y-1/2 flex flex-col tablet:flex-row gap-[6vw] mt-20 mobile:mt-24 tablet:mt-0"
-    >
-      {
-        [...Array(length).keys()].map((n) => (
-          <img
-            class="image w-full tablet:w-[37.5vw] tablet:h-[25vw] object-cover object-center"
-            src={`https://vance.imgix.net/${slug}/s${
-              n + 1
-            }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`}
-            alt="bowl"
-          />
-        ))
-      }
-    </div> -->
   </div>
 </Layout>

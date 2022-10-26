@@ -34,8 +34,8 @@
 
     offscreenWorker.postMessage({
       type: "size",
-      width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
     });
 
     await api.main(

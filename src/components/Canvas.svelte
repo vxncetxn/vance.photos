@@ -3,68 +3,51 @@
   import * as Comlink from "comlink";
   import normalizeWheel from "normalize-wheel";
   import { progress } from "../stores/progress";
-  import collectionsData from "../data/collections.json";
-
+  import { calcScrollHeight } from "../lib/calcScrollHeight";
+  import { throttle } from "../lib/throttle";
+  import { initTransferHandler } from "../lib/event.transferhandler";
+  import { WebglInit } from "../lib/webgl";
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
     {
       type: "module",
     }
   );
-  import { throttle } from "../lib/throttle";
-  import { initTransferHandler } from "../lib/event.transferhandler";
-  import { WebglInit } from "../lib/webgl";
 
   initTransferHandler();
+
   let canvas;
   let dimensions = {
-    width: canvas.offsetWidth,
-    height: canvas.offsetHeight,
+    width: window.innerWidth,
+    height: window.innerHeight,
   };
-  let scroll;
   let scrollHeight;
+  let cursor = {
+    ease: 0.05,
+    current: 0,
+    target: 0,
+    last: 0,
+  };
+  let scroll = {
+    ease: 0.05,
+    current: 0,
+    target: 0,
+    last: 0,
+    direction: "right",
+  };
+  let transitionStartTime = null;
+  let transitionFactor = 1.0;
   let currentPath;
-
-  function calcScrollHeight(slug) {
-    let gap = (6 / 100) * dimensions.width;
-    let padding = dimensions.width <= 376 ? 16 : 20;
-    let width = dimensions.width - 2 * padding;
-    let collectionHeight = 0;
-    collectionsData
-      .find((c) => c.slug === slug)
-      .isLandscape.forEach((isLandscape) => {
-        collectionHeight += isLandscape ? width / 1.5 : width / (2 / 3);
-        collectionHeight += gap;
-      });
-    scrollHeight = collectionHeight - gap + (1 / 2) * dimensions.height;
-  }
+  let webglInited = new WebglInit({
+    container: canvas,
+    dimensions: { width: window.innerWidth, height: window.innerHeight },
+    progress,
+  });
 
   onMount(async () => {
     progress.set(progress.get() + 17.3);
 
     const api = Comlink.wrap(calcWorker);
-
-    const cursor = {
-      ease: 0.05,
-      current: 0,
-      target: 0,
-      last: 0,
-    };
-    scroll = {
-      ease: 0.05,
-      current: 0,
-      target: 0,
-      last: 0,
-      direction: "right",
-    };
-    let transitionStartTime = null;
-    let transitionFactor = 1.0;
-
-    async function initCollection(slug) {
-      await webglInited.addCollection(slug);
-      webglInited.setCollection(slug);
-      webglInited.setPosition(scroll, cursor);
-    }
 
     function onWheel(ev) {
       const normalized = normalizeWheel(ev);
@@ -91,7 +74,7 @@
       cursor.target = ev.clientY;
     }
 
-    function onPageChange(ev) {
+    async function onPageChange(ev) {
       scroll = {
         ease: 0.05,
         current: 0,
@@ -100,19 +83,12 @@
         direction: "right",
       };
       currentPath = ev.pathname;
-      calcScrollHeight(currentPath);
+      scrollHeight = calcScrollHeight(currentPath, dimensions);
       if (currentPath) {
-        if (webglInited.checkCollection(currentPath)) {
-          webglInited.setCollection(currentPath);
-          transitionFactor = 1.0;
-          transitionStartTime = new Date();
-          setTimeout(() => (transitionStartTime = null), 820);
-        } else {
-          initCollection(currentPath);
-          transitionFactor = 1.0;
-          transitionStartTime = new Date();
-          setTimeout(() => (transitionStartTime = null), 820);
-        }
+        await webglInited.setCollection(currentPath);
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
       } else {
         transitionFactor = -1.0;
         transitionStartTime = new Date();
@@ -135,15 +111,9 @@
         width: ev.width,
         height: ev.height,
       };
-      calcScrollHeight(currentPath);
+      scrollHeight = calcScrollHeight(currentPath, dimensions);
       webglInited.resize(dimensions);
     }
-
-    let webglInited = new WebglInit({
-      container: canvas,
-      dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
-      progress,
-    });
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });

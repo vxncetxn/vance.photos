@@ -167,15 +167,18 @@ export class WebglInit {
     });
   }
 
-  checkCollection(slug) {
-    return !!this.collections[slug].group;
-  }
-
-  setCollection(slug) {
+  async setCollection(slug) {
     if (slug) {
-      this.activeCollection = slug;
-      this.collections[slug].group.visible = true;
-      this.render();
+      if (!!this.collections[slug].group) {
+        this.activeCollection = slug;
+        this.collections[slug].group.visible = true;
+        this.render();
+      } else {
+        await this.addCollection(slug);
+        this.activeCollection = slug;
+        this.collections[slug].group.visible = true;
+        this.render();
+      }
     }
   }
 

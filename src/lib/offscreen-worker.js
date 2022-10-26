@@ -1,22 +1,16 @@
 import * as Comlink from "comlink";
 import normalizeWheel from "normalize-wheel";
 import { atom } from "nanostores";
-
 import { initTransferHandler } from "./event.transferhandler";
 import { WebglInit } from "./webgl";
-import collectionsData from "../data/collections.json";
+import { calcScrollHeight } from "./calcScrollHeight";
+import { lerp } from "./lerp";
 
 initTransferHandler();
 
-function lerp(p1, p2, t) {
-  return p1 + (p2 - p1) * t;
-}
-
 let dimensions;
-
 let scrollHeight;
-
-const cursor = {
+let cursor = {
   ease: 0.05,
   current: 0,
   target: 0,
@@ -32,27 +26,6 @@ let scroll = {
 let transitionStartTime = null;
 let transitionFactor = 1.0;
 let currentPath;
-
-async function initCollection(slug) {
-  await webglInited.addCollection(slug);
-  webglInited.setCollection(slug);
-  webglInited.setPosition(scroll, cursor);
-}
-
-function calcScrollHeight(slug) {
-  let gap = (6 / 100) * dimensions.width;
-  let padding = dimensions.width <= 376 ? 16 : 20;
-  let width = dimensions.width - 2 * padding;
-  let collectionHeight = 0;
-  collectionsData
-    .find((c) => c.slug === slug)
-    .isLandscape.forEach((isLandscape) => {
-      collectionHeight += isLandscape ? width / 1.5 : width / (2 / 3);
-      collectionHeight += gap;
-    });
-  scrollHeight = collectionHeight - gap + (1 / 2) * dimensions.height;
-}
-
 let webglInited;
 let progress = atom(48.8);
 
@@ -92,20 +65,13 @@ const api = {
       direction: "right",
     };
     currentPath = ev.pathname;
-    calcScrollHeight(currentPath);
+    scrollHeight = calcScrollHeight(currentPath, dimensions);
 
     if (currentPath) {
-      if (webglInited.checkCollection(currentPath)) {
-        webglInited.setCollection(currentPath);
-        transitionFactor = 1.0;
-        transitionStartTime = new Date();
-        setTimeout(() => (transitionStartTime = null), 820);
-      } else {
-        await initCollection(currentPath);
-        transitionFactor = 1.0;
-        transitionStartTime = new Date();
-        setTimeout(() => (transitionStartTime = null), 820);
-      }
+      await webglInited.setCollection(currentPath);
+      transitionFactor = 1.0;
+      transitionStartTime = new Date();
+      setTimeout(() => (transitionStartTime = null), 820);
     } else {
       transitionFactor = -1.0;
       transitionStartTime = new Date();
@@ -127,7 +93,7 @@ const api = {
       width: ev.width,
       height: ev.height,
     };
-    calcScrollHeight(currentPath);
+    scrollHeight = calcScrollHeight(currentPath, dimensions);
     webglInited.resize(dimensions);
   },
   main(props) {
