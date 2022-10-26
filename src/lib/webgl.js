@@ -91,7 +91,6 @@ export class WebglInit {
     this.height = dimensions.height;
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
-    // this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
     this.camera.perspective();
 
     Object.entries(this.collections).forEach(([slug, data]) => {

@@ -38,11 +38,6 @@
   let transitionStartTime = null;
   let transitionFactor = 1.0;
   let currentPath;
-  let webglInited = new WebglInit({
-    container: canvas,
-    dimensions: { width: window.innerWidth, height: window.innerHeight },
-    progress,
-  });
 
   onMount(async () => {
     progress.set(progress.get() + 17.3);
@@ -99,7 +94,7 @@
       }
     }
 
-    function onResize(ev) {
+    function onResize() {
       scroll = {
         ease: 0.05,
         current: 0,
@@ -108,8 +103,8 @@
         direction: "right",
       };
       dimensions = {
-        width: ev.width,
-        height: ev.height,
+        width: window.innerWidth,
+        height: window.innerHeight,
       };
       scrollHeight = calcScrollHeight(currentPath, dimensions);
       webglInited.resize(dimensions);
@@ -120,6 +115,12 @@
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
     window.addEventListener("pagechange", onPageChange);
     window.addEventListener("resize", onResize);
+
+    let webglInited = new WebglInit({
+      container: canvas,
+      dimensions: { width: window.innerWidth, height: window.innerHeight },
+      progress,
+    });
 
     async function rafLoop() {
       if (
