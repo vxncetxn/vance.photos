@@ -116,6 +116,7 @@
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchmove", onWheel, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
     window.addEventListener("pagechange", onPageChange);
     window.addEventListener("resize", onResize);

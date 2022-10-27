@@ -34,6 +34,9 @@
       passive: true,
     });
     window.addEventListener("wheel", api.onWheel.bind(api), { passive: true });
+    window.addEventListener("touchmove", api.onWheel.bind(api), {
+      passive: true,
+    });
     window.addEventListener("wheel", onWheelMain, { passive: true });
     window.addEventListener(
       "mousemove",
