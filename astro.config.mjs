@@ -17,5 +17,8 @@ export default defineConfig({
       noExternal: [],
     },
     plugins: [glsl(), visualizer()],
+    worker: {
+      plugins: [glsl()],
+    },
   },
 });

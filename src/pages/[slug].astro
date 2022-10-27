@@ -1,7 +1,6 @@
 ---
 import collections from "../data/collections.json";
 import Layout from "../layouts/Layout.astro";
-// import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 
 export async function getStaticPaths() {
   return collections.map((collection) => {
@@ -19,7 +18,7 @@ export async function getStaticPaths() {
   });
 }
 
-let { name, slug, length, description } = Astro.props;
+let { name, description } = Astro.props;
 ---
 
 <Layout title={`vance.photos \\ ${name}`} route="collection">
@@ -74,42 +73,19 @@ let { name, slug, length, description } = Astro.props;
     ></ellipse>
   </svg>
 
-  <div
-    data-barba="container"
-    data-barba-namespace="collection"
-    class="w-screen h-screen px-16 py-16 bg-[#1c1c1c]"
-  >
-    <!-- <CanvasControlFlow client:idle /> -->
-    <div class="py-1 overflow-hidden">
+  <div data-barba="container" data-barba-namespace="collection">
+    <div class="py-1 overflow-hidden covered-text">
       <h1
-        class="relative uppercase font-sans text-[120px] capsize text-slate-50 mo-text leading-tight mix-blend-difference z-10"
+        class="relative uppercase font-sans text-[36px] mobile:text-[44px] tablet:text-[72px] desktop:text-[104px] capsize text-slate-50 mo-text leading-tight mix-blend-difference z-10"
       >
         {name}
       </h1>
     </div>
-    <!-- <div class="py-1 mt-10 overflow-hidden">
-                <a href="/" class="text-6xl text-transparent cursor-pointer text-stroke hover:text-white">
-                    <p class="mo-text">Go Back</p>
-                </a>
-            </div> -->
     <div
-      class="fixed left-0 top-0 transform translate-y-52 -translate-x-44 flex space-x-[100px]"
+      class="z-10 max-w-sm overflow-hidden tablet:fixed tablet:right-40 tablet:bottom-40 desktop:right-64 desktop:bottom-64 covered-text"
     >
-      {
-        [...Array(length).keys()].map((n) => (
-          <img
-            class="image w-[525px] h-[350px] object-cover object-center"
-            src={`https://vance.imgix.net/${slug}/s${
-              n + 1
-            }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`}
-            alt="bowl"
-          />
-        ))
-      }
-    </div>
-    <div class="fixed z-10 max-w-sm overflow-hidden bottom-16 right-16">
       <p
-        class="font-sans text-xl capsize text-slate-50 mix-blend-difference mo-text load-in-text"
+        class="font-sans text-[16px] tablet:text-[18px] desktop:text-[20px] leading-[1.5] tablet:leading-[1.75] capsize text-slate-50 mt-20 mobile:mt-24 tablet:mt-0 mix-blend-difference mo-text load-in-text"
       >
         {description}
       </p>

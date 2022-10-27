@@ -15,10 +15,10 @@ import Progress from "../components/Progress.svelte";
     <script>
       import barba from "@barba/core";
       import { animate } from "motion";
-      import imagesLoaded from "imagesloaded";
       import { progress } from "../stores/progress";
 
       barba.init({
+        timeout: 5000,
         views: [
           {
             namespace: "index",
@@ -60,34 +60,11 @@ import Progress from "../components/Progress.svelte";
               ).finished;
 
               let customEv = new CustomEvent("pagechange");
-              const preloadImages = new Promise((resolve, reject) => {
-                imagesLoaded(
-                  document.querySelectorAll(".image"),
-                  { background: true },
-                  resolve
-                );
-              });
-              Promise.all([preloadImages]).then(() => {
-                let domImages = [...document.querySelectorAll(".image")].map(
-                  (img) => {
-                    const bounds = img.getBoundingClientRect();
-                    const url = new URL(img.src);
-                    return {
-                      src: url.origin + url.pathname,
-                      top: bounds.top,
-                      left: bounds.left,
-                      width: bounds.width,
-                      height: bounds.height,
-                    };
-                  }
-                );
-
-                customEv["pathname"] = new URL(
-                  window.location.href
-                ).pathname.slice(1);
-                customEv["domImages"] = domImages;
-                window.dispatchEvent(customEv);
-              });
+              customEv["pathname"] = new URL(
+                window.location.href
+              ).pathname.slice(1);
+              customEv["scrollHeight"] = document.documentElement.scrollHeight;
+              window.dispatchEvent(customEv);
 
               return animate(
                 loadInTexts,
@@ -109,7 +86,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunOne,
                 {
-                  transform: "translate(-50%, -50%)",
+                  transform: "translate(calc(-50vw + 30%), calc(-50vh + 80%))",
                 },
                 {
                   duration: 1.6,
@@ -123,7 +100,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunTwo,
                 {
-                  transform: "translate(-20%, -20%)",
+                  transform: "translate(calc(-50vw + 70%), calc(-50vh + 65%))",
                 },
                 {
                   duration: 1.6,
@@ -146,34 +123,11 @@ import Progress from "../components/Progress.svelte";
               let texts = data.next.container.querySelectorAll(".mo-text");
 
               let customEv = new CustomEvent("pagechange");
-              const preloadImages = new Promise((resolve, reject) => {
-                imagesLoaded(
-                  document.querySelectorAll(".image"),
-                  { background: true },
-                  resolve
-                );
-              });
-              Promise.all([preloadImages]).then(() => {
-                let domImages = [...document.querySelectorAll(".image")].map(
-                  (img) => {
-                    const bounds = img.getBoundingClientRect();
-                    const url = new URL(img.src);
-                    return {
-                      src: url.origin + url.pathname,
-                      top: bounds.top,
-                      left: bounds.left,
-                      width: bounds.width,
-                      height: bounds.height,
-                    };
-                  }
-                );
-
-                customEv["pathname"] = new URL(
-                  window.location.href
-                ).pathname.slice(1);
-                customEv["domImages"] = domImages;
-                window.dispatchEvent(customEv);
-              });
+              customEv["pathname"] = new URL(
+                window.location.href
+              ).pathname.slice(1);
+              customEv["scrollHeight"] = document.documentElement.scrollHeight;
+              window.dispatchEvent(customEv);
 
               animate(
                 texts,
@@ -194,13 +148,13 @@ import Progress from "../components/Progress.svelte";
 
               let customEv = new CustomEvent("pagechange");
               customEv["pathname"] = "";
-              customEv["domImages"] = undefined;
+              customEv["scrollHeight"] = document.documentElement.scrollHeight;
               window.dispatchEvent(customEv);
 
               animate(
                 sunOne,
                 {
-                  transform: "translate(45%, 45%)",
+                  transform: "translate(-25%, 60%)",
                 },
                 {
                   duration: 1.6,
@@ -213,7 +167,7 @@ import Progress from "../components/Progress.svelte";
               animate(
                 sunTwo,
                 {
-                  transform: "translate(90%, 20%)",
+                  transform: "translate(20%, 20%)",
                 },
                 {
                   duration: 1.6,
@@ -247,24 +201,38 @@ import Progress from "../components/Progress.svelte";
   </head>
   <body
     data-barba="wrapper"
-    class={`overscroll-none ${route === "collection" ? "overflow-hidden" : ""}`}
+    class={`p-16 mobile:p-20 tablet:p-40 desktop:p-64 bg-[#1c1c1c] overscroll-none ${
+      route === "collection" ? "tablet:overflow-hidden" : ""
+    }`}
   >
     <nav
-      class="fixed z-10 flex flex-col space-y-4 right-20 top-16 text-slate-50 mix-blend-difference"
+      class="relative z-10 flex gap-12 mb-20 tablet:flex-col tablet:fixed tablet:right-40 tablet:top-40 desktop:right-64 desktop:top-64 text-slate-50 mix-blend-difference mobile:mb-24 tablet:mb-0 covered-text"
     >
       <div class="overflow-hidden">
         <a href="#"
-          ><p class="font-sans text-xl capsize load-in-text">vancetan</p>
+          ><p
+            class="font-sans text-[16px] tablet:text-[18px] desktop:text-[20px] leading-normal capsize load-in-text"
+          >
+            vance.is
+          </p>
         </a>
       </div>
       <div class="overflow-hidden">
         <a href="#"
-          ><p class="font-sans text-xl capsize load-in-text">Twitter</p>
+          ><p
+            class="font-sans text-[16px] tablet:text-[18px] desktop:text-[20px] leading-normal capsize load-in-text"
+          >
+            Twitter
+          </p>
         </a>
       </div>
       <div class="overflow-hidden">
         <a href="#"
-          ><p class="font-sans text-xl capsize load-in-text">Email</p>
+          ><p
+            class="font-sans text-[16px] tablet:text-[18px] desktop:text-[20px] leading-normal capsize load-in-text"
+          >
+            Email
+          </p>
         </a>
       </div>
     </nav>

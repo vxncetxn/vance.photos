@@ -1,17 +1,16 @@
 import * as Comlink from "comlink";
 import normalizeWheel from "normalize-wheel";
 import { atom } from "nanostores";
-
 import { initTransferHandler } from "./event.transferhandler";
 import { WebglInit } from "./webgl";
+import { calcScrollHeight } from "./calcScrollHeight";
+import { lerp } from "./lerp";
 
 initTransferHandler();
 
-function lerp(p1, p2, t) {
-  return p1 + (p2 - p1) * t;
-}
-
-const cursor = {
+let dimensions;
+let scrollHeight;
+let cursor = {
   ease: 0.05,
   current: 0,
   target: 0,
@@ -26,19 +25,16 @@ let scroll = {
 };
 let transitionStartTime = null;
 let transitionFactor = 1.0;
-
-async function initCollection(slug, domImages) {
-  await webglInited.addCollection(slug, domImages);
-  webglInited.setCollection(slug);
-  webglInited.setPosition(scroll, cursor);
-}
-
+let currentPath;
 let webglInited;
 let progress = atom(48.8);
 
 const api = {
   getProgress() {
     return progress.get();
+  },
+  getScrollCurrent() {
+    return scroll.current;
   },
   onWheel(ev) {
     const normalized = normalizeWheel(ev);
@@ -52,6 +48,13 @@ const api = {
     }
 
     scroll.target += Math.min(Math.max(speed, -150), 150) * 0.5;
+
+    if (dimensions.width <= 768) {
+      scroll.target = Math.min(
+        Math.max(scroll.target, 0),
+        scrollHeight - dimensions.height + 40
+      );
+    }
   },
   onMouseMove(ev) {
     cursor.target = ev.clientY;
@@ -64,18 +67,14 @@ const api = {
       last: 0,
       direction: "right",
     };
-    if (ev.pathname) {
-      if (webglInited.checkCollection(ev.pathname)) {
-        webglInited.setCollection(ev.pathname);
-        transitionFactor = 1.0;
-        transitionStartTime = new Date();
-        setTimeout(() => (transitionStartTime = null), 820);
-      } else {
-        await initCollection(ev.pathname, ev.domImages);
-        transitionFactor = 1.0;
-        transitionStartTime = new Date();
-        setTimeout(() => (transitionStartTime = null), 820);
-      }
+    currentPath = ev.pathname;
+    scrollHeight = calcScrollHeight(currentPath, dimensions);
+
+    if (currentPath) {
+      await webglInited.setCollection(currentPath);
+      transitionFactor = 1.0;
+      transitionStartTime = new Date();
+      setTimeout(() => (transitionStartTime = null), 820);
     } else {
       transitionFactor = -1.0;
       transitionStartTime = new Date();
@@ -85,17 +84,36 @@ const api = {
       }, 820);
     }
   },
+  onResize(ev) {
+    scroll = {
+      ease: 0.05,
+      current: 0,
+      target: 0,
+      last: 0,
+      direction: "right",
+    };
+    dimensions = {
+      width: ev.width,
+      height: ev.height,
+    };
+    scrollHeight = calcScrollHeight(currentPath, dimensions);
+    webglInited.resize(dimensions);
+  },
   main(props) {
-    let { container, dimensions, pathname, domImages } = props;
+    let {
+      container,
+      dimensions: trfDimensions,
+      scrollHeight: trfScrollHeight,
+    } = props;
+
+    dimensions = trfDimensions;
+    scrollHeight = trfScrollHeight;
+
     webglInited = new WebglInit({
       container,
-      dimensions,
+      dimensions: trfDimensions,
       progress,
     });
-    if (pathname) {
-      initCollection(pathname, domImages);
-    }
-    // webglInited.setPosition(scroll, cursor);
 
     function rafLoop() {
       if (

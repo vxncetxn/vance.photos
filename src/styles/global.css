@@ -15,35 +15,46 @@
 .sun-one,
 .sun-two {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  filter: blur(100px);
-  width: 400px;
-  height: 400px;
+  right: 0;
+  bottom: 0;
+  filter: blur(9vw);
+  width: 64vw;
+  height: 64vw;
   opacity: 0.6;
-  /* transition: transform 1.6s cubic-bezier(0.2, 0.125, 0, 0.73); */
+}
+
+@media (min-width: 768px) {
+  .sun-one,
+  .sun-two {
+    width: 40vw;
+    height: 40vw;
+    filter: blur(7vw);
+  }
+}
+
+@media (min-width: 1024px) {
+  .sun-one,
+  .sun-two {
+    width: 28vw;
+    height: 28vw;
+    filter: blur(5vw);
+  }
 }
 
 .sun-one-index {
-  transform: translate(45%, 45%) scale(1);
-  /* animation: throb-index-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
+  transform: translate(-25%, 60%);
 }
 
 .sun-two-index {
-  transform: translate(90%, 20%) scale(1);
-  /* animation: throb-index-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite; */
+  transform: translate(20%, 20%);
 }
 
 .sun-one-collection {
-  transform: translate(-50%, -50%) scale(1);
-  /* animation: throb-collection-one 8s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
-    will-change: transform; */
+  transform: translate(calc(-50vw + 30%), calc(-50vh + 80%));
 }
 
 .sun-two-collection {
-  transform: translate(-20%, -20%) scale(1);
-  /* animation: throb-collection-two 10s cubic-bezier(0.2, 0.125, 0, 0.73) alternate infinite;
-    will-change: transform; */
+  transform: translate(calc(-50vw + 70%), calc(-50vh + 65%));
 }
 
 .text-leave {

@@ -3,58 +3,46 @@
   import * as Comlink from "comlink";
   import normalizeWheel from "normalize-wheel";
   import { progress } from "../stores/progress";
-
+  import { calcScrollHeight } from "../lib/calcScrollHeight";
+  import { throttle } from "../lib/throttle";
+  import { initTransferHandler } from "../lib/event.transferhandler";
+  import { WebglInit } from "../lib/webgl";
   const calcWorker = new Worker(
     new URL("../lib/calc-worker", import.meta.url),
     {
       type: "module",
     }
   );
-  import { throttle } from "../lib/throttle";
-  import { initTransferHandler } from "../lib/event.transferhandler";
-  import { WebglInit } from "../lib/webgl";
 
   initTransferHandler();
-  let canvas;
-  let scroll;
 
-  onMount(() => {
+  let canvas;
+  let dimensions = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+  let scrollHeight;
+  let cursor = {
+    ease: 0.05,
+    current: 0,
+    target: 0,
+    last: 0,
+  };
+  let scroll = {
+    ease: 0.05,
+    current: 0,
+    target: 0,
+    last: 0,
+    direction: "right",
+  };
+  let transitionStartTime = null;
+  let transitionFactor = 1.0;
+  let currentPath;
+
+  onMount(async () => {
     progress.set(progress.get() + 17.3);
 
     const api = Comlink.wrap(calcWorker);
-
-    const cursor = {
-      ease: 0.05,
-      current: 0,
-      target: 0,
-      last: 0,
-    };
-    scroll = {
-      ease: 0.05,
-      current: 0,
-      target: 0,
-      last: 0,
-      direction: "right",
-    };
-    let transitionStartTime = null;
-    let transitionFactor = 1.0;
-
-    async function initCollection(slug) {
-      let domImages = [...document.querySelectorAll(".image")].map((img) => {
-        const bounds = img.getBoundingClientRect();
-        const url = new URL(img.src);
-        return {
-          src: url.origin + url.pathname,
-          top: bounds.top,
-          left: bounds.left,
-          width: bounds.width,
-          height: bounds.height,
-        };
-      });
-      await webglInited.addCollection(slug, domImages);
-      webglInited.setCollection(slug);
-      webglInited.setPosition(scroll, cursor);
-    }
 
     function onWheel(ev) {
       const normalized = normalizeWheel(ev);
@@ -68,13 +56,24 @@
       }
 
       scroll.target += Math.min(Math.max(speed, -150), 150) * 0.5;
+
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        scroll.target = Math.min(
+          Math.max(scroll.target, 0),
+          scrollHeight - dimensions.height + 40
+        );
+
+        [...document.querySelectorAll(".covered-text")].forEach((elem) => {
+          elem.style.opacity = 1 - (scroll.current / dimensions.height) * 2;
+        });
+      }
     }
 
     function onMouseMove(ev) {
       cursor.target = ev.clientY;
     }
 
-    function onPageChange(ev) {
+    async function onPageChange(ev) {
       scroll = {
         ease: 0.05,
         current: 0,
@@ -82,18 +81,13 @@
         last: 0,
         direction: "right",
       };
-      if (ev.pathname) {
-        if (webglInited.checkCollection(ev.pathname)) {
-          webglInited.setCollection(ev.pathname);
-          transitionFactor = 1.0;
-          transitionStartTime = new Date();
-          setTimeout(() => (transitionStartTime = null), 820);
-        } else {
-          initCollection(ev.pathname);
-          transitionFactor = 1.0;
-          transitionStartTime = new Date();
-          setTimeout(() => (transitionStartTime = null), 820);
-        }
+      currentPath = ev.pathname;
+      scrollHeight = calcScrollHeight(currentPath, dimensions);
+      if (currentPath) {
+        await webglInited.setCollection(currentPath);
+        transitionFactor = 1.0;
+        transitionStartTime = new Date();
+        setTimeout(() => (transitionStartTime = null), 820);
       } else {
         transitionFactor = -1.0;
         transitionStartTime = new Date();
@@ -104,20 +98,33 @@
       }
     }
 
-    let webglInited = new WebglInit({
-      container: canvas,
-      dimensions: { width: canvas.offsetWidth, height: canvas.offsetHeight },
-      progress,
-    });
-    let pathname = new URL(window.location.href).pathname.slice(1);
-    if (pathname) {
-      initCollection(pathname);
+    function onResize() {
+      scroll = {
+        ease: 0.05,
+        current: 0,
+        target: 0,
+        last: 0,
+        direction: "right",
+      };
+      dimensions = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+      scrollHeight = calcScrollHeight(currentPath, dimensions);
+      webglInited.resize(dimensions);
     }
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
     window.addEventListener("pagechange", onPageChange);
+    window.addEventListener("resize", onResize);
+
+    let webglInited = new WebglInit({
+      container: canvas,
+      dimensions: { width: window.innerWidth, height: window.innerHeight },
+      progress,
+    });
 
     async function rafLoop() {
       if (

@@ -21,45 +21,42 @@
     const offscreen = canvas.transferControlToOffscreen();
     const api = Comlink.wrap(offscreenWorker);
 
+    async function onWheelMain() {
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        let scrollCurrent = await api.getScrollCurrent();
+        [...document.querySelectorAll(".covered-text")].forEach((elem) => {
+          elem.style.opacity = 1 - (scrollCurrent / window.innerHeight) * 2;
+        });
+      }
+    }
+
     window.addEventListener("mousewheel", api.onWheel.bind(api), {
       passive: true,
     });
     window.addEventListener("wheel", api.onWheel.bind(api), { passive: true });
+    window.addEventListener("wheel", onWheelMain, { passive: true });
     window.addEventListener(
       "mousemove",
       throttle(api.onMouseMove.bind(api), 100)
     );
     window.addEventListener("pagechange", api.onPageChange.bind(api));
+    window.addEventListener("resize", api.onResize.bind(api));
 
     offscreenWorker.postMessage({
       type: "size",
-      width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
     });
 
-    let pathname = new URL(window.location.href).pathname.slice(1);
     await api.main(
       Comlink.transfer(
         {
           container: offscreen,
           dimensions: {
-            width: canvas.offsetWidth,
-            height: canvas.offsetHeight,
+            width: window.innerWidth,
+            height: window.innerHeight,
           },
-          pathname,
-          domImages: pathname
-            ? [...document.querySelectorAll(".image")].map((img) => {
-                const bounds = img.getBoundingClientRect();
-                const url = new URL(img.src);
-                return {
-                  src: url.origin + url.pathname,
-                  top: bounds.top,
-                  left: bounds.left,
-                  width: bounds.width,
-                  height: bounds.height,
-                };
-              })
-            : null,
+          scrollHeight: document.documentElement.scrollHeight,
           dpr: Math.min(window.devicePixelRatio, 2),
         },
         [offscreen]

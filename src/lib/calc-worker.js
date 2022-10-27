@@ -1,8 +1,5 @@
 import * as Comlink from "comlink";
-
-function lerp(p1, p2, t) {
-  return p1 + (p2 - p1) * t;
-}
+import { lerp } from "./lerp";
 
 const api = {
   process(scroll, cursor) {

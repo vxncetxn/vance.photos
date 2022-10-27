@@ -8,8 +8,9 @@ import {
   TextureLoader,
 } from "ogl";
 
-// import vertex from "../shaders/vertex.glsl";
-// import fragment from "../shaders/fragment.glsl";
+import vertScrollVertex from "../shaders/vert-scroll-vertex.glsl";
+import horiScrollVertex from "../shaders/hori-scroll-vertex.glsl";
+import fragment from "../shaders/fragment.glsl";
 
 import collectionsData from "../data/collections.json";
 
@@ -40,22 +41,25 @@ export class WebglInit {
       fov: (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI,
     });
     this.camera.position.z = 600;
-    this.baseGeometry = new Plane(this.gl, { widthSegments: 10 });
+    this.baseGeometry = new Plane(this.gl, {
+      widthSegments: 10,
+      heightSegments: 10,
+    });
 
     this.activeCollection = undefined;
     this.collections = {};
     collectionsData.forEach((collection) => {
       this.collections[collection.slug] = {
-        images: [...Array(collection.length).keys()].map((i) => {
+        images: collection.isLandscape.map((isLandscape, i) => {
           return {
-            src: `https://vance.imgix.net/${collection.slug}/s${
-              i + 1
-            }.jpg?w=300&h=200&fit=contain&format=auto&blur=200`,
+            origin: `https://vance.imgix.net/${collection.slug}/s${i + 1}.jpg`,
             lqipTexture: undefined,
+            isLandscape,
           };
         }),
         group: undefined,
         widthTotal: 0,
+        heightTotal: 0,
       };
     });
 
@@ -70,7 +74,7 @@ export class WebglInit {
     Object.entries(this.collections).forEach(([slug, data]) => {
       data.images.forEach((img, i) => {
         let texture = TextureLoader.load(this.gl, {
-          src: img.src,
+          src: `${img.origin}?w=300&h=200&fit=contain&format=auto&blur=200`,
           generateMipmaps: false,
         });
         this.lqipTexturesAdded.push(texture.loaded);
@@ -82,40 +86,98 @@ export class WebglInit {
     });
   }
 
-  onResize() {
-    // this.width = this.container.offsetWidth;
-    // this.height = this.container.offsetHeight;
-    // this.renderer.setSize(this.width, this.height);
-    // this.camera.aspect = this.width / this.height;
-    // this.camera.updateProjectionMatrix();
-    // this.camera.fov = (2 * Math.atan(this.height / 2 / 600) * 180) / Math.PI;
-    // this.materials.forEach(m=>{
-    //     m.uniforms.uResolution.value.x = this.width;
-    //     m.uniforms.uResolution.value.y = this.height;
-    // })
-    // this.imageStore.forEach(i=>{
-    //     let bounds = i.img.getBoundingClientRect();
-    //     i.mesh.scale.set(bounds.width,bounds.height,1);
-    //     i.top = bounds.top;
-    //     i.left = bounds.left + this.asscroll.currentPos;
-    //     i.width = bounds.width;
-    //     i.height = bounds.height;
-    //     i.mesh.material.uniforms.uQuadSize.value.x = bounds.width;
-    //     i.mesh.material.uniforms.uQuadSize.value.y = bounds.height;
-    //     i.mesh.material.uniforms.uTextureSize.value.x = bounds.width;
-    //     i.mesh.material.uniforms.uTextureSize.value.y = bounds.height;
-    // })
-  }
+  resize(dimensions) {
+    this.width = dimensions.width;
+    this.height = dimensions.height;
+    this.renderer.setSize(this.width, this.height);
+    this.camera.aspect = this.width / this.height;
+    this.camera.perspective();
 
-  checkCollection(slug) {
-    return !!this.collections[slug].group;
-  }
+    Object.entries(this.collections).forEach(([slug, data]) => {
+      let collection = this.collections[slug];
+      collection.widthTotal = 0;
+      collection.heightTotal = 0;
 
-  setCollection(slug) {
-    if (slug) {
-      this.activeCollection = slug;
-      this.collections[slug].group.visible = true;
+      data.images.forEach((img, i) => {
+        if (img.mesh) {
+          let gap = (6 / 100) * this.width;
+          let width;
+          let height;
+          let top;
+          let left;
+
+          if (this.width <= 768) {
+            let padding = this.width <= 376 ? 16 : 20;
+            width = this.width - 2 * padding;
+            height = img.isLandscape ? width / 1.5 : width / (2 / 3);
+            top = collection.heightTotal + (1 / 2) * this.height;
+            left = padding;
+          } else {
+            height = 0.25 * this.width;
+            width = img.isLandscape ? 1.5 * height : (2 / 3) * height;
+            top = (1 / 2) * this.height - (1 / 2) * height;
+            left = collection.widthTotal - (12 / 100) * this.width;
+          }
+
+          let program = new Program(this.gl, {
+            depthTest: false,
+            depthWrite: false,
+            vertex: this.width <= 768 ? vertScrollVertex : horiScrollVertex,
+            fragment,
+            uniforms: {
+              ...img.mesh.program.uniforms,
+              uViewportSize: { value: [this.width, this.height] },
+            },
+          });
+          img.mesh.program = program;
+
+          img.mesh.scale.x = width;
+          img.mesh.scale.y = height;
+
+          collection.widthTotal += width + gap;
+          collection.heightTotal += height + gap;
+
+          // Set initial pos
+          let posX = left - this.width / 2 + width / 2;
+          let posY = -top + this.height / 2 - height / 2;
+
+          img.mesh.position.x = posX;
+          img.mesh.position.y = posY;
+
+          let meshOffset = img.mesh.scale.x / 2;
+          let isBefore = posX + meshOffset < -this.width;
+          let isAfter = posY - meshOffset > this.width;
+
+          collection.images[i] = {
+            ...collection.images[i],
+            width,
+            height,
+            top,
+            left,
+            posX,
+            posY,
+            isBefore,
+            isAfter,
+            extraScroll: 0,
+          };
+        }
+      });
       this.render();
+    });
+  }
+
+  async setCollection(slug) {
+    if (slug) {
+      if (!!this.collections[slug].group) {
+        this.activeCollection = slug;
+        this.collections[slug].group.visible = true;
+        this.render();
+      } else {
+        await this.addCollection(slug);
+        this.activeCollection = slug;
+        this.collections[slug].group.visible = true;
+        this.render();
+      }
     }
   }
 
@@ -167,63 +229,38 @@ export class WebglInit {
     }
   }
 
-  async addCollection(slug, domImages) {
+  async addCollection(slug) {
     await Promise.all(this.lqipTexturesAdded);
 
     let group = new Transform();
     let collection = this.collections[slug];
 
-    domImages.forEach((img, i) => {
-      let { src, top, left, width, height } = img;
+    collection.images.forEach((img, i) => {
+      // dom-independent calcs
+      let gap = (6 / 100) * this.width;
+      let width;
+      let height;
+      let top;
+      let left;
+
+      if (this.width <= 768) {
+        let padding = this.width <= 376 ? 16 : 20;
+        width = this.width - 2 * padding;
+        height = img.isLandscape ? width / 1.5 : width / (2 / 3);
+        top = collection.heightTotal + (1 / 2) * this.height;
+        left = padding;
+      } else {
+        height = 0.25 * this.width;
+        width = img.isLandscape ? 1.5 * height : (2 / 3) * height;
+        top = (1 / 2) * this.height - (1 / 2) * height;
+        left = collection.widthTotal - (12 / 100) * this.width;
+      }
 
       let program = new Program(this.gl, {
         depthTest: false,
         depthWrite: false,
-        vertex: `#define PI 3.1415926535897932384626433832795
-
-        precision highp float;
-        precision highp int;
-        
-        attribute vec3 position;
-        attribute vec2 uv;
-        
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        uniform vec2 uViewportSize;
-        uniform float uStrength;
-        
-        varying vec2 vUv;
-        
-        void main() {
-            vUv = uv;
-        
-            vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
-            newPosition.z += min(cos(newPosition.x / uViewportSize.x * PI) * uStrength * 400.0, cos(newPosition.x / uViewportSize.x * PI) * 200.0);
-        
-            gl_Position = projectionMatrix * newPosition;
-        }`,
-        fragment: `precision highp float;
-
-        uniform sampler2D uTexture;
-        uniform float uTime;
-        uniform float uTransitionFactor;
-        
-        varying vec2 vUv;
-        
-        void main() {
-            vec4 textureResult = texture2D(uTexture, vUv);
-            float func;
-            if (2.0 * uTime / 800.0 < 1.0)
-            {
-              func = -1.0 / 2.0 * pow(2.0 * uTime / 800.0, 3.0) + 1.0;
-            }
-            else
-            {
-              func = -1.0 / 2.0 * (pow((2.0 * uTime / 800.0) - 2.0, 3.0) + 2.0) + 1.0;
-            }
-            textureResult.a = ceil(max((vUv.y - func) * uTransitionFactor, 0.0));
-            gl_FragColor = textureResult;
-        }`,
+        vertex: this.width <= 768 ? vertScrollVertex : horiScrollVertex,
+        fragment,
         uniforms: {
           uTexture: { value: collection.images[i].lqipTexture },
           uViewportSize: { value: [this.width, this.height] },
@@ -238,7 +275,8 @@ export class WebglInit {
       mesh.scale.y = height;
       mesh.setParent(group);
 
-      collection.widthTotal += width + 100;
+      collection.widthTotal += width + gap;
+      collection.heightTotal += height + gap;
 
       // Set initial pos
       let posX = left - this.width / 2 + width / 2;
@@ -266,7 +304,7 @@ export class WebglInit {
       };
 
       let actualTexture = TextureLoader.load(this.gl, {
-        src: `${src}?w=900&h=600&fit=contain&format=auto`,
+        src: `${img.origin}?w=900&h=600&fit=contain&format=auto`,
         generateMipmaps: false,
       });
       actualTexture.loaded.then(() => {
@@ -283,33 +321,38 @@ export class WebglInit {
     if (this.activeCollection) {
       let collection = this.collections[this.activeCollection];
       collection.images.forEach((o) => {
-        o.posX =
-          -scroll.current +
-          o.left -
-          this.width / 2 +
-          o.width / 2 -
-          o.extraScroll;
+        if (this.width <= 768) {
+          o.posY = scroll.current - o.top + this.height / 2 - o.height / 2;
+          o.mesh.position.y = o.posY;
+        } else {
+          o.posX =
+            -scroll.current +
+            o.left -
+            this.width / 2 +
+            o.width / 2 -
+            o.extraScroll;
 
-        let meshOffset = o.mesh.scale.x / 2;
-        o.isBefore = o.posX + meshOffset < -this.width;
-        o.isAfter = o.posX - meshOffset > this.width;
+          let meshOffset = o.mesh.scale.x / 2;
+          o.isBefore = o.posX + meshOffset < -this.width;
+          o.isAfter = o.posX - meshOffset > this.width;
 
-        if (!o.isBefore && !o.isAfter) {
-          o.mesh.position.x = o.posX;
-        }
+          if (!o.isBefore && !o.isAfter) {
+            o.mesh.position.x = o.posX;
+          }
 
-        if (scroll.direction === "right" && o.isBefore) {
-          o.extraScroll -= collection.widthTotal;
+          if (scroll.direction === "right" && o.isBefore) {
+            o.extraScroll -= collection.widthTotal;
 
-          o.isBefore = false;
-          o.isAfter = false;
-        }
+            o.isBefore = false;
+            o.isAfter = false;
+          }
 
-        if (scroll.direction === "left" && o.isAfter) {
-          o.extraScroll += collection.widthTotal;
+          if (scroll.direction === "left" && o.isAfter) {
+            o.extraScroll += collection.widthTotal;
 
-          o.isBefore = false;
-          o.isAfter = false;
+            o.isBefore = false;
+            o.isAfter = false;
+          }
         }
 
         o.mesh.program.uniforms.uStrength.value =
