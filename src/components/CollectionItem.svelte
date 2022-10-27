@@ -22,7 +22,7 @@
   }
 </script>
 
-<div class="py-1 overflow-hidden">
+<div class="py-2 overflow-hidden">
   <a
     on:mouseenter={handleMouseEnter}
     href={`/${collection.slug}`}
