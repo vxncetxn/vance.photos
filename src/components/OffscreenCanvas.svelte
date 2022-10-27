@@ -21,10 +21,20 @@
     const offscreen = canvas.transferControlToOffscreen();
     const api = Comlink.wrap(offscreenWorker);
 
+    async function onWheelMain() {
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        let scrollCurrent = await api.getScrollCurrent();
+        [...document.querySelectorAll(".covered-text")].forEach((elem) => {
+          elem.style.opacity = 1 - (scrollCurrent / window.innerHeight) * 2;
+        });
+      }
+    }
+
     window.addEventListener("mousewheel", api.onWheel.bind(api), {
       passive: true,
     });
     window.addEventListener("wheel", api.onWheel.bind(api), { passive: true });
+    window.addEventListener("wheel", onWheelMain, { passive: true });
     window.addEventListener(
       "mousemove",
       throttle(api.onMouseMove.bind(api), 100)

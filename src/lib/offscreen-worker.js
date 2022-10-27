@@ -33,6 +33,9 @@ const api = {
   getProgress() {
     return progress.get();
   },
+  getScrollCurrent() {
+    return scroll.current;
+  },
   onWheel(ev) {
     const normalized = normalizeWheel(ev);
     const { pixelX, pixelY } = normalized;

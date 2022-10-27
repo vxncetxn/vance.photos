@@ -62,6 +62,10 @@
           Math.max(scroll.target, 0),
           scrollHeight - dimensions.height + 40
         );
+
+        [...document.querySelectorAll(".covered-text")].forEach((elem) => {
+          elem.style.opacity = 1 - (scroll.current / dimensions.height) * 2;
+        });
       }
     }
 
