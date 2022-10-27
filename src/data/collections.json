@@ -18,7 +18,7 @@
       true,
       true
     ],
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+    "description": "Mum and Dad's 32nd wedding anniversary dinner at Ibid helmed by the first Masterchef Asia winner Woo Wai Leong — photos aim to capture the intensity and passions of both the food and renewed love."
   },
   {
     "name": "covid suppers",
@@ -39,7 +39,7 @@
       true,
       false
     ],
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+    "description": "Trapped within the confines of tiny Singapore amidst the COVID-19 lockdowns, me and my friends spent the newfound time on many delicious suppers - photos aim to capture the nostalgia of old friendships."
   },
   {
     "name": "easter",
@@ -64,14 +64,6 @@
       false,
       true
     ],
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
-  },
-  {
-    "name": "europe solo",
-    "slug": "europe-solo",
-    "colors": ["#3CA55C", "#B5AC49"],
-    "length": 0,
-    "isLandscape": [],
-    "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type."
+    "description": "We were warmly invited over by Jireh and Natalie for a DIY pizza-making session over the Easter holidays - photos aim to emulate the soft and pastel aesthetic that Natalie uses on her social media."
   }
 ]
