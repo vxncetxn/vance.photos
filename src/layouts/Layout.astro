@@ -3,6 +3,7 @@ import "../styles/global.css";
 const { title, route } = Astro.props;
 import CanvasControlFlow from "../components/CanvasControlFlow.svelte";
 import Progress from "../components/Progress.svelte";
+import { SEO } from "astro-seo";
 ---
 
 <html>
@@ -10,7 +11,7 @@ import Progress from "../components/Progress.svelte";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.svg" />
     <title>{title}</title>
     <script>
       import barba from "@barba/core";
@@ -198,6 +199,16 @@ import Progress from "../components/Progress.svelte";
         ],
       });
     </script>
+    <SEO
+      title="vance.photos"
+      description="A collection of photos by Vance Tan."
+      openGraph={{
+        basic: {
+          title: "vance.photos",
+          type: "website",
+        },
+      }}
+    />
   </head>
   <body
     data-barba="wrapper"

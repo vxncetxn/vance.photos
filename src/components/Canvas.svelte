@@ -35,6 +35,10 @@
     last: 0,
     direction: "right",
   };
+  let touch = {
+    startY: 0,
+    deltaY: 0,
+  };
   let transitionStartTime = null;
   let transitionFactor = 1.0;
   let currentPath;
@@ -43,6 +47,27 @@
     progress.set(progress.get() + 17.3);
 
     const api = Comlink.wrap(calcWorker);
+
+    function onTouchStart(ev) {
+      touch.startY = ev.touches[0].clientY;
+    }
+
+    function onTouchMove(ev) {
+      touch.deltaY = ev.touches[0].clientY - startY;
+
+      scroll.target += Math.min(Math.max(touch.deltaY, -150), 150) * 0.5;
+
+      if (!window.matchMedia("(min-width: 768px)").matches) {
+        scroll.target = Math.min(
+          Math.max(scroll.target, 0),
+          scrollHeight - dimensions.height + 40
+        );
+
+        [...document.querySelectorAll(".covered-text")].forEach((elem) => {
+          elem.style.opacity = 1 - (scroll.current / dimensions.height) * 2;
+        });
+      }
+    }
 
     function onWheel(ev) {
       const normalized = normalizeWheel(ev);
@@ -116,7 +141,8 @@
 
     window.addEventListener("mousewheel", onWheel, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("touchmove", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("mousemove", throttle(onMouseMove, 100));
     window.addEventListener("pagechange", onPageChange);
     window.addEventListener("resize", onResize);

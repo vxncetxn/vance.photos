@@ -23,6 +23,10 @@ let scroll = {
   last: 0,
   direction: "right",
 };
+let touch = {
+  startY: 0,
+  deltaY: 0,
+};
 let transitionStartTime = null;
 let transitionFactor = 1.0;
 let currentPath;
@@ -35,6 +39,21 @@ const api = {
   },
   getScrollCurrent() {
     return scroll.current;
+  },
+  onTouchStart(ev) {
+    touch.startY = ev.touches[0].clientY;
+  },
+  onTouchMove(ev) {
+    touch.deltaY = ev.touches[0].clientY - startY;
+
+    scroll.target += Math.min(Math.max(touch.deltaY, -150), 150) * 0.5;
+
+    if (dimensions.width <= 768) {
+      scroll.target = Math.min(
+        Math.max(scroll.target, 0),
+        scrollHeight - dimensions.height + 40
+      );
+    }
   },
   onWheel(ev) {
     const normalized = normalizeWheel(ev);

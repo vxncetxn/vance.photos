@@ -10,6 +10,7 @@ specifiers:
   '@astrojs/tailwind': ^1.0.0
   '@barba/core': ^2.9.7
   astro: 1.1.5
+  astro-seo: ^0.6.0
   comlink: ^4.3.1
   motion: ^10.5.2
   nanostores: ^0.7.0
@@ -25,6 +26,7 @@ specifiers:
 
 dependencies:
   '@barba/core': 2.9.7
+  astro-seo: 0.6.0
   comlink: 4.3.1
   motion: 10.14.2
   nanostores: 0.7.0
@@ -841,6 +843,10 @@ packages:
     dependencies:
       tslib: 2.4.0
     dev: true
+
+  /astro-seo/0.6.0:
+    resolution: {integrity: sha512-nR+dJlAyQhX6s0oAmbBqPq3KCZax/zVAerFsclGiJQ2znOkS/7L+RGjziS4M9Q3OQxm3FMfqIKHp9Ns73Q81ww==}
+    dev: false
 
   /astro/1.1.5:
     resolution: {integrity: sha512-V3uDGTHYDbrqDbCpziEgCv8uElow/Ae1LjGC7guTQTU3IXzcVbJPkIfx8uNDThQ6nZpSb38z9GsFtsNJ9A3OmQ==}

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@barba/core": "^2.9.7",
+    "astro-seo": "^0.6.0",
     "comlink": "^4.3.1",
     "motion": "^10.5.2",
     "nanostores": "^0.7.0",
